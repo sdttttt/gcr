@@ -9,8 +9,8 @@ fn main() {
     let msgType = type_input();
     let scope = scope_input();
     let msg = msg_input();
-
     
+    println!("{} {} {}", msgType, scope, msg);
 }
 
 fn show_type() {
@@ -26,22 +26,23 @@ fn show_type() {
 }
 
 fn type_input() -> String {
-    print!("Message Type: ");
+    println!("Message Type ---------------------------");
     get_input()
 }
 
 fn scope_input() -> String {
-    print!("Scope: ");
+    println!("Scope ---------------------------------");
     get_input()
 }
 
 fn msg_input() -> String {
-    print!("Commit Message: ");
+    println!("Commit Message ------------------------");
     get_input()
 }
 
 fn get_input() -> String {
     let mut result = String::new();
     io::stdin().read_line(&mut result).expect("not string");
+    result.pop();
     result
 }
