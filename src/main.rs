@@ -1,11 +1,16 @@
 use std::process::Command;
-use std::io;
+use std::io::{self, Write};
+
 
 fn main() {
     println!("Type:");
     show_type();
-    let typestr = type_input();
-    println!("{}",typestr);
+    
+    let msgType = type_input();
+    let scope = scope_input();
+    let msg = msg_input();
+
+    
 }
 
 fn show_type() {
@@ -21,8 +26,21 @@ fn show_type() {
 }
 
 fn type_input() -> String {
-    print!("Commit Message: ");
+    print!("Message Type: ");
+    get_input()
+}
 
+fn scope_input() -> String {
+    print!("Scope: ");
+    get_input()
+}
+
+fn msg_input() -> String {
+    print!("Commit Message: ");
+    get_input()
+}
+
+fn get_input() -> String {
     let mut result = String::new();
     io::stdin().read_line(&mut result).expect("not string");
     result
