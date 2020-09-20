@@ -2,13 +2,18 @@ use std::process::Command;
 use std::io;
 use std::fs;
 
+mod repo;
 mod util;
+
+use repo::*;
+use util::*;
 
 fn main() {
     show_type();
     
-    let current_path = util::current_path();
-    println!("{}", current_path);
+    let current_path = current_path();
+    let repo = Repository::new(current_path);
+    repo.sign();
 }
 
 fn show_type() {
