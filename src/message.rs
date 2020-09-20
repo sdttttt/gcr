@@ -34,6 +34,7 @@ fn show_type() {
     println!("style:      Markup, white-space, formatting, missing semi-colons...");
     println!("perf:       A code change that improves performance");
     println!("ci:         CI related changes");
+    println!();
 }
 
 fn ask_type() -> String {
