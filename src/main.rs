@@ -14,5 +14,8 @@ fn main() {
     let repo = Repository::new(current_path);
 
     let message = Messager::new().build();
-    repo.commit(message.as_str());
+    println!("Commit Message: {}", message);
+    if let Err(e) = repo.commit(message.as_str()) {
+        println!("{}", e.message());
+    } 
 }
