@@ -17,9 +17,9 @@ impl Messager {
 
     pub fn build(&self) -> String {
         if self.scope.len() == 0 || self.scope.trim() == "" {
-            format!("{}:{}", self.typ, self.content)
+            format!("{}: {}", self.typ, self.content)
         } else {
-            format!("{}({}):{}", self.typ, self.scope, self.content)
+            format!("{}({}): {}", self.typ, self.scope, self.content)
         }
     }
 }
