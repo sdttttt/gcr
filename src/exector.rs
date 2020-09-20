@@ -1,4 +1,5 @@
 use std::process::Command;
+use git2::Commit;
 
 pub struct GExector {
     message: String,
@@ -14,6 +15,8 @@ impl GExector {
     }
 
     fn build_commit_message(&self) -> String {
+        
+        
         if &self.scope.len() != &0 {
             format!("{}:{}", self.typ, self.message)
         } else {

@@ -1,16 +1,14 @@
 use std::process::Command;
-use std::io::{self, Write};
+use std::io;
+use std::fs;
 
+mod util;
 
 fn main() {
-    println!("Type:");
     show_type();
     
-    let msgType = type_input();
-    let scope = scope_input();
-    let msg = msg_input();
-    
-    println!("{} {} {}", msgType, scope, msg);
+    let current_path = util::current_path();
+    println!("{}", current_path);
 }
 
 fn show_type() {
