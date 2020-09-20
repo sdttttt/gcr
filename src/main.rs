@@ -1,5 +1,3 @@
-use std::io;
-
 mod message;
 mod repo;
 mod util;
