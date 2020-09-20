@@ -16,14 +16,39 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    
     - name: Run tests
       run: cargo test --verbose
   
     - name: Build
       run: cargo build --release --verbose
     
-    - name: Upload Release Product
+    - name: Upload Product
       uses: actions/upload-artifact@v2
       with:
         name: GCR-${{ runner.os }}
         path: ./target/release/GCR
+    
+    - name: Upload Product To Github Release
+      uses: xresloader/upload-to-github-release@v1.1.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # The files or file patterns to upload. You can upload multiple files by split them by semicolon. You can use the glob pattern to find the files.
+        file: ./target/release/GCR
+        # If you need to overwrite existing files, add overwrite: true to the with.
+        overwrite: true
+        # The resultant deployment is a draft Release that only repository collaborators can see. This gives you an opportunity to examine and edit the draft release.
+        draft: false
+        # The resultant deployment is a Prerelease. This gives you an opportunity to examine and edit the prerelease.
+        prerelease: false
+        # With tags: true, your Releases deployment will trigger if and only if the build is a tagged build.
+        tags: ${{ github.ref }}
+        release_name: GCR-${{ runner.os }}
