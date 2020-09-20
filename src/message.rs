@@ -61,7 +61,7 @@ pub fn ask_user(question: &str) -> String {
     println!("{}", question);
 
     let mut answer = String::new();
-    io::stdin().read_line(&mut answer);
+    io::stdin().read_line(&mut answer).expect("what error?");
 
     answer.pop();
     answer

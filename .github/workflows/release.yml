@@ -1,0 +1,29 @@
+name: Release
+
+on:
+  push:
+    tags: 
+      - 'v**'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  upload:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Run tests
+      run: cargo test --verbose
+  
+    - name: Build
+      run: cargo build --release --verbose
+    
+    - name: Upload Release Product
+      uses: actions/upload-artifact@v2
+      with:
+        name: GCR-${{ runner.os }}
+        path: ./target/release/GCR
