@@ -13,7 +13,6 @@ fn main() {
     
     let current_path = current_path();
     let repo = Repository::new(current_path);
-    repo.sign();
 }
 
 fn show_type() {

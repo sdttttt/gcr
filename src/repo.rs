@@ -1,4 +1,5 @@
-use git2::Repository as GRepository;
+use git2::{Repository as GRepository, Signature, Error};
+
 
 pub struct Repository {
     repo: git2::Repository
@@ -14,16 +15,28 @@ impl Repository {
         }
     }
 
-    pub fn commit(&self, message: String) {
+    pub fn commit(&self, message: &str) -> Result<(), Error> {
+        let current_sign = self.generate_sign();
+        let tree_id = {
+            let mut index = self.repo.index()?;
+            
+            index.write_tree()?
+        };
 
+        let tree = self.repo.find_tree(tree_id)?;
+
+        self.repo.commit(
+            Some("HEAD"),
+            &current_sign,
+            &current_sign,
+            message,
+            &tree,
+            &[])?;
+
+        Ok(())
     }
 
-    pub fn sign(&self) {
-        let sign = self.repo.signature().unwrap();
-        let email = sign.email().unwrap();
-        let username = sign.name().unwrap();
-    
-        println!("{}", email);
-        println!("{}", username);
+    fn generate_sign(&self) -> Signature<'static> {
+        self.repo.signature().unwrap()
     }
 }
