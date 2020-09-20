@@ -17,9 +17,9 @@ impl Repository {
 
     pub fn commit(&self, message: &str) -> Result<(), Error> {
         let current_sign = self.generate_sign();
+        
         let tree_id = {
             let mut index = self.repo.index()?;
-            
             index.write_tree()?
         };
 
