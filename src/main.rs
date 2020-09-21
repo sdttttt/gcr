@@ -10,8 +10,16 @@ use util::*;
 
 fn main() {
     let current_path = current_path();
-    let repo = Repository::new(current_path);
-
+    let repo = {
+        match Repository::new(current_path) {
+            Ok(r) => r,
+            Err(e) => {
+                gcr_err_println(e.message());
+                return
+            }
+        }
+    };
+    
     if let Err(e) = repo.pre_commit() {
         gcr_err_println(e.message());
         return

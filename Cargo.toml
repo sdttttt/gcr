@@ -1,6 +1,6 @@
 [package]
-name = "GCR"
-version = "0.1.0"
+name = "gcr"
+version = "0.4.0"
 authors = ["sdttttt <760159537@qq.com>"]
 edition = "2018"
 

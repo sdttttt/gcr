@@ -9,11 +9,11 @@ pub struct Repository {
 }
 
 impl Repository {
-    pub fn new(path: String) -> Self {
+    pub fn new(path: String) -> Result<Self, Error> {
         let result = GRepository::open(&path);
         match result {
-            Ok(repo) => Self { repo },
-            Err(e) => panic!(e),
+            Ok(repo) => Ok(Self { repo }),
+            Err(e) => Err(e),
         }
     }
 
