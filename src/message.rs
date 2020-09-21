@@ -25,6 +25,7 @@ impl Messager {
 }
 
 fn show_type() {
+    println!();
     println!("test:       Adding missing tests");
     println!("feat:       A new feature");
     println!("fix:        A bug fix");

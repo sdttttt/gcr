@@ -9,6 +9,7 @@ use repo::*;
 use util::*;
 
 fn main() {
+    welcome();
     let current_path = current_path();
     let repo = {
         match Repository::new(current_path) {
@@ -30,6 +31,10 @@ fn main() {
     if let Err(e) = repo.commit(message.as_str()) {
         println!("GCR(Error): {}", e.message())
     }
+}
+
+fn welcome() {
+    println!("Thanks you for using GCR.")
 }
 
 
