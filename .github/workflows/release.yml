@@ -11,7 +11,7 @@ env:
 jobs:
   
   create:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     
     steps:
     
@@ -38,7 +38,7 @@ jobs:
   
   upload:
     
-    needs: [ 'create' ]
+    needs: [ create ]
     
     strategy:
       matrix:
