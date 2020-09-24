@@ -1,4 +1,21 @@
-use std::io;
+use dialoguer::{theme::ColorfulTheme, Input, Select};
+
+const COMMIT_TYPES_DESCRIPTION: &[&str] = &[
+    "test:       Adding missing tests.",
+    "feat:       A new feature.",
+    "fix:        A bug fix.",
+    "chore:      Build process or auxiliary tool changes.",
+    "docs:       Documentation only changes.",
+    "refactor:   A code change that neither fixes a bug or adds a feature.",
+    "style:      Markup, white-space, formatting, missing semi-colons...",
+    "perf:       A code change that improves performance.",
+    "ci:         CI related changes.",
+    "Custom your type.",
+];
+
+const COMMIT_TYPES: &[&str] = &[
+    "test", "feat", "fix", "chore", "docs", "refactor", "style", "perf", "ci",
+];
 
 pub struct Messager {
     typ: String,
@@ -8,11 +25,14 @@ pub struct Messager {
 
 impl Messager {
     pub fn new() -> Self {
-        show_type();
         let typ = ask_type();
         let scope = ask_scope();
         let content = ask_content();
-        Self {typ, scope, content}
+        Self {
+            typ,
+            scope,
+            content,
+        }
     }
 
     pub fn build(&self) -> String {
@@ -24,61 +44,49 @@ impl Messager {
     }
 }
 
-fn show_type() {
-    println!();
-    println!("test:       Adding missing tests");
-    println!("feat:       A new feature");
-    println!("fix:        A bug fix");
-    println!("chore:      Build process or auxiliary tool changes");
-    println!("docs:       Documentation only changes");
-    println!("refactor:   A code change that neither fixes a bug or adds a feature");
-    println!("style:      Markup, white-space, formatting, missing semi-colons...");
-    println!("perf:       A code change that improves performance");
-    println!("ci:         CI related changes");
-    println!();
-}
-
 fn ask_type() -> String {
-   let typ = ask_user("GCR: Message Type ?");
-   if typ.len() == 0 || typ.trim() == "" {
-      panic!("ooo! type is null !");
-   }
-   typ
+    let selection = Select::with_theme(&ColorfulTheme::default())
+        .items(COMMIT_TYPES_DESCRIPTION)
+        .default(0)
+        .interact()
+        .unwrap();
+
+    // Custom TYPE.
+    if selection == COMMIT_TYPES.len() {
+        Input::with_theme(&ColorfulTheme::default())
+            .with_prompt("GCR: What Type ?")
+            .validate_with(|input: &str | -> Result<(), &str> {
+                if input.len() == 0 || input.trim().len() == 0 {
+                    Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
+                } else {
+                    Ok(())
+                }
+            })
+            .interact()
+            .unwrap()
+    } else {
+        String::from(COMMIT_TYPES[selection])
+    }
 }
 
 fn ask_scope() -> String {
-    ask_user("GCR: Scope ? (Optional)")
+    Input::<String>::with_theme(&ColorfulTheme::default())
+        .with_prompt("GCR: Scope ? (Optional)")
+        .allow_empty(true)
+        .interact()
+        .unwrap()
 }
 
 fn ask_content() -> String {
-    let content = ask_user("GCR: Commit Message ?");
-    if content.len() == 0 || content.trim() == "" {
-        panic!("ooo! Message is null!");
-    }
-    content
+    Input::<String>::with_theme(&ColorfulTheme::default())
+        .with_prompt("GCR: Commit Message ?")
+        .validate_with(|input: &str | -> Result<(), &str> {
+            if input.len() == 0 || input.trim().len() == 0 {
+                Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
+            } else {
+                Ok(())
+            }
+        })
+        .interact()
+        .unwrap()
 }
-
-
-#[cfg(target_os = "linux")]
-pub fn ask_user(question: &str) -> String {
-    println!("{}", question);
-
-    let mut answer = String::new();
-    io::stdin().read_line(&mut answer).expect("what error?");
-
-    answer.pop();
-    answer
-}
-
-#[cfg(not(target_os = "linux"))]
-pub fn ask_user(question: &str) -> String {
-    println!("{}", question);
-
-    let mut answer = String::new();
-    io::stdin().read_line(&mut answer).expect("what error?");
-
-    answer.pop();
-    answer.pop();
-    answer
-}
-

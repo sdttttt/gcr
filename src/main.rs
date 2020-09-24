@@ -34,5 +34,6 @@ fn main() {
 }
 
 fn welcome() {
+    println!();
     println!("Thanks you for using GCR.")
 }
