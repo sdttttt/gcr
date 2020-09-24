@@ -28,27 +28,37 @@ jobs:
       run: cargo test --verbose
   
     - name: Build
-      run: cargo build --release --verbose
+      run: |
+        cargo build --release --verbose
+        zip --junk-paths gcr ./target/release/gcr
     
     - name: Upload Product
       uses: actions/upload-artifact@v2
       with:
         name: GCR-${{ runner.os }}
-        path: ./target/release/GCR
+        path: ./target/release/gcr
     
-    - name: Upload Product To Github Release
-      uses: xresloader/upload-to-github-release@v1.1.1
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          ## GCR ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        # The files or file patterns to upload. You can upload multiple files by split them by semicolon. You can use the glob pattern to find the files.
-        file: ./target/release/gcr
-        # If you need to overwrite existing files, add overwrite: true to the with.
-        overwrite: true
-        # The resultant deployment is a draft Release that only repository collaborators can see. This gives you an opportunity to examine and edit the draft release.
-        draft: false
-        # The resultant deployment is a Prerelease. This gives you an opportunity to examine and edit the prerelease.
-        prerelease: false
-        # With tags: true, your Releases deployment will trigger if and only if the build is a tagged build.
-        tags: ${{ github.ref }}
-        release_name: GCR-${{ runner.os }}
+         # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: gcr
+        asset_name: GCR-${{ runner.os }}.zip
+        asset_content_type: application/zip
