@@ -29,6 +29,13 @@ jobs:
           target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
     
+    - uses: actions/cache@v2
+      if: ${{ runner.os == 'Windows' }}
+      with:
+        path: |
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    
     - name: Run tests
       run: cargo test --verbose
   
