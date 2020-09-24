@@ -1,10 +1,12 @@
 [package]
 name = "gcr"
-version = "0.4.0"
-authors = ["sdttttt <760159537@qq.com>"]
+version = "0.6.0"
+authors = ["sdttttt <sdttttt@outlook.com>"]
 edition = "2018"
-
+license = "MIT"
+repository = "https://github.com/sdttttt/gcr.git"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 git2 = "0.13"
+dialoguer = "0.6.2"

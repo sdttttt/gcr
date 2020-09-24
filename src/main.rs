@@ -9,6 +9,7 @@ use repo::*;
 use util::*;
 
 fn main() {
+
     let current_path = current_path();
     let repo = {
         match Repository::new(current_path) {
@@ -35,14 +36,3 @@ fn main() {
 fn welcome() {
     println!("Thanks you for using GCR.")
 }
-
-
-// #[cfg(test)]
-// mod tests {   
-//     use super::*;
-
-//     #[test]
-//     fn test_repo() {
-        
-//     }
-// }
