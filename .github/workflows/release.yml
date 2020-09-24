@@ -38,7 +38,7 @@ jobs:
   
   upload:
     
-    needs: [create]
+    needs: [ 'create' ]
     
     strategy:
       matrix:
