@@ -37,7 +37,7 @@ jobs:
         prerelease: false
     
     - name: Set ENV
-      run: ::set-env name=UPLOAD_URL::${{ steps.create_release.outputs.upload_url }}
+      run: echo "::set-env name=UPLOAD_URL::${{ steps.create_release.outputs.upload_url }}"
   
   upload:
     
