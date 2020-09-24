@@ -9,7 +9,6 @@ use repo::*;
 use util::*;
 
 fn main() {
-    welcome();
     let current_path = current_path();
     let repo = {
         match Repository::new(current_path) {
@@ -25,7 +24,7 @@ fn main() {
         gcr_err_println(e.message());
         return
     }
-
+    welcome();
     let message = Messager::new().build();
     gcr_println(&message);
     if let Err(e) = repo.commit(message.as_str()) {
