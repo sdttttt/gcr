@@ -58,6 +58,8 @@ fn ask_content() -> String {
     content
 }
 
+
+#[cfg(target_os = "linux")]
 pub fn ask_user(question: &str) -> String {
     println!("{}", question);
 
@@ -67,3 +69,16 @@ pub fn ask_user(question: &str) -> String {
     answer.pop();
     answer
 }
+
+#[cfg(not(target_os = "linux"))]
+pub fn ask_user(question: &str) -> String {
+    println!("{}", question);
+
+    let mut answer = String::new();
+    io::stdin().read_line(&mut answer).expect("what error?");
+
+    answer.pop();
+    answer.pop();
+    answer
+}
+
