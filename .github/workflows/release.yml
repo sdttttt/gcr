@@ -36,9 +36,6 @@ jobs:
         draft: false
         prerelease: false
     
-    - name: Set ENV
-      run: echo "::set-env name=UPLOAD_URL::${{ steps.create_release.outputs.upload_url }}"
-  
   upload:
     
     needs: [ create ]
@@ -72,19 +69,19 @@ jobs:
       if: ${{ runner.os != 'Windows' }}
       run: |
         cargo build --release --verbose
-        zip --junk-paths gcr.zip ./target/release/gcr
+        zip --junk-paths grc.zip ./target/release/grc
     
     - name: Build on Windows
       if: ${{ runner.os == 'Windows' }}
       run: |
         cargo build --release --verbose
-        makecab .\target\release\gcr.exe gcr.zip
+        makecab .\target\release\grc.exe grc.zip
   
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: GCR-${{ runner.os }}
-        path: gcr.zip
+        name: grc-${{ runner.os }}
+        path: grc.zip
 
     - name: Upload Release Asset
       id: upload-release-asset
@@ -94,6 +91,6 @@ jobs:
       with:
          # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         upload_url: ${{ needs.create.outputs.upload_url }}
-        asset_path: gcr.zip
-        asset_name: GCR-${{ runner.os }}.zip
+        asset_path: grc.zip
+        asset_name: grc-${{ runner.os }}.zip
         asset_content_type: application/zip
