@@ -10,3 +10,4 @@ repository = "https://github.com/sdttttt/gcr.git"
 [dependencies]
 git2 = "0.13"
 dialoguer = "0.6.2"
+clap = "2.33.3"

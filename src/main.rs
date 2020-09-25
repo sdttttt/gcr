@@ -1,14 +1,18 @@
+mod arguments;
 mod message;
 mod repo;
 mod util;
 mod log;
 
+use arguments::*;
 use log::*;
 use message::*;
 use repo::*;
 use util::*;
 
 fn main() {
+
+    Arguments::collect();
 
     let current_path = current_path();
     let repo = {
@@ -25,15 +29,10 @@ fn main() {
         gcr_err_println(e.message());
         return
     }
-    welcome();
+
     let message = Messager::new().build();
     gcr_println(&message);
     if let Err(e) = repo.commit(message.as_str()) {
         println!("GCR(Error): {}", e.message())
     }
-}
-
-fn welcome() {
-    println!();
-    println!("Thanks you for using GCR.")
 }
