@@ -20,26 +20,36 @@ const COMMIT_TYPES: &[&str] = &[
 pub struct Messager {
     typ: String,
     scope: String,
-    content: String,
+    subject: String,
+    body: String
 }
 
 impl Messager {
     pub fn new() -> Self {
         let typ = ask_type();
         let scope = ask_scope();
-        let content = ask_content();
+        let subject = ask_subject();
+        let body = ask_description();
+
         Self {
             typ,
             scope,
-            content,
+            subject,
+            body
         }
     }
 
     pub fn build(&self) -> String {
-        if self.scope.len() == 0 || self.scope.trim() == "" {
-            format!("{}: {}", self.typ, self.content)
+        let header = if self.scope.trim().len() == 0 {
+            format!("{}: {}", self.typ, self.subject)
         } else {
-            format!("{}({}): {}", self.typ, self.scope, self.content)
+            format!("{}({}): {}", self.typ, self.scope, self.subject)
+        };
+
+        if self.body.trim().len() == 0 {
+            header
+        } else {
+            format!("{} \n\n{}", header, self.body)
         }
     }
 }
@@ -70,14 +80,16 @@ fn ask_type() -> String {
 }
 
 fn ask_scope() -> String {
-    Input::<String>::with_theme(&ColorfulTheme::default())
-        .with_prompt("GRC: Scope ? (Optional)")
+    let scope = Input::<String>::with_theme(&ColorfulTheme::default())
+        .with_prompt("GRC: Which scope? (Optional)")
         .allow_empty(true)
         .interact()
-        .unwrap()
+        .unwrap();
+
+    String::from(scope.trim())
 }
 
-fn ask_content() -> String {
+fn ask_subject() -> String {
     Input::<String>::with_theme(&ColorfulTheme::default())
         .with_prompt("GRC: Commit Message ?")
         .validate_with(|input: &str | -> Result<(), &str> {
@@ -89,4 +101,14 @@ fn ask_content() -> String {
         })
         .interact()
         .unwrap()
+}
+
+fn ask_description() -> String {
+    let description = Input::<String>::with_theme(&ColorfulTheme::default())
+        .with_prompt("GRC: Provide a longer description? (Optional)")
+        .allow_empty(true)
+        .interact()
+        .unwrap();
+
+    String::from(description.trim())
 }
