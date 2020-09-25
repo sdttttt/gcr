@@ -1,5 +1,7 @@
 use dialoguer::{theme::ColorfulTheme, Input, Select};
 
+use crate::util::remove_pound_prefix;
+
 const COMMIT_TYPES_DESCRIPTION: &[&str] = &[
     "test:       Adding missing tests.",
     "feat:       A new feature.",
@@ -29,7 +31,10 @@ impl Messager {
         let typ = ask_type();
         let scope = ask_scope();
         let subject = ask_subject();
-        let body = ask_description();
+
+        let description = ask_description();
+        let closes = ask_close();
+        let body = format!("{}\n\n Close #{}", description, closes);
 
         Self {
             typ,
@@ -112,3 +117,14 @@ fn ask_description() -> String {
 
     String::from(description.trim())
 }
+
+fn ask_close() -> String {
+    let closes = Input::<String>::with_theme(&ColorfulTheme::default())
+        .with_prompt("GRC: PR & Issues this commit closes, e.g 123: (Optional)")
+        .allow_empty(true)
+        .interact()
+        .unwrap();
+
+    String::from(remove_pound_prefix(closes.trim()))
+}
+

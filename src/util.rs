@@ -38,3 +38,31 @@ pub fn is_all_workspace(statuses: &Statuses) -> bool {
     }
     tip
 }
+
+
+pub fn remove_pound_prefix(input: &str) -> &str {
+    match input.find("#") {
+        Some(index) => {
+            match input.get(index+1..input.len()) {
+                Some(s) => s,
+                _ => input,
+            }
+        } 
+        _ => input,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_string_start_with() {
+        let str_1 = "#123";
+        let result = "123";
+
+        let str_2 = remove_pound_prefix(str_1);
+        assert_eq!(str_2, result);
+    }
+}
