@@ -31,11 +31,8 @@ impl Messager {
         let typ = ask_type();
         let scope = ask_scope();
         let subject = ask_subject();
-
-        let description = ask_description();
-        let closes = ask_close();
-        let body = format!("{}\n\n Close #{}", description, closes);
-
+        let body = Self::build_body();
+        
         Self {
             typ,
             scope,
@@ -56,6 +53,23 @@ impl Messager {
         } else {
             format!("{} \n\n{}", header, self.body)
         }
+    }
+
+    fn build_body() -> String {
+        let description = ask_description();
+        let closes = ask_close();
+
+        let mut body = String::new();
+
+        if description.len() != 0 {
+          body = description;
+        };
+
+        if closes.len() != 0 {
+            body = format!("{}\n\nClose #{}", body, closes);
+        };
+
+        body
     }
 }
 
@@ -127,4 +141,3 @@ fn ask_close() -> String {
 
     String::from(remove_pound_prefix(closes.trim()))
 }
-
