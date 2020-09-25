@@ -2,10 +2,9 @@ use clap::{App, Arg};
 
 const VERSION: &str = "0.6.0";
 const AUTHOR: &str = "SDTTTTT. <sdttttt@outlook.com>";
-const NAME: &str = "GCR";
+const NAME: &str = "GRC";
 const DESCRIPTION: &str =
     "I'm here to help you make it more standardized and convenient to use Git.";
-
 
 enum Mode {
     Auto,

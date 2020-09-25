@@ -33,6 +33,6 @@ fn main() {
     let message = Messager::new().build();
     gcr_println(&message);
     if let Err(e) = repo.commit(message.as_str()) {
-        println!("GCR(Error): {}", e.message())
+        println!("GRC(Error): {}", e.message())
     }
 }

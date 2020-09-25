@@ -97,15 +97,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a357d28ed41a50f9c765dbfe56cbc04a64e53e5fc58ba79fbc34c10ef3df831f"
 
 [[package]]
-name = "gcr"
-version = "0.6.0"
-dependencies = [
- "clap",
- "dialoguer",
- "git2",
-]
-
-[[package]]
 name = "getrandom"
 version = "0.1.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -129,6 +120,15 @@ dependencies = [
  "openssl-probe",
  "openssl-sys",
  "url",
+]
+
+[[package]]
+name = "grc"
+version = "0.6.0"
+dependencies = [
+ "clap",
+ "dialoguer",
+ "git2",
 ]
 
 [[package]]

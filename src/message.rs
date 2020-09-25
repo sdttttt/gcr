@@ -54,7 +54,7 @@ fn ask_type() -> String {
     // Custom TYPE.
     if selection == COMMIT_TYPES.len() {
         Input::with_theme(&ColorfulTheme::default())
-            .with_prompt("GCR: What Type ?")
+            .with_prompt("GRC: What Type ?")
             .validate_with(|input: &str | -> Result<(), &str> {
                 if input.len() == 0 || input.trim().len() == 0 {
                     Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
@@ -71,7 +71,7 @@ fn ask_type() -> String {
 
 fn ask_scope() -> String {
     Input::<String>::with_theme(&ColorfulTheme::default())
-        .with_prompt("GCR: Scope ? (Optional)")
+        .with_prompt("GRC: Scope ? (Optional)")
         .allow_empty(true)
         .interact()
         .unwrap()
@@ -79,7 +79,7 @@ fn ask_scope() -> String {
 
 fn ask_content() -> String {
     Input::<String>::with_theme(&ColorfulTheme::default())
-        .with_prompt("GCR: Commit Message ?")
+        .with_prompt("GRC: Commit Message ?")
         .validate_with(|input: &str | -> Result<(), &str> {
             if input.len() == 0 || input.trim().len() == 0 {
                 Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
