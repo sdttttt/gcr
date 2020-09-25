@@ -12,6 +12,7 @@ enum Mode {
     Commit,
 }
 
+
 pub struct Arguments {
     mode: Mode
 }
