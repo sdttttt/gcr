@@ -42,3 +42,7 @@ after the tools install, run command in your repository:
 ```
 grc
 ```
+
+## Progress
+
+GRC is still a child at present. About its training ~~(develop)~~ progress. The progress of it is in [project](https://github.com/sdttttt/gcr/projects).
