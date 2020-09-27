@@ -24,7 +24,7 @@ fn main() {
             }
         }
     };
-    
+
     if let Err(e) = repo.pre_commit() {
         gcr_err_println(e.message());
         return
