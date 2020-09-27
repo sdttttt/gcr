@@ -12,3 +12,19 @@ pub fn gcr_err_println(content: impl Display) {
 
     println!("{}", color.apply_to(output))
 }
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_gcr_println() {
+        gcr_println("TEST CONTENT.");
+    }
+
+    #[test]
+    fn test_gcr_err_println() {
+        gcr_err_println("TEST ERROR CONTENT.");
+    }
+}

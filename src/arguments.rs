@@ -13,7 +13,7 @@ enum Mode {
 }
 
 pub struct Arguments {
-    mode: Mode
+    mode: Mode,
 }
 
 impl Arguments {
@@ -35,18 +35,11 @@ impl Arguments {
             .get_matches();
 
         if matches.is_present(add) {
-            Self { 
-                mode: Mode::Add
-             }
-        }else if matches.is_present(auto) {
-            Self {
-                mode: Mode::Auto
-            }
+            Self { mode: Mode::Add }
+        } else if matches.is_present(auto) {
+            Self { mode: Mode::Auto }
         } else {
-            Self {
-                mode: Mode::Commit
-            }
+            Self { mode: Mode::Commit }
         }
     }
-
 }
