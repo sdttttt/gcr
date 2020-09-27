@@ -53,5 +53,11 @@ mod tests {
 
         let str_2 = remove_pound_prefix(str_1);
         assert_eq!(str_2, result);
+
+        let str_3 = "321";
+        let result_2 = "321";
+
+        let str_4 = remove_pound_prefix(str_3);
+        assert_eq!(str_4, result_2);
     }
 }
