@@ -13,23 +13,12 @@ pub fn is_all_workspace(statuses: &Statuses) -> bool {
     let mut tip = false;
     for state in statuses.iter() {
         match state.status() {
-            Status::INDEX_NEW => {
-                tip = true;
-                break;
-            },
-            Status::INDEX_MODIFIED => {
-                tip = true;
-                break;
-            },
-            Status::INDEX_DELETED => {
-                tip = true;
-                break;
-            },
-            Status::INDEX_RENAMED => {
-                tip = true;
-                break;
-            },
-            Status::INDEX_TYPECHANGE => {
+            Status::INDEX_NEW |
+            Status::INDEX_MODIFIED |
+            Status::INDEX_DELETED |
+            Status::INDEX_RENAMED |
+            Status::INDEX_TYPECHANGE
+            => {
                 tip = true;
                 break;
             },
@@ -64,5 +53,11 @@ mod tests {
 
         let str_2 = remove_pound_prefix(str_1);
         assert_eq!(str_2, result);
+
+        let str_3 = "321";
+        let result_2 = "321";
+
+        let str_4 = remove_pound_prefix(str_3);
+        assert_eq!(str_4, result_2);
     }
 }
