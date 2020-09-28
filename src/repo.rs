@@ -72,3 +72,14 @@ impl Repository {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_new_repo() {
+        Repository::new(String::from("."));
+    }
+}
