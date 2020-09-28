@@ -50,20 +50,9 @@ jobs:
     - name: Coverage
       if: ${{ runner.os == 'Linux' }}
       run: |
-        wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
-        tar xzf master.tar.gz &&
-        cd kcov-master &&
-        mkdir build &&
-        cd build &&
-        cmake .. &&
-        make &&
-        make install DESTDIR=../../kcov-build &&
-        cd ../.. &&
-        rm -rf kcov-master &&
-        ./kcov-build/usr/local/bin/kcov --exclude-pattern=/.cargo target/kcov target/debug/grc-*
-        ls
-        cd target/kcov
-        ls
+        cargo install cargo-tarpaulin
+        cargo tarpaulin -v --out Xml
+        bash <(curl -s https://codecov.io/bash)
   
     - name: Build
       run: cargo build --release --verbose
