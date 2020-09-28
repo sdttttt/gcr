@@ -48,11 +48,13 @@ jobs:
       run: cargo test --verbose
   
     - name: Run cargo-tarpaulin
+      if: ${{ runner.os == 'Linux' }}
       uses: actions-rs/tarpaulin@v0.1
       with:
         args: '-- --test-threads 1 -v'
 
     - name: Upload to codecov.io
+      if: ${{ runner.os == 'Linux' }}
       uses: codecov/codecov-action@v1.0.2
   
     - name: Build
