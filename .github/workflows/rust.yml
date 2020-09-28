@@ -47,12 +47,13 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
   
-    - name: Coverage
-      if: ${{ runner.os == 'Linux' }}
-      run: |
-        cargo install cargo-tarpaulin
-        cargo tarpaulin -v --out Xml
-        bash <(curl -s https://codecov.io/bash)
+    - name: Run cargo-tarpaulin
+      uses: actions-rs/tarpaulin@v0.1
+      with:
+        args: '-- --test-threads 1 -v'
+
+    - name: Upload to codecov.io
+      uses: codecov/codecov-action@v1.0.2
   
     - name: Build
       run: cargo build --release --verbose
