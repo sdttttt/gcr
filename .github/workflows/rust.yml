@@ -51,7 +51,7 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       uses: actions-rs/tarpaulin@v0.1
       with:
-        args: '-- --test-threads 1 -v'
+        args: '-- --test-threads 1'
 
     - name: Upload to codecov.io
       if: ${{ runner.os == 'Linux' }}
