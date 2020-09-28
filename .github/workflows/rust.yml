@@ -56,6 +56,8 @@ jobs:
     - name: Upload to codecov.io
       if: ${{ runner.os == 'Linux' }}
       uses: codecov/codecov-action@v1.0.2
+      with:
+         token: ${{ secrets.CODECOV_TOKEN }}
   
     - name: Build
       run: cargo build --release --verbose
