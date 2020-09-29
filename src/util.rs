@@ -36,7 +36,7 @@ pub fn remove_pound_prefix(input: &str) -> &str {
                 Some(s) => s,
                 _ => input,
             }
-        } 
+        },
         _ => input,
     }
 }

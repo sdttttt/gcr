@@ -47,5 +47,15 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
   
+    - name: Run cargo-tarpaulin
+      if: ${{ runner.os == 'Linux' }}
+      uses: actions-rs/tarpaulin@v0.1
+      with:
+        args: '-- --test-threads 1'
+
+    - name: Upload to codecov.io
+      if: ${{ runner.os == 'Linux' }}
+      run: bash <(curl -s https://codecov.io/bash)
+  
     - name: Build
       run: cargo build --release --verbose

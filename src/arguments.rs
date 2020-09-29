@@ -13,14 +13,14 @@ enum Mode {
 }
 
 pub struct Arguments {
-    mode: Mode
+    mode: Mode,
 }
 
 impl Arguments {
     pub fn collect() -> Self {
         let add = "all";
         let auto = "auto";
-
+        
         let matches = App::new(NAME)
             .version(VERSION)
             .author(AUTHOR)
@@ -32,21 +32,14 @@ impl Arguments {
                     .required(false)
                     .help("Help you run `git add .`"),
             )
-            .get_matches();
+           .get_matches();
 
         if matches.is_present(add) {
-            Self { 
-                mode: Mode::Add
-             }
-        }else if matches.is_present(auto) {
-            Self {
-                mode: Mode::Auto
-            }
+            Self { mode: Mode::Add }
+        } else if matches.is_present(auto) {
+            Self { mode: Mode::Auto }
         } else {
-            Self {
-                mode: Mode::Commit
-            }
+            Self { mode: Mode::Commit }
         }
     }
-
 }
