@@ -17,15 +17,6 @@ impl Repository {
             Err(e) => Err(e),
         }
     }
-    
-    pub fn default(path: String) -> Result<Self, Error> {
-        let result = GRepository::open(&path);
-        let arg = Arguments::new(Mode::Commit, "");
-        match result {
-            Ok(repo) => Ok(Self { repo, arg }),
-            Err(e) => Err(e),
-        }
-    }
 
     pub fn pre_commit(&self) -> Result<(), Error> {
         match self.arg.command_mode() {
@@ -106,12 +97,15 @@ impl Repository {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::metadata::Mode;
     use crate::util::current_path;
+    use crate::Arguments;
 
     #[test]
     fn test_new_repo() {
         let path = current_path();
-        if let Err(e) = Repository::default(path) {
+        let args = Arguments::new(Mode::Commit, "");
+        if let Err(e) = Repository::new(path, args) {
             panic!(e)
         }
     }
