@@ -1,5 +1,5 @@
 use git2::{
-    Commit, Error, ObjectType, Repository as GRepository, Signature, StatusOptions, Statuses,
+    Commit, Error, Index, ObjectType, Repository as GRepository, Signature, StatusOptions, Statuses,
 };
 
 use crate::{arguments::Arguments, metadata::Mode, util::is_all_workspace};
@@ -21,7 +21,9 @@ impl Repository {
     pub fn pre_commit(&self) -> Result<(), Error> {
         match self.arg.command_mode() {
             Mode::Commit => self.check_index()?,
-            Mode::Add => {}
+            Mode::Add => {
+                // let index = self.index()?;
+            }
             Mode::Auto => {}
             Mode::AddAll => {}
             Mode::Push => {}
@@ -67,6 +69,10 @@ impl Repository {
     fn status(&self) -> Result<Statuses<'_>, Error> {
         let mut sp = StatusOptions::new();
         self.repo.statuses(Option::from(&mut sp))
+    }
+
+    fn index(&self) -> Result<Index, Error> {
+        self.repo.index()
     }
 
     fn generate_sign(&self) -> Signature<'static> {

@@ -12,7 +12,6 @@ use repo::*;
 use util::*;
 
 fn main() {
-
     let arg = {
         match Arguments::collect() {
             Ok(a) => a,
@@ -23,9 +22,9 @@ fn main() {
         }
     };
 
-    let current_path = current_path();
+    let path = current_path();
     let repo = {
-        match Repository::new(current_path, arg) {
+        match Repository::new(path, arg) {
             Ok(r) => r,
             Err(e) => {
                 gcr_err_println(e.message());
