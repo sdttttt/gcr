@@ -24,6 +24,8 @@ impl Repository {
             Mode::Commit => self.check_index()?,
             Mode::Add => {},
             Mode::Auto => {},
+            Mode::AddAll => {},
+            Mode::Push => {},
         };
 
         Ok(())
@@ -34,6 +36,8 @@ impl Repository {
             Mode::Commit => {},
             Mode::Add => {},
             Mode::Auto => {},
+            Mode::AddAll => {},
+            Mode::Push => {},
         };
 
         Ok(())

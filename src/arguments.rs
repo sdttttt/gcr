@@ -9,8 +9,13 @@ const DESCRIPTION: &str =
 pub enum Mode {
     Auto,
     Add,
+    AddAll,
     Commit,
+    Push,
 }
+
+const ADD_COMMAND: &str = "add";
+const PUSH_COMMAND: &str = "push";
 
 pub struct Arguments {
     mode: Mode,
@@ -18,39 +23,45 @@ pub struct Arguments {
 
 impl Arguments {
     pub fn collect() -> Self {
-        let add = "all";
-        let push = "push";
-
         let matches = App::new(NAME)
             .version(VERSION)
             .author(AUTHOR)
             .about(DESCRIPTION)
-            .arg(
-                Arg::with_name(add)
-                    .short("ad")
-                    .long("all")
-                    .required(false)
-                    .help("Help you run `git add .`")
+            .args(
+                &[Self::push_arg(PUSH_COMMAND), Self::add_arg(ADD_COMMAND)]
             )
-            .arg(
-                Arg::with_name(push)
-                .short("p")
-                .long("push")
-                .required(false)
-                .help("Help you run `git add .` and `git push`")
-            )
-           .get_matches();
+            .get_matches();
 
-        if matches.is_present(add) {
-            Self { mode: Mode::Add }
-        } else if matches.is_present(push) {
-            Self { mode: Mode::Auto }
+        if matches.is_present(ADD_COMMAND) {
+            Self::new(Mode::Add)
+        } else if matches.is_present(PUSH_COMMAND) {
+            Self::new(Mode::Auto)
         } else {
-            Self { mode: Mode::Commit }
+            Self::new(Mode::Commit)
         }
+    }
+
+    pub fn new(mode: Mode) -> Self {
+        Self { mode }
     }
 
     pub fn command_mode(&self) -> &Mode {
         &self.mode
+    }
+
+    fn push_arg(command_name: &str) -> Arg {
+        Arg::with_name(command_name)
+            .short("p")
+            .long("push")
+            .required(false)
+            .help("Help you run `git add .` and `git push`")
+    }
+
+    fn add_arg(command_name: &str) -> Arg {
+        Arg::with_name(command_name)
+            .short("a")
+            .long("add")
+            .required(false)
+            .help("Help you run `git add .`")
     }
 }
