@@ -2,10 +2,11 @@ use clap::{App, Arg, ArgMatches};
 use git2::Error;
 
 use crate::metadata::*;
+use crate::util::*;
 
 pub struct Arguments {
     mode: Mode,
-    params: String,
+    params: Vec<String>,
 }
 
 impl Arguments {
@@ -15,8 +16,7 @@ impl Arguments {
         Self::resolve_command(matches)
     }
 
-    pub fn new(mode: Mode, params: &str) -> Self {
-        let params = String::from(params);
+    pub fn new(mode: Mode, params: Vec<String>) -> Self {
         Self { mode, params }
     }
 
@@ -24,8 +24,8 @@ impl Arguments {
         &self.mode
     }
 
-    pub fn files(&self) -> &str {
-        &self.params.as_str()
+    pub fn files(&self) -> &Vec<String> {
+        &self.params
     }
 
     fn cli() -> App<'static, 'static> {
@@ -40,6 +40,7 @@ impl Arguments {
         Arg::with_name(command_name)
             .short(PUSH_COMMAND_SHORT)
             .long(command_name)
+            .multiple(true)
             .required(false)
             .help(PUSH_COMMAND_HELP)
             .takes_value(true)
@@ -49,6 +50,7 @@ impl Arguments {
         Arg::with_name(command_name)
             .short(ADD_COMMAND_SHORT)
             .long(command_name)
+            .multiple(true)
             .required(false)
             .help(ADD_COMMAND_HELP)
             .takes_value(true)
@@ -57,27 +59,29 @@ impl Arguments {
     fn resolve_command(matches: ArgMatches) -> Result<Self, Error> {
         let arg: Self;
         if matches.is_present(ADD_COMMAND) {
-            if let Some(files) = matches.value_of(ADD_COMMAND) {
-                if files == "." {
-                    arg = Self::new(Mode::AddAll, files);
+            if let Some(files) = matches.values_of(ADD_COMMAND) {
+                let files_vec: Vec<String> = vec_str_to_string(files.collect());
+                if files_vec.len() == 1 && files_vec[0] == "." {
+                    arg = Self::new(Mode::AddAll, vec![]);
                 } else {
-                    arg = Self::new(Mode::Add, files);
+                    arg = Self::new(Mode::Add, files_vec);
                 }
             } else {
                 return Err(Error::from_str(ADD_COMMAND_NO_FILE));
             }
         } else if matches.is_present(PUSH_COMMAND) {
-            if let Some(files) = matches.value_of(PUSH_COMMAND) {
-                if files == "." {
-                    arg = Self::new(Mode::Auto, files);
+            if let Some(files) = matches.values_of(PUSH_COMMAND) {
+                let files_vec: Vec<String> = vec_str_to_string(files.collect());
+                if files_vec.len() == 1 && files_vec[0] == "." {
+                    arg = Self::new(Mode::Auto, vec![]);
                 } else {
-                    arg = Self::new(Mode::Push, files);
+                    arg = Self::new(Mode::Push, files_vec);
                 }
             } else {
                 return Err(Error::from_str(PUSH_COMMAND_NO_FILE));
             }
         } else {
-            arg = Self::new(Mode::Commit, "");
+            arg = Self::new(Mode::Commit, vec![]);
         }
         Ok(arg)
     }
@@ -136,6 +140,33 @@ mod tests {
         match args.command_mode() {
             Mode::Commit => {}
             _ => panic!("NOT COMMIT MODE!"),
+        }
+    }
+
+    #[test]
+    fn input_file() {
+        let file_1 = "1.txt";
+        let args = quick_command_run(vec!["grc", "--add", file_1]);
+        for file_name in args.files() {
+            if file_name.as_str() != file_1 {
+                panic!("NOT THIS FILE NAME.")
+            }
+        }
+    }
+
+    #[test]
+    fn input_more_file() {
+        let file_1 = "1.txt";
+        let file_2 = "2.txt";
+        let file_3 = "3.txt";
+
+        let args = quick_command_run(vec!["grc", "--add", file_1, file_2, file_3]);
+        for file_name in args.files() {
+            if file_name.as_str() != file_1 
+            && file_name.as_str() != file_2
+            && file_name.as_str() != file_3 {
+                panic!("NOT THIS FILE NAME.")
+            }
         }
     }
 }

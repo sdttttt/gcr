@@ -110,7 +110,7 @@ mod tests {
     #[test]
     fn test_new_repo() {
         let path = current_path();
-        let args = Arguments::new(Mode::Commit, "");
+        let args = Arguments::new(Mode::Commit, vec![]);
         if let Err(e) = Repository::new(path, args) {
             panic!(e)
         }

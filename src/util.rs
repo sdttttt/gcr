@@ -34,19 +34,27 @@ pub fn remove_pound_prefix(input: &str) -> &str {
     }
 }
 
+pub fn vec_str_to_string(vec: Vec<&str>) -> Vec<String> {
+    let mut result = vec![];
+    for s in vec {
+        result.push(String::from(s));
+    }
+    result
+}
+
 #[cfg(test)]
 mod tests {
 
     use super::*;
 
     #[test]
-    fn test_current_path() {
+    fn get_current_path() {
         let path = current_path();
         assert!(path.len() > 0);
     }
 
     #[test]
-    fn test_string_start_with() {
+    fn string_start_with() {
         let str_1 = "#123";
         let result = "123";
 
@@ -58,5 +66,16 @@ mod tests {
 
         let str_4 = remove_pound_prefix(str_3);
         assert_eq!(str_4, result_2);
+    }
+
+    #[test]
+    fn test_vec_str_to_string() {
+        let one = "1";
+        let two = "2";
+
+        let v1 = vec![one, two];
+        let mut v2 = vec_str_to_string(v1);
+        assert_eq!(v2.pop(), Some(String::from(two)));
+        assert_eq!(v2.pop(), Some(String::from(one)));
     }
 }
