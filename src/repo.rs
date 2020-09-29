@@ -19,6 +19,15 @@ impl Repository {
         }
     }
 
+    pub fn default(path: String) -> Result<Self, Error> {
+        let result = GRepository::open(&path);
+        let arg = Arguments::new(Mode::Commit);
+        match result {
+            Ok(repo) => Ok(Self{repo, arg}),
+            Err(e) => Err(e),
+        }
+    }
+
     pub fn pre_commit(&self) -> Result<(), Error> {
         match self.arg.command_mode() {
             Mode::Commit => self.check_index()?,
@@ -91,6 +100,20 @@ impl Repository {
                 }
             }
             Err(e) => Err(e),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::util::current_path;
+
+    #[test]
+    fn test_new_repo() {
+        let path = current_path();
+        if let Err(e) = Repository::default(path) {
+            panic!(e)
         }
     }
 }
