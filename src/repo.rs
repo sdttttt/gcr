@@ -1,5 +1,5 @@
 use git2::{
-    Commit, Error, Index, ObjectType, Repository as GRepository, Signature, StatusOptions, Statuses,
+    Commit, Error, Index, IndexAddOption, ObjectType, Repository as GRepository, Signature, StatusOptions, Statuses,
 };
 
 use crate::{arguments::Arguments, metadata::Mode, util::is_all_workspace};
@@ -21,12 +21,10 @@ impl Repository {
     pub fn pre_commit(&self) -> Result<(), Error> {
         match self.arg.command_mode() {
             Mode::Commit => self.check_index()?,
-            Mode::Add => {
-                // let index = self.index()?;
-            }
-            Mode::Auto => {}
-            Mode::AddAll => {}
-            Mode::Push => {}
+            Mode::Add => self.add_files(self.arg.files())?,
+            Mode::Auto => {},
+            Mode::AddAll => self.add_all_files()?,
+            Mode::Push => {},
         };
 
         Ok(())
@@ -73,6 +71,20 @@ impl Repository {
 
     fn index(&self) -> Result<Index, Error> {
         self.repo.index()
+    }
+
+    fn add_files(&self, files: &Vec<String>) -> Result<(), Error> {
+        let mut index = self.index()?;
+        index.add_all(files,IndexAddOption::DEFAULT ,None)?;
+        index.write()?;
+        Ok(())
+    }
+
+    fn add_all_files(&self) -> Result<(), Error> {
+        let mut index = self.index()?;
+        index.add_all(["*"].iter(),IndexAddOption::DEFAULT ,None)?;
+        index.write()?;
+        Ok(())
     }
 
     fn generate_sign(&self) -> Signature<'static> {
