@@ -1,67 +1,72 @@
-use clap::{App, Arg};
+use clap::{App, Arg, ArgMatches};
+use git2::Error;
 
-const VERSION: &str = "0.6.0";
-const AUTHOR: &str = "SDTTTTT. <sdttttt@outlook.com>";
-const NAME: &str = "GRC";
-const DESCRIPTION: &str =
-    "I'm here to help you make it more standardized and convenient to use Git.";
-
-pub enum Mode {
-    Auto,
-    Add,
-    AddAll,
-    Commit,
-    Push,
-}
-
-const ADD_COMMAND: &str = "add";
-const PUSH_COMMAND: &str = "push";
+use crate::metadata::*;
 
 pub struct Arguments {
     mode: Mode,
+    params: String,
 }
 
 impl Arguments {
-    pub fn collect() -> Self {
+    pub fn collect() -> Result<Self, Error> {
         let matches = App::new(NAME)
             .version(VERSION)
             .author(AUTHOR)
             .about(DESCRIPTION)
-            .args(
-                &[Self::push_arg(PUSH_COMMAND), Self::add_arg(ADD_COMMAND)]
-            )
+            .args(&[Self::push_arg(PUSH_COMMAND), Self::add_arg(ADD_COMMAND)])
             .get_matches();
 
-        if matches.is_present(ADD_COMMAND) {
-            Self::new(Mode::Add)
-        } else if matches.is_present(PUSH_COMMAND) {
-            Self::new(Mode::Auto)
-        } else {
-            Self::new(Mode::Commit)
-        }
+        let arg = Self::resolve_command(matches)?;
+        Ok(arg)
     }
 
-    pub fn new(mode: Mode) -> Self {
-        Self { mode }
+    pub fn new(mode: Mode, params: &str) -> Self {
+        let params = String::from(params);
+        Self { mode, params }
     }
 
     pub fn command_mode(&self) -> &Mode {
         &self.mode
     }
 
+    pub fn files(&self) -> &str {
+        &self.params.as_str()
+    }
+
     fn push_arg(command_name: &str) -> Arg {
         Arg::with_name(command_name)
-            .short("p")
-            .long("push")
+            .short(PUSH_COMMAND_SHORT)
             .required(false)
-            .help("Help you run `git add .` and `git push`")
+            .help(PUSH_COMMAND_HELP)
+            .takes_value(true)
     }
 
     fn add_arg(command_name: &str) -> Arg {
         Arg::with_name(command_name)
-            .short("a")
-            .long("add")
+            .short(ADD_COMMAND_SHORT)
             .required(false)
-            .help("Help you run `git add .`")
+            .help(ADD_COMMAND_HELP)
+            .takes_value(true)
+    }
+
+    fn resolve_command(matches: ArgMatches) -> Result<Self, Error> {
+        let arg: Self;
+        if matches.is_present(ADD_COMMAND) {
+            if let Some(files) = matches.value_of(ADD_COMMAND) {
+                arg = Self::new(Mode::Add, files);
+            } else {
+                return Err(Error::from_str(ADD_COMMAND_NO_FILE));
+            }
+        } else if matches.is_present(PUSH_COMMAND) {
+            if let Some(files) = matches.value_of(PUSH_COMMAND) {
+                arg = Self::new(Mode::Push, files);
+            } else {
+                return Err(Error::from_str(PUSH_COMMAND_NO_FILE));
+            }
+        } else {
+            arg = Self::new(Mode::Commit, "");
+        }
+        Ok(arg)
     }
 }

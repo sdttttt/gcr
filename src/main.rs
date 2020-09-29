@@ -1,6 +1,7 @@
 mod arguments;
 mod log;
 mod message;
+mod metadata;
 mod repo;
 mod util;
 
@@ -11,7 +12,16 @@ use repo::*;
 use util::*;
 
 fn main() {
-    let arg = Arguments::collect();
+
+    let arg = {
+        match Arguments::collect() {
+            Ok(a) => a,
+            Err(e) => {
+                gcr_err_println(e.message());
+                return;
+            }
+        }
+    };
 
     let current_path = current_path();
     let repo = {

@@ -2,12 +2,11 @@ use git2::{
     Commit, Error, ObjectType, Repository as GRepository, Signature, StatusOptions, Statuses,
 };
 
-use crate::arguments::{Mode, Arguments};
-use crate::util::is_all_workspace;
+use crate::{arguments::Arguments, metadata::Mode, util::is_all_workspace};
 
 pub struct Repository {
     repo: git2::Repository,
-    arg: Arguments
+    arg: Arguments,
 }
 
 impl Repository {
@@ -21,9 +20,9 @@ impl Repository {
 
     pub fn default(path: String) -> Result<Self, Error> {
         let result = GRepository::open(&path);
-        let arg = Arguments::new(Mode::Commit);
+        let arg = Arguments::new(Mode::Commit, "");
         match result {
-            Ok(repo) => Ok(Self{repo, arg}),
+            Ok(repo) => Ok(Self { repo, arg }),
             Err(e) => Err(e),
         }
     }
@@ -31,10 +30,10 @@ impl Repository {
     pub fn pre_commit(&self) -> Result<(), Error> {
         match self.arg.command_mode() {
             Mode::Commit => self.check_index()?,
-            Mode::Add => {},
-            Mode::Auto => {},
-            Mode::AddAll => {},
-            Mode::Push => {},
+            Mode::Add => {}
+            Mode::Auto => {}
+            Mode::AddAll => {}
+            Mode::Push => {}
         };
 
         Ok(())
@@ -42,11 +41,11 @@ impl Repository {
 
     pub fn after_commit(&self) -> Result<(), Error> {
         match self.arg.command_mode() {
-            Mode::Commit => {},
-            Mode::Add => {},
-            Mode::Auto => {},
-            Mode::AddAll => {},
-            Mode::Push => {},
+            Mode::Commit => {}
+            Mode::Add => {}
+            Mode::Auto => {}
+            Mode::AddAll => {}
+            Mode::Push => {}
         };
 
         Ok(())
