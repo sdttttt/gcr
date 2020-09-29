@@ -17,7 +17,7 @@ impl Repository {
             Err(e) => Err(e),
         }
     }
-
+    
     pub fn default(path: String) -> Result<Self, Error> {
         let result = GRepository::open(&path);
         let arg = Arguments::new(Mode::Commit, "");

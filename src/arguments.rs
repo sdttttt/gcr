@@ -17,8 +17,7 @@ impl Arguments {
             .args(&[Self::push_arg(PUSH_COMMAND), Self::add_arg(ADD_COMMAND)])
             .get_matches();
 
-        let arg = Self::resolve_command(matches)?;
-        Ok(arg)
+        Self::resolve_command(matches)
     }
 
     pub fn new(mode: Mode, params: &str) -> Self {
@@ -54,13 +53,21 @@ impl Arguments {
         let arg: Self;
         if matches.is_present(ADD_COMMAND) {
             if let Some(files) = matches.value_of(ADD_COMMAND) {
-                arg = Self::new(Mode::Add, files);
+                if files == "*" {
+                    arg = Self::new(Mode::AddAll, files);
+                } else {
+                    arg = Self::new(Mode::Add, files);
+                }
             } else {
                 return Err(Error::from_str(ADD_COMMAND_NO_FILE));
             }
         } else if matches.is_present(PUSH_COMMAND) {
             if let Some(files) = matches.value_of(PUSH_COMMAND) {
-                arg = Self::new(Mode::Push, files);
+                if files == "*" {
+                    arg = Self::new(Mode::Auto, files);
+                } else {
+                    arg = Self::new(Mode::Push, files);
+                }
             } else {
                 return Err(Error::from_str(PUSH_COMMAND_NO_FILE));
             }
