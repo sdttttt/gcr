@@ -1,8 +1,8 @@
 mod arguments;
+mod log;
 mod message;
 mod repo;
 mod util;
-mod log;
 
 use arguments::*;
 use log::*;
@@ -11,28 +11,32 @@ use repo::*;
 use util::*;
 
 fn main() {
-
-    Arguments::collect();
+    let arg = Arguments::collect();
 
     let current_path = current_path();
     let repo = {
-        match Repository::new(current_path) {
+        match Repository::new(current_path, arg) {
             Ok(r) => r,
             Err(e) => {
                 gcr_err_println(e.message());
-                return
+                return;
             }
         }
     };
 
     if let Err(e) = repo.pre_commit() {
         gcr_err_println(e.message());
-        return
+        return;
     }
 
     let message = Messager::new().build();
     gcr_println(&message);
+
     if let Err(e) = repo.commit(message.as_str()) {
-        println!("GRC(Error): {}", e.message())
+        gcr_err_println(e.message());
+    }
+
+    if let Err(e) = repo.after_commit() {
+        gcr_err_println(e.message());
     }
 }

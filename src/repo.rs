@@ -2,23 +2,40 @@ use git2::{
     Commit, Error, ObjectType, Repository as GRepository, Signature, StatusOptions, Statuses,
 };
 
+use crate::arguments::{Mode, Arguments};
 use crate::util::is_all_workspace;
 
 pub struct Repository {
     repo: git2::Repository,
+    arg: Arguments
 }
 
 impl Repository {
-    pub fn new(path: String) -> Result<Self, Error> {
+    pub fn new(path: String, arg: Arguments) -> Result<Self, Error> {
         let result = GRepository::open(&path);
         match result {
-            Ok(repo) => Ok(Self { repo }),
+            Ok(repo) => Ok(Self { repo, arg }),
             Err(e) => Err(e),
         }
     }
 
     pub fn pre_commit(&self) -> Result<(), Error> {
-        self.check_index()?;
+        match self.arg.command_mode() {
+            Mode::Commit => self.check_index()?,
+            Mode::Add => {},
+            Mode::Auto => {},
+        };
+
+        Ok(())
+    }
+
+    pub fn after_commit(&self) -> Result<(), Error> {
+        match self.arg.command_mode() {
+            Mode::Commit => {},
+            Mode::Add => {},
+            Mode::Auto => {},
+        };
+
         Ok(())
     }
 
@@ -40,6 +57,7 @@ impl Repository {
             &tree,
             &[&commit],
         )?;
+
         Ok(())
     }
 
@@ -70,16 +88,5 @@ impl Repository {
             }
             Err(e) => Err(e),
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-
-    use super::*;
-
-    #[test]
-    fn test_new_repo() {
-        Repository::new(String::from("."));
     }
 }

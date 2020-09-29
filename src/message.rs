@@ -120,8 +120,6 @@ fn ask_subject() -> String {
         })
         .interact()
         .unwrap()
-
-
 }
 
 fn ask_description() -> String {
