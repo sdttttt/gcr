@@ -1,7 +1,4 @@
-use git2::{
-    Statuses,
-    Status
-};
+use git2::{Status, Statuses};
 use std::fs;
 
 pub fn current_path() -> String {
@@ -13,29 +10,25 @@ pub fn is_all_workspace(statuses: &Statuses) -> bool {
     let mut tip = false;
     for state in statuses.iter() {
         match state.status() {
-            Status::INDEX_NEW |
-            Status::INDEX_MODIFIED |
-            Status::INDEX_DELETED |
-            Status::INDEX_RENAMED |
-            Status::INDEX_TYPECHANGE
-            => {
+            Status::INDEX_NEW
+            | Status::INDEX_MODIFIED
+            | Status::INDEX_DELETED
+            | Status::INDEX_RENAMED
+            | Status::INDEX_TYPECHANGE => {
                 tip = true;
                 break;
-            },
+            }
             _ => {}
         }
     }
     tip
 }
 
-
 pub fn remove_pound_prefix(input: &str) -> &str {
     match input.find("#") {
-        Some(index) => {
-            match input.get(index+1..input.len()) {
-                Some(s) => s,
-                _ => input,
-            }
+        Some(index) => match input.get(index + 1..input.len()) {
+            Some(s) => s,
+            _ => input,
         },
         _ => input,
     }
@@ -45,6 +38,12 @@ pub fn remove_pound_prefix(input: &str) -> &str {
 mod tests {
 
     use super::*;
+
+    #[test]
+    fn test_current_path() {
+        let path = current_path();
+        assert!(path.len() > 0);
+    }
 
     #[test]
     fn test_string_start_with() {
