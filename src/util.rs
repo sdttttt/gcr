@@ -1,7 +1,4 @@
-use git2::{
-    Statuses,
-    Status
-};
+use git2::{Status, Statuses};
 use std::fs;
 
 pub fn current_path() -> String {
@@ -13,32 +10,36 @@ pub fn is_all_workspace(statuses: &Statuses) -> bool {
     let mut tip = false;
     for state in statuses.iter() {
         match state.status() {
-            Status::INDEX_NEW |
-            Status::INDEX_MODIFIED |
-            Status::INDEX_DELETED |
-            Status::INDEX_RENAMED |
-            Status::INDEX_TYPECHANGE
-            => {
+            Status::INDEX_NEW
+            | Status::INDEX_MODIFIED
+            | Status::INDEX_DELETED
+            | Status::INDEX_RENAMED
+            | Status::INDEX_TYPECHANGE => {
                 tip = true;
                 break;
-            },
+            }
             _ => {}
         }
     }
     tip
 }
 
-
 pub fn remove_pound_prefix(input: &str) -> &str {
     match input.find("#") {
-        Some(index) => {
-            match input.get(index+1..input.len()) {
-                Some(s) => s,
-                _ => input,
-            }
+        Some(index) => match input.get(index + 1..input.len()) {
+            Some(s) => s,
+            _ => input,
         },
         _ => input,
     }
+}
+
+pub fn vec_str_to_string(vec: Vec<&str>) -> Vec<String> {
+    let mut result = vec![];
+    for s in vec {
+        result.push(String::from(s));
+    }
+    result
 }
 
 #[cfg(test)]
@@ -47,7 +48,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_string_start_with() {
+    fn get_current_path() {
+        let path = current_path();
+        assert!(path.len() > 0);
+    }
+
+    #[test]
+    fn string_start_with() {
         let str_1 = "#123";
         let result = "123";
 
@@ -59,5 +66,17 @@ mod tests {
 
         let str_4 = remove_pound_prefix(str_3);
         assert_eq!(str_4, result_2);
+    }
+
+    
+    #[test]
+    fn test_vec_str_to_string() {
+        let one = "1";
+        let two = "2";
+
+        let v1 = vec![one, two];
+        let mut v2 = vec_str_to_string(v1);
+        assert_eq!(v2.pop(), Some(String::from(two)));
+        assert_eq!(v2.pop(), Some(String::from(one)));
     }
 }

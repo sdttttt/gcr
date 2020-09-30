@@ -1,45 +1,172 @@
-use clap::{App, Arg};
+use clap::{App, Arg, ArgMatches};
+use git2::Error;
 
-const VERSION: &str = "0.6.0";
-const AUTHOR: &str = "SDTTTTT. <sdttttt@outlook.com>";
-const NAME: &str = "GRC";
-const DESCRIPTION: &str =
-    "I'm here to help you make it more standardized and convenient to use Git.";
-
-enum Mode {
-    Auto,
-    Add,
-    Commit,
-}
+use crate::metadata::*;
+use crate::util::*;
 
 pub struct Arguments {
     mode: Mode,
+    params: Vec<String>,
 }
 
 impl Arguments {
-    pub fn collect() -> Self {
-        let add = "all";
-        let auto = "auto";
-        
-        let matches = App::new(NAME)
+    pub fn collect() -> Result<Self, Error> {
+        let matches = Self::cli().get_matches();
+
+        Self::resolve_command(matches)
+    }
+
+    pub fn new(mode: Mode, params: Vec<String>) -> Self {
+        Self { mode, params }
+    }
+
+    pub fn command_mode(&self) -> &Mode {
+        &self.mode
+    }
+
+    pub fn files(&self) -> &Vec<String> {
+        &self.params
+    }
+
+    fn cli() -> App<'static, 'static> {
+        App::new(NAME)
             .version(VERSION)
             .author(AUTHOR)
             .about(DESCRIPTION)
-            .arg(
-                Arg::with_name(add)
-                    .short("a")
-                    .long("all")
-                    .required(false)
-                    .help("Help you run `git add .`"),
-            )
-           .get_matches();
+            .args(&[Self::push_arg(PUSH_COMMAND), Self::add_arg(ADD_COMMAND)])
+    }
 
-        if matches.is_present(add) {
-            Self { mode: Mode::Add }
-        } else if matches.is_present(auto) {
-            Self { mode: Mode::Auto }
+    fn push_arg(command_name: &str) -> Arg {
+        Arg::with_name(command_name)
+            .short(PUSH_COMMAND_SHORT)
+            .long(command_name)
+            .multiple(true)
+            .required(false)
+            .help(PUSH_COMMAND_HELP)
+            .takes_value(true)
+    }
+
+    fn add_arg(command_name: &str) -> Arg {
+        Arg::with_name(command_name)
+            .short(ADD_COMMAND_SHORT)
+            .long(command_name)
+            .multiple(true)
+            .required(false)
+            .help(ADD_COMMAND_HELP)
+            .takes_value(true)
+    }
+
+    fn resolve_command(matches: ArgMatches) -> Result<Self, Error> {
+        let arg: Self;
+        if matches.is_present(ADD_COMMAND) {
+            if let Some(files) = matches.values_of(ADD_COMMAND) {
+                let files_vec: Vec<String> = vec_str_to_string(files.collect());
+                if files_vec.len() == 1 && files_vec[0] == "." {
+                    arg = Self::new(Mode::AddAll, vec![]);
+                } else {
+                    arg = Self::new(Mode::Add, files_vec);
+                }
+            } else {
+                return Err(Error::from_str(ADD_COMMAND_NO_FILE));
+            }
+        } else if matches.is_present(PUSH_COMMAND) {
+            if let Some(files) = matches.values_of(PUSH_COMMAND) {
+                let files_vec: Vec<String> = vec_str_to_string(files.collect());
+                if files_vec.len() == 1 && files_vec[0] == "." {
+                    arg = Self::new(Mode::Auto, vec![]);
+                } else {
+                    arg = Self::new(Mode::Push, files_vec);
+                }
+            } else {
+                return Err(Error::from_str(PUSH_COMMAND_NO_FILE));
+            }
         } else {
-            Self { mode: Mode::Commit }
+            arg = Self::new(Mode::Commit, vec![]);
+        }
+        Ok(arg)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    fn quick_command_run(vec: Vec<&str>) -> Arguments {
+        let matches = Arguments::cli().get_matches_from(vec);
+
+        Arguments::resolve_command(matches).unwrap()
+    }
+
+    #[test]
+    fn add_all_mode() {
+        let args = quick_command_run(vec!["grc", "--add", "."]);
+        match args.command_mode() {
+            Mode::AddAll => {}
+            _ => panic!("NOT ADDALL MODE!"),
+        }
+    }
+
+    #[test]
+    fn add_mode() {
+        let args = quick_command_run(vec!["grc", "--add", "rusty"]);
+        match args.command_mode() {
+            Mode::Add => {}
+            _ => panic!("NOT ADD MODE!"),
+        }
+    }
+
+    #[test]
+    fn push_mode() {
+        let args = quick_command_run(vec!["grc", "--push", "ytsur"]);
+        match args.command_mode() {
+            Mode::Push => {}
+            _ => panic!("NOT PUSH MODE!"),
+        }
+    }
+
+    #[test]
+    fn auto_mode() {
+        let args = quick_command_run(vec!["grc", "--push", "."]);
+        match args.command_mode() {
+            Mode::Auto => {}
+            _ => panic!("NOT AUTO MODE!"),
+        }
+    }
+
+    #[test]
+    fn commit_mode() {
+        let args = quick_command_run(vec!["grc"]);
+        match args.command_mode() {
+            Mode::Commit => {}
+            _ => panic!("NOT COMMIT MODE!"),
+        }
+    }
+
+    #[test]
+    fn input_file() {
+        let file_1 = "1.txt";
+        let args = quick_command_run(vec!["grc", "--add", file_1]);
+        for file_name in args.files() {
+            if file_name.as_str() != file_1 {
+                panic!("NOT THIS FILE NAME.")
+            }
+        }
+    }
+
+    #[test]
+    fn input_more_file() {
+        let file_1 = "1.txt";
+        let file_2 = "2.txt";
+        let file_3 = "3.txt";
+
+        let args = quick_command_run(vec!["grc", "--add", file_1, file_2, file_3]);
+        for file_name in args.files() {
+            if file_name.as_str() != file_1 
+            && file_name.as_str() != file_2
+            && file_name.as_str() != file_3 {
+                panic!("NOT THIS FILE NAME.")
+            }
         }
     }
 }

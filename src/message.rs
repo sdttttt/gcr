@@ -23,7 +23,7 @@ pub struct Messager {
     typ: String,
     scope: String,
     subject: String,
-    body: String
+    body: String,
 }
 
 impl Messager {
@@ -32,12 +32,12 @@ impl Messager {
         let scope = ask_scope();
         let subject = ask_subject();
         let body = Self::build_body();
-        
+
         Self {
             typ,
             scope,
             subject,
-            body
+            body,
         }
     }
 
@@ -62,7 +62,7 @@ impl Messager {
         let mut body = String::new();
 
         if description.len() != 0 {
-          body = description;
+            body = description;
         };
 
         if closes.len() != 0 {
@@ -84,7 +84,7 @@ fn ask_type() -> String {
     if selection == COMMIT_TYPES.len() {
         Input::with_theme(&ColorfulTheme::default())
             .with_prompt("GRC: What Type ?")
-            .validate_with(|input: &str | -> Result<(), &str> {
+            .validate_with(|input: &str| -> Result<(), &str> {
                 if input.len() == 0 || input.trim().len() == 0 {
                     Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
                 } else {
@@ -111,7 +111,7 @@ fn ask_scope() -> String {
 fn ask_subject() -> String {
     Input::<String>::with_theme(&ColorfulTheme::default())
         .with_prompt("GRC: Commit Message ?")
-        .validate_with(|input: &str | -> Result<(), &str> {
+        .validate_with(|input: &str| -> Result<(), &str> {
             if input.len() == 0 || input.trim().len() == 0 {
                 Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
             } else {
@@ -120,8 +120,6 @@ fn ask_subject() -> String {
         })
         .interact()
         .unwrap()
-
-
 }
 
 fn ask_description() -> String {

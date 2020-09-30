@@ -1,24 +1,44 @@
 use git2::{
-    Commit, Error, ObjectType, Repository as GRepository, Signature, StatusOptions, Statuses,
+    Commit, Error, Index, IndexAddOption, ObjectType, Repository as GRepository, Signature, StatusOptions, Statuses,
 };
 
-use crate::util::is_all_workspace;
+use crate::{arguments::Arguments, metadata::Mode, util::is_all_workspace};
 
 pub struct Repository {
     repo: git2::Repository,
+    arg: Arguments,
 }
 
 impl Repository {
-    pub fn new(path: String) -> Result<Self, Error> {
+    pub fn new(path: String, arg: Arguments) -> Result<Self, Error> {
         let result = GRepository::open(&path);
         match result {
-            Ok(repo) => Ok(Self { repo }),
+            Ok(repo) => Ok(Self { repo, arg }),
             Err(e) => Err(e),
         }
     }
 
     pub fn pre_commit(&self) -> Result<(), Error> {
-        self.check_index()?;
+        match self.arg.command_mode() {
+            Mode::Commit => self.check_index()?,
+            Mode::Add => self.add_files(self.arg.files())?,
+            Mode::Auto => {},
+            Mode::AddAll => self.add_all_files()?,
+            Mode::Push => {},
+        };
+
+        Ok(())
+    }
+
+    pub fn after_commit(&self) -> Result<(), Error> {
+        match self.arg.command_mode() {
+            Mode::Commit => {}
+            Mode::Add => {}
+            Mode::Auto => {}
+            Mode::AddAll => {}
+            Mode::Push => {}
+        };
+
         Ok(())
     }
 
@@ -40,12 +60,33 @@ impl Repository {
             &tree,
             &[&commit],
         )?;
+
         Ok(())
     }
 
     fn status(&self) -> Result<Statuses<'_>, Error> {
         let mut sp = StatusOptions::new();
         self.repo.statuses(Option::from(&mut sp))
+    }
+
+    fn index(&self) -> Result<Index, Error> {
+        self.repo.index()
+    }
+
+    fn add_files(&self, files_path: &Vec<String>) -> Result<(), Error> {
+        let mut index = self.index()?;
+        for file_path in files_path {
+            index.add_path(file_path.as_ref())?;
+        }
+        index.write()?;
+        Ok(())
+    }
+
+    fn add_all_files(&self) -> Result<(), Error> {
+        let mut index = self.index()?;
+        index.add_all(["*"].iter(),IndexAddOption::DEFAULT ,None)?;
+        index.write()?;
+        Ok(())
     }
 
     fn generate_sign(&self) -> Signature<'static> {
@@ -75,11 +116,17 @@ impl Repository {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
+    use crate::metadata::Mode;
+    use crate::util::current_path;
+    use crate::Arguments;
 
     #[test]
     fn test_new_repo() {
-        Repository::new(String::from("."));
+        let path = current_path();
+        let args = Arguments::new(Mode::Commit, vec![]);
+        if let Err(e) = Repository::new(path, args) {
+            panic!(e)
+        }
     }
 }

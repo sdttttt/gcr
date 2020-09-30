@@ -1,6 +1,6 @@
 [package]
 name = "grc"
-version = "0.7.1"
+version = "0.8.0"
 authors = ["sdttttt <sdttttt@outlook.com>"]
 description = "Similar to git-cz, gcr will help you to provide a better Git experience."
 edition = "2018"
