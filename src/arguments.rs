@@ -33,23 +33,24 @@ impl Arguments {
             .version(VERSION)
             .author(AUTHOR)
             .about(DESCRIPTION)
-            .args(&[Self::push_arg(PUSH_COMMAND), Self::add_arg(ADD_COMMAND)])
+            .args(&[Self::add_arg(ADD_PARAMS)])
+           // .args(&[Self::push_arg(PUSH_PARAMS), Self::add_arg(ADD_PARAMS)])
     }
 
-    fn push_arg(command_name: &str) -> Arg {
-        Arg::with_name(command_name)
+    fn push_arg(params_name: &str) -> Arg {
+        Arg::with_name(params_name)
             .short(PUSH_COMMAND_SHORT)
-            .long(command_name)
+            .long(PUSH_COMMAND)
             .multiple(true)
             .required(false)
             .help(PUSH_COMMAND_HELP)
             .takes_value(true)
     }
 
-    fn add_arg(command_name: &str) -> Arg {
-        Arg::with_name(command_name)
+    fn add_arg(params_name: &str) -> Arg {
+        Arg::with_name(params_name)
             .short(ADD_COMMAND_SHORT)
-            .long(command_name)
+            .long(ADD_COMMAND)
             .multiple(true)
             .required(false)
             .help(ADD_COMMAND_HELP)
@@ -58,8 +59,8 @@ impl Arguments {
 
     fn resolve_command(matches: ArgMatches) -> Result<Self, Error> {
         let arg: Self;
-        if matches.is_present(ADD_COMMAND) {
-            if let Some(files) = matches.values_of(ADD_COMMAND) {
+        if matches.is_present(ADD_PARAMS) {
+            if let Some(files) = matches.values_of(ADD_PARAMS) {
                 let files_vec: Vec<String> = vec_str_to_string(files.collect());
                 if files_vec.len() == 1 && files_vec[0] == "." {
                     arg = Self::new(Mode::AddAll, vec![]);
@@ -69,8 +70,8 @@ impl Arguments {
             } else {
                 return Err(Error::from_str(ADD_COMMAND_NO_FILE));
             }
-        } else if matches.is_present(PUSH_COMMAND) {
-            if let Some(files) = matches.values_of(PUSH_COMMAND) {
+        } else if matches.is_present(PUSH_PARAMS) {
+            if let Some(files) = matches.values_of(PUSH_PARAMS) {
                 let files_vec: Vec<String> = vec_str_to_string(files.collect());
                 if files_vec.len() == 1 && files_vec[0] == "." {
                     arg = Self::new(Mode::Auto, vec![]);
@@ -117,6 +118,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn push_mode() {
         let args = quick_command_run(vec!["grc", "--push", "ytsur"]);
         match args.command_mode() {
@@ -126,6 +128,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn auto_mode() {
         let args = quick_command_run(vec!["grc", "--push", "."]);
         match args.command_mode() {
