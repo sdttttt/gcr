@@ -73,9 +73,11 @@ impl Repository {
         self.repo.index()
     }
 
-    fn add_files(&self, files: &Vec<String>) -> Result<(), Error> {
+    fn add_files(&self, files_path: &Vec<String>) -> Result<(), Error> {
         let mut index = self.index()?;
-        index.add_all(files,IndexAddOption::DEFAULT ,None)?;
+        for file_path in files_path {
+            index.add_path(file_path.as_ref())?;
+        }
         index.write()?;
         Ok(())
     }
