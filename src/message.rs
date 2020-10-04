@@ -19,6 +19,8 @@ const COMMIT_TYPES: &[&str] = &[
     "test", "feat", "fix", "chore", "docs", "refactor", "style", "perf", "ci",
 ];
 
+
+// Messsager is Commit Message struct.
 pub struct Messager {
     typ: String,
     scope: String,
@@ -41,6 +43,7 @@ impl Messager {
         }
     }
 
+    // generate commit message.
     pub fn build(&self) -> String {
         let header = if self.scope.trim().len() == 0 {
             format!("{}: {}", self.typ, self.subject)
@@ -55,6 +58,7 @@ impl Messager {
         }
     }
 
+    // generate commit long description.
     fn build_body() -> String {
         let description = ask_description();
         let closes = ask_close();
@@ -73,6 +77,7 @@ impl Messager {
     }
 }
 
+// type of commit message.
 fn ask_type() -> String {
     let selection = Select::with_theme(&ColorfulTheme::default())
         .items(COMMIT_TYPES_DESCRIPTION)
@@ -98,6 +103,7 @@ fn ask_type() -> String {
     }
 }
 
+// scope of commit scope.
 fn ask_scope() -> String {
     let scope = Input::<String>::with_theme(&ColorfulTheme::default())
         .with_prompt("GRC: Which scope? (Optional)")

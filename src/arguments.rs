@@ -9,7 +9,11 @@ pub struct Arguments {
     params: Vec<String>,
 }
 
+// Get the external parameter and analyze it. Construct the behavior of GRC.
 impl Arguments {
+
+
+    // get the external parameter.
     pub fn collect() -> Result<Self, Error> {
         let matches = Self::cli().get_matches();
 
@@ -57,6 +61,7 @@ impl Arguments {
             .takes_value(true)
     }
 
+    // Construct the behavior according to the input parameters.
     fn resolve_command(matches: ArgMatches) -> Result<Self, Error> {
         let arg: Self;
         if matches.is_present(ADD_PARAMS) {

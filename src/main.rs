@@ -12,6 +12,8 @@ use repo::*;
 use util::*;
 
 fn main() {
+
+    // input parameters.
     let arg = {
         match Arguments::collect() {
             Ok(a) => a,
@@ -22,7 +24,10 @@ fn main() {
         }
     };
 
+    // repository path.
     let path = current_path();
+
+    // repository Object instance.
     let repo = {
         match Repository::new(path, arg) {
             Ok(r) => r,
@@ -33,18 +38,22 @@ fn main() {
         }
     };
 
+    // before commit hook.
     if let Err(e) = repo.pre_commit() {
         gcr_err_println(e.message());
         return;
     }
 
+    // commit message.
     let message = Messager::new().build();
     gcr_println(&message);
 
+    // Git commit
     if let Err(e) = repo.commit(message.as_str()) {
         gcr_err_println(e.message());
     }
 
+    // after commit hook.
     if let Err(e) = repo.after_commit() {
         gcr_err_println(e.message());
     }

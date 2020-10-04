@@ -2,10 +2,13 @@ use std::fmt::Display;
 
 use console::Style;
 
+
+// GCR logger.
 pub fn gcr_println(content: impl Display) {
     println!("GRC: {}", content)
 }
 
+// GCR error logger.
 pub fn gcr_err_println(content: impl Display) {
     let color = Style::new().red();
     let output = format!("GRC(ERROR): {}", content);

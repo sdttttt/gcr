@@ -4,6 +4,9 @@ pub const NAME: &str = "GRC";
 pub const DESCRIPTION: &str =
     "I'm here to help you make it more standardized and convenient to use Git.";
 
+
+
+// GRC four commit modes.
 pub enum Mode {
     Auto,
     Add,
@@ -16,6 +19,7 @@ pub const ADD_COMMAND: &str = "add";
 pub const ADD_PARAMS: &str = "add_file_name";
 pub const ADD_COMMAND_SHORT: &str = "a";
 pub const ADD_COMMAND_HELP: &str = "Help you add files before commit. If the parameter is `.`, Then GRC will help you add everything.";
+// Not found file execption information.
 pub const ADD_COMMAND_NO_FILE: &str = "The add command requires parameters.";
 
 pub const PUSH_COMMAND: &str = "push";

@@ -4,6 +4,9 @@ use git2::{
 
 use crate::{arguments::Arguments, metadata::Mode, util::is_all_workspace};
 
+
+// Repository in GRC.
+// is git2::Repository Encapsulation.
 pub struct Repository {
     repo: git2::Repository,
     arg: Arguments,
@@ -18,6 +21,7 @@ impl Repository {
         }
     }
 
+    // actions before commit.
     pub fn pre_commit(&self) -> Result<(), Error> {
         match self.arg.command_mode() {
             Mode::Commit => self.check_index()?,
@@ -30,6 +34,7 @@ impl Repository {
         Ok(())
     }
 
+    // actions after commit.
     pub fn after_commit(&self) -> Result<(), Error> {
         match self.arg.command_mode() {
             Mode::Commit => {}
@@ -42,6 +47,7 @@ impl Repository {
         Ok(())
     }
 
+    // execute git commit.
     pub fn commit(&self, message: &str) -> Result<(), Error> {
         let current_sign = self.generate_sign();
         let tree_id = {
@@ -64,15 +70,18 @@ impl Repository {
         Ok(())
     }
 
+    // Repository status.
     fn status(&self) -> Result<Statuses<'_>, Error> {
         let mut sp = StatusOptions::new();
         self.repo.statuses(Option::from(&mut sp))
     }
 
+    // Repository commit index.
     fn index(&self) -> Result<Index, Error> {
         self.repo.index()
     }
 
+    // add files to Repository commit index.
     fn add_files(&self, files_path: &Vec<String>) -> Result<(), Error> {
         let mut index = self.index()?;
         for file_path in files_path {
@@ -82,6 +91,7 @@ impl Repository {
         Ok(())
     }
 
+    // add all files to Repository commit index.
     fn add_all_files(&self) -> Result<(), Error> {
         let mut index = self.index()?;
         index.add_all(["*"].iter(),IndexAddOption::DEFAULT ,None)?;
@@ -89,16 +99,19 @@ impl Repository {
         Ok(())
     }
 
+    // get sigin(email, authot ... ) from git config.
     fn generate_sign(&self) -> Signature<'static> {
         self.repo.signature().unwrap()
     }
 
+    // the last commit in this repository.
     fn find_last_commit(&self) -> Result<Commit, Error> {
         let obj = self.repo.head()?.resolve()?.peel(ObjectType::Commit)?;
         obj.into_commit()
             .map_err(|_| Error::from_str("not fonund Commit."))
     }
 
+    // Check to see if the repository commit index is empty.
     fn check_index(&self) -> Result<(), Error> {
         match self.status() {
             Ok(statuses) => {
