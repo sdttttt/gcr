@@ -9,7 +9,7 @@
 
 Standardized Git submission tool. “Grc” is a temporary name.
 
-Similar to git-cz, gcr will help you to provide a better Git experience.
+Similar to git-cz, grc will help you to provide a better Git experience.
 
 ## Install
 
@@ -17,7 +17,11 @@ You can install **grc** in the following ways:
 
 ### From Cargo
 
-Please Run `cargo install grc`.
+Please Run:
+
+```sh
+cargo install grc
+```
 
 ### Release Package
 
@@ -27,7 +31,7 @@ Go to [RELEASE](https://github.com/sdttttt/gcr/releases), download one you like.
 
 Please Run:
 
-```bash
+```sh
 git clone --depth=1 https://github.com/sdttttt/gcr.git
 
 cd gcr
@@ -41,10 +45,20 @@ grc under `target/release/`.
 
 after the tools install, run command in your repository:
 
-```
+```sh
 grc
 ```
 
-## Progress
+GRC can also automatically help you add files to the index.
 
-GRC is still a child at present. About its training ~~(develop)~~ progress. The progress of it is in [project](https://github.com/sdttttt/gcr/projects).
+```sh
+//Add all files
+grc -a .
+
+// Add specified file
+grc -a <filename>...
+```
+
+## IDEA
+
+If you have any new ideas, you are welcome to talk to me.
