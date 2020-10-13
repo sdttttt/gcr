@@ -1,11 +1,9 @@
 # GRC
 
-| NAME | STATE
-|--|--
-|Version| ![](https://img.shields.io/crates/v/grc.svg)
-|Test| ![Rust](https://github.com/sdttttt/gcr/workflows/Rust/badge.svg)
-|Release| ![Release](https://github.com/sdttttt/gcr/workflows/Release/badge.svg)
-|Coverage| [![codecov](https://codecov.io/gh/sdttttt/gcr/branch/master/graph/badge.svg)](https://codecov.io/gh/sdttttt/gcr)
+ ![](https://img.shields.io/crates/v/grc.svg)
+![Rust](https://github.com/sdttttt/gcr/workflows/Rust/badge.svg)
+![Release](https://github.com/sdttttt/gcr/workflows/Release/badge.svg)
+[![codecov](https://codecov.io/gh/sdttttt/gcr/branch/master/graph/badge.svg)](https://codecov.io/gh/sdttttt/gcr)
 
 Standardized Git submission tool. “Grc” is a temporary name.
 
