@@ -14,8 +14,13 @@ test:
 
 .PHONY: fmt
 fmt:
-	$(c) fmt -v
+	$(c) fmt
 
 .PHONY: publish
 publish:
 	$(c) publish -v
+
+.PHONY: commit
+commit: fmt
+	grc -a .
+	git push
