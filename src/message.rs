@@ -28,9 +28,9 @@ pub struct Messager {
 
 impl Messager {
     pub fn new() -> Self {
-        let typ = ask_type();
-        let scope = ask_scope();
-        let subject = ask_subject();
+        let typ = Self::ask_type();
+        let scope = Self::ask_scope();
+        let subject = Self::ask_subject();
         let body = Self::build_body();
 
         Self { typ, scope, subject, body }
@@ -53,8 +53,8 @@ impl Messager {
 
     // generate commit long description.
     fn build_body() -> String {
-        let description = ask_description();
-        let closes = ask_close();
+        let description = Self::ask_description();
+        let closes = Self::ask_close();
 
         let mut body = String::new();
 
@@ -68,20 +68,47 @@ impl Messager {
 
         body
     }
-}
 
-// type of commit message.
-fn ask_type() -> String {
-    let selection = Select::with_theme(&ColorfulTheme::default())
-        .items(COMMIT_TYPES_DESCRIPTION)
-        .default(0)
-        .interact()
-        .unwrap();
+    // type of commit message.
+    fn ask_type() -> String {
+        let selection = Select::with_theme(&ColorfulTheme::default())
+            .items(COMMIT_TYPES_DESCRIPTION)
+            .default(0)
+            .interact()
+            .unwrap();
 
-    // Custom TYPE.
-    if selection == COMMIT_TYPES.len() {
-        Input::with_theme(&ColorfulTheme::default())
-            .with_prompt("GRC: What Type ?")
+        // Custom TYPE.
+        if selection == COMMIT_TYPES.len() {
+            Input::with_theme(&ColorfulTheme::default())
+                .with_prompt("GRC: What Type ?")
+                .validate_with(|input: &str| -> Result<(), &str> {
+                    if input.len() == 0 || input.trim().len() == 0 {
+                        Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
+                    } else {
+                        Ok(())
+                    }
+                })
+                .interact()
+                .unwrap()
+        } else {
+            String::from(COMMIT_TYPES[selection])
+        }
+    }
+
+    // scope of commit scope.
+    fn ask_scope() -> String {
+        let scope = Input::<String>::with_theme(&ColorfulTheme::default())
+            .with_prompt("GRC: Which scope? (Optional)")
+            .allow_empty(true)
+            .interact()
+            .unwrap();
+
+        String::from(scope.trim())
+    }
+
+    fn ask_subject() -> String {
+        Input::<String>::with_theme(&ColorfulTheme::default())
+            .with_prompt("GRC: Commit Message ?")
             .validate_with(|input: &str| -> Result<(), &str> {
                 if input.len() == 0 || input.trim().len() == 0 {
                     Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
@@ -91,52 +118,25 @@ fn ask_type() -> String {
             })
             .interact()
             .unwrap()
-    } else {
-        String::from(COMMIT_TYPES[selection])
     }
-}
 
-// scope of commit scope.
-fn ask_scope() -> String {
-    let scope = Input::<String>::with_theme(&ColorfulTheme::default())
-        .with_prompt("GRC: Which scope? (Optional)")
-        .allow_empty(true)
-        .interact()
-        .unwrap();
+    fn ask_description() -> String {
+        let description = Input::<String>::with_theme(&ColorfulTheme::default())
+            .with_prompt("GRC: Provide a longer description? (Optional)")
+            .allow_empty(true)
+            .interact()
+            .unwrap();
 
-    String::from(scope.trim())
-}
+        String::from(description.trim())
+    }
 
-fn ask_subject() -> String {
-    Input::<String>::with_theme(&ColorfulTheme::default())
-        .with_prompt("GRC: Commit Message ?")
-        .validate_with(|input: &str| -> Result<(), &str> {
-            if input.len() == 0 || input.trim().len() == 0 {
-                Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
-            } else {
-                Ok(())
-            }
-        })
-        .interact()
-        .unwrap()
-}
+    fn ask_close() -> String {
+        let closes = Input::<String>::with_theme(&ColorfulTheme::default())
+            .with_prompt("GRC: PR & Issues this commit closes, e.g 123: (Optional)")
+            .allow_empty(true)
+            .interact()
+            .unwrap();
 
-fn ask_description() -> String {
-    let description = Input::<String>::with_theme(&ColorfulTheme::default())
-        .with_prompt("GRC: Provide a longer description? (Optional)")
-        .allow_empty(true)
-        .interact()
-        .unwrap();
-
-    String::from(description.trim())
-}
-
-fn ask_close() -> String {
-    let closes = Input::<String>::with_theme(&ColorfulTheme::default())
-        .with_prompt("GRC: PR & Issues this commit closes, e.g 123: (Optional)")
-        .allow_empty(true)
-        .interact()
-        .unwrap();
-
-    String::from(remove_pound_prefix(closes.trim()))
+        String::from(remove_pound_prefix(closes.trim()))
+    }
 }
