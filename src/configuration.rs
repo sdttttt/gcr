@@ -54,28 +54,39 @@ mod tests {
 
     use super::*;
 
+    const GRC_TEST_CONFIG_FILE_NAME: &str = "grc.test.toml";
+
+    const GRC_TOML_CONTENT: &str = r#"type = [ "version: version is change." ]"#;
+    const GRC_TOML_TYPE: &str = "version: version is change.";
+
+    const GRC_TEST_TOML_CONTENT: &str = r#"type = [ "123" ]"#;
+    const GRC_TEST_TOML_TYPE: &str = "123";
+
     #[test]
     fn it_read_config_file() {
-        let target1 = r#"type = [ "123" ]"#;
-        let file_str = GrcConfig::read_config_file("grc.test.toml").unwrap();
-        assert_eq!(file_str.as_str(), target1);
+        let file_str = GrcConfig::read_config_file(GRC_TEST_CONFIG_FILE_NAME).unwrap();
+        assert_eq!(file_str.as_str(), GRC_TEST_TOML_CONTENT);
 
         let file_str2 = GrcConfig::read_config_file("nullfile").unwrap();
         assert_eq!(file_str2.len(), 0);
         assert_eq!(file_str2.as_str(), "");
 
-        let target2 = r#"type = [ "version: version is change." ]"#;
         let config = GrcConfig::read_config_file(GRC_CONFIG_FILE_NAME).unwrap();
-        assert_eq!(config.as_str(), target2);
+        assert_eq!(config.as_str(), GRC_TOML_CONTENT);
     }
+
     #[test]
     fn it_deserialize() {
-        let file_str = String::from(r#"type = [ "version: version is change." ]"#);
+        let file_str = String::from(GRC_TOML_CONTENT);
         let result = GrcConfig::deserialize(file_str).unwrap().unwrap();
 
-        let target = "version: version is change.";
         let types = result.types().as_ref().unwrap();
-
-        assert_eq!(types[0], target);
+        assert_eq!(types[0], GRC_TOML_TYPE);
     }
+
+    // #[test]
+    // fn it_from_agreement() {
+    //     let config = GrcConfig::from_agreement().unwrap().unwrap();
+    //     let types = config.types().as_ref().unwrap();
+    // }
 }
