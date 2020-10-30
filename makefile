@@ -23,4 +23,3 @@ publish:
 .PHONY: commit
 commit: fmt
 	grc -a .
-	git push
