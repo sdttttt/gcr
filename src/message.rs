@@ -2,23 +2,21 @@ use dialoguer::{theme::ColorfulTheme, Input, Select};
 
 use crate::util::remove_pound_prefix;
 
-const COMMIT_TYPES_DESCRIPTION: &[&str] = &[
-    "test:       Adding missing tests.",
-    "feat:       A new feature.",
-    "fix:        A bug fix.",
-    "chore:      Build process or auxiliary tool changes.",
-    "docs:       Documentation only changes.",
-    "refactor:   A code change that neither fixes a bug or adds a feature.",
-    "style:      Markup, white-space, formatting, missing semi-colons...",
-    "perf:       A code change that improves performance.",
-    "ci:         CI related changes.",
-    "Custom your type.",
+const SPACE: &str = " ";
+
+const COMMIT_TYPE_DESCRIPT: &[CommitTD] = &[
+    CommitTD("test", "Adding missing tests."),
+    CommitTD("feat", "A new feature."),
+    CommitTD("fix", "A bug fix."),
+    CommitTD("chore", "Build process or auxiliary tool changes."),
+    CommitTD("docs", "Documentation only changes."),
+    CommitTD("refactor", "A code change that neither fixes a bug or adds a feature."),
+    CommitTD("style", "Markup, white-space, formatting, missing semi-colons..."),
+    CommitTD("perf", "A code change that improves performance."),
+    CommitTD("ci", "CI related changes."),
 ];
 
-const COMMIT_TYPES: &[&str] = &[
-    "test", "feat", "fix", "chore", "docs", "refactor", "style", "perf", "ci",
-];
-
+pub struct CommitTD(&'static str, &'static str);
 
 // Messsager is Commit Message struct.
 pub struct Messager {
@@ -79,13 +77,13 @@ impl Messager {
     // type of commit message.
     fn ask_type() -> String {
         let selection = Select::with_theme(&ColorfulTheme::default())
-            .items(COMMIT_TYPES_DESCRIPTION)
+            .items(&Self::type_list())
             .default(0)
             .interact()
             .unwrap();
 
         // Custom TYPE.
-        if selection == COMMIT_TYPES.len() {
+        if selection == COMMIT_TYPE_DESCRIPT.len() {
             Input::with_theme(&ColorfulTheme::default())
                 .with_prompt("GRC: What Type ?")
                 .validate_with(|input: &str| -> Result<(), &str> {
@@ -98,7 +96,7 @@ impl Messager {
                 .interact()
                 .unwrap()
         } else {
-            String::from(COMMIT_TYPES[selection])
+            String::from(COMMIT_TYPE_DESCRIPT[selection].0)
         }
     }
 
@@ -145,5 +143,33 @@ impl Messager {
             .unwrap();
 
         String::from(remove_pound_prefix(closes.trim()))
+    }
+
+    fn type_list() -> Vec<String> {
+        COMMIT_TYPE_DESCRIPT
+            .iter()
+            .map(|td: &CommitTD| -> String {
+                let mut space = String::new();
+                if td.0.len() < 12 {
+                    for _ in 0..(11 - td.0.len()) {
+                        space.push_str(SPACE);
+                    }
+                }
+                format!("{}:{}{}", td.0, space, td.1)
+            })
+            .collect::<Vec<String>>()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn it_type_list() {
+        let result = Messager::type_list();
+
+        assert_eq!(result[0].as_str(), "test:       Adding missing tests.")
     }
 }
