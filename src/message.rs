@@ -27,7 +27,7 @@ pub struct Messager {
 }
 
 impl Messager {
-    pub fn new() -> Self {
+    pub fn ask() -> Self {
         let typ = Self::ask_type();
         let scope = Self::ask_scope();
         let subject = Self::ask_subject();
