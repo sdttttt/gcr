@@ -15,3 +15,7 @@ test:
 .PHONY: fmt
 fmt:
 	$(c) fmt -v
+
+.PHONY: publish
+publish:
+	$(c) publish -v

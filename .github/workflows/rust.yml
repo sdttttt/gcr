@@ -45,7 +45,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Run tests
-      run: cargo test --verbose
+      run: make test
   
     - name: Run cargo-tarpaulin
       if: ${{ runner.os == 'Linux' }}
@@ -56,6 +56,6 @@ jobs:
     - name: Upload to codecov.io
       if: ${{ runner.os == 'Linux' }}
       run: bash <(curl -s https://codecov.io/bash)
-  
+
     - name: Build
-      run: cargo build --release --verbose
+      run: make
