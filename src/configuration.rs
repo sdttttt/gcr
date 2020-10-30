@@ -52,4 +52,14 @@ mod tests {
     use std::io::ErrorKind;
 
     use super::*;
+
+    #[test]
+    fn it_read_config_file() {
+        let file_str = GrcConfig::read_config_file("grc.test.toml").unwrap();
+        assert_eq!(file_str.as_str(), "type = \"123\"");
+
+        let file_str2 = GrcConfig::read_config_file("nullfile").unwrap();
+        assert_eq!(file_str2.len(), 0);
+        assert_eq!(file_str2.as_str(), "");
+    }
 }
