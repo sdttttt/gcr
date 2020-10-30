@@ -21,5 +21,5 @@ publish:
 	$(c) publish -v
 
 .PHONY: commit
-commit: fmt
+commit: fmt test
 	grc -a .
