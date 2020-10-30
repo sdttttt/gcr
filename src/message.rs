@@ -96,6 +96,7 @@ impl Messager {
 
         // Custom TYPE.
         if selection == BASE_COMMIT_TYPE_DESCRIPTION.len() {
+
             Input::with_theme(&ColorfulTheme::default())
                 .with_prompt("GRC: What Type ?")
                 .validate_with(|input: &str| -> Result<(), &str> {
@@ -175,7 +176,6 @@ impl Messager {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
 
     #[test]
