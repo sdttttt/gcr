@@ -91,4 +91,12 @@ mod tests {
 
         assert_eq!(types[0], GRC_TOML_TYPE);
     }
+
+    #[test]
+    fn it_from() {
+        let config = GrcConfig::from(GRC_TEST_CONFIG_FILE_NAME).unwrap().unwrap();
+        let types = config.types().as_ref().unwrap();
+
+        assert_eq!(types[0], GRC_TEST_TOML_TYPE);
+    }
 }
