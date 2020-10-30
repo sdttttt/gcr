@@ -1,4 +1,5 @@
 mod arguments;
+mod configuration;
 mod log;
 mod message;
 mod metadata;

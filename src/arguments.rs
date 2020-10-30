@@ -103,11 +103,11 @@ mod tests {
     }
 
     #[test]
-    fn add_all_mode() {
+    fn add_all_mode() -> Result<(), &'static str> {
         let args = quick_command_run(vec!["grc", "--add", "."]);
         match args.command_mode() {
-            Mode::AddAll => {}
-            _ => panic!("NOT ADDALL MODE!"),
+            Mode::AddAll => Ok(()),
+            _ => Err("NOT ADDALL MODE!"),
         }
     }
 

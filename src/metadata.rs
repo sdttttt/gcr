@@ -26,3 +26,5 @@ pub const PUSH_COMMAND_SHORT: &str = "p";
 // TODO: Fill in the `push` command help
 pub const PUSH_COMMAND_HELP: &str = "...";
 pub const PUSH_COMMAND_NO_FILE: &str = "The 'push' command requires parameters.";
+
+pub const GRC_CONFIG_FILE_NAME: &str = "grc.toml";
