@@ -60,3 +60,5 @@ grc -a <filename>...
 ## IDEA
 
 If you have any new ideas, you are welcome to talk to me.
+
+`grc` has taken over all git submissions from @sdttttt.
