@@ -4,7 +4,7 @@ use crate::util::remove_pound_prefix;
 
 const SPACE: &str = " ";
 
-const COMMIT_TYPE_DESCRIPT: &[CommitTD] = &[
+const BASE_COMMIT_TYPE_DESCRIPTION: &[CommitTD] = &[
     CommitTD("test", "Adding missing tests."),
     CommitTD("feat", "A new feature."),
     CommitTD("fix", "A bug fix."),
@@ -16,10 +16,13 @@ const COMMIT_TYPE_DESCRIPT: &[CommitTD] = &[
     CommitTD("ci", "CI related changes."),
 ];
 
-pub struct CommitTD(&'static str, &'static str);
+#[derive(Clone)]
+pub struct CommitTD(pub &'static str, pub &'static str);
 
 // Messsager is Commit Message struct.
 pub struct Messager {
+    commit_type_descript: Vec<CommitTD>,
+
     typ: String,
     scope: String,
     subject: String,
@@ -27,13 +30,27 @@ pub struct Messager {
 }
 
 impl Messager {
-    pub fn ask() -> Self {
-        let typ = Self::ask_type();
-        let scope = Self::ask_scope();
-        let subject = Self::ask_subject();
-        let body = Self::build_body();
+    pub fn new() -> Self {
+        let commit_type_descript = vec![];
+        let typ = String::new();
+        let scope = String::new();
+        let subject = String::new();
+        let body = String::new();
 
-        Self { typ, scope, subject, body }
+        Self { commit_type_descript, typ, scope, subject, body }
+    }
+
+    pub fn load_ext_td(mut self, td: Vec<CommitTD>) -> Self {
+        self.commit_type_descript = [BASE_COMMIT_TYPE_DESCRIPTION, &td].concat();
+        self
+    }
+
+    pub fn ask(mut self) -> Self {
+        self.typ = Self::ask_type();
+        self.scope = Self::ask_scope();
+        self.subject = Self::ask_subject();
+        self.body = Self::build_body();
+        self
     }
 
     // generate commit message.
@@ -78,7 +95,7 @@ impl Messager {
             .unwrap();
 
         // Custom TYPE.
-        if selection == COMMIT_TYPE_DESCRIPT.len() {
+        if selection == BASE_COMMIT_TYPE_DESCRIPTION.len() {
             Input::with_theme(&ColorfulTheme::default())
                 .with_prompt("GRC: What Type ?")
                 .validate_with(|input: &str| -> Result<(), &str> {
@@ -91,7 +108,7 @@ impl Messager {
                 .interact()
                 .unwrap()
         } else {
-            String::from(COMMIT_TYPE_DESCRIPT[selection].0)
+            String::from(BASE_COMMIT_TYPE_DESCRIPTION[selection].0)
         }
     }
 
@@ -141,7 +158,7 @@ impl Messager {
     }
 
     fn type_list() -> Vec<String> {
-        COMMIT_TYPE_DESCRIPT
+        BASE_COMMIT_TYPE_DESCRIPTION
             .iter()
             .map(|td: &CommitTD| -> String {
                 let mut space = String::new();

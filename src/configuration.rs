@@ -3,6 +3,7 @@ use std::io::{Error, ErrorKind};
 
 use serde::Deserialize;
 
+use crate::message::CommitTD;
 use crate::metadata::GRC_CONFIG_FILE_NAME;
 
 #[derive(Deserialize)]
@@ -22,8 +23,21 @@ impl GrcConfig {
         Ok(Self::deserialize(file_str)?)
     }
 
-    pub fn types(&self) -> &Option<Vec<String>> {
-        &self.typ
+    pub fn ext_td(&'static self) -> Option<Vec<CommitTD>> {
+        match &self.typ {
+            None => None,
+            Some(types) => {
+                let t = types
+                    .iter()
+                    .map(|typ: &String| -> CommitTD {
+                        let arr_td = typ.split(":").collect::<Vec<&str>>();
+                        CommitTD(arr_td[0], arr_td[1])
+                    })
+                    .collect();
+
+                Some(t)
+            }
+        }
     }
 
     fn deserialize(file_str: String) -> Result<Option<Self>, Error> {
@@ -80,14 +94,14 @@ mod tests {
         let file_str = String::from(GRC_TOML_CONTENT);
         let result = GrcConfig::deserialize(file_str).unwrap().unwrap();
 
-        let types = result.types().as_ref().unwrap();
+        let types = result.typ.as_ref().unwrap();
         assert_eq!(types[0], GRC_TOML_TYPE);
     }
 
     #[test]
     fn it_from_agreement() {
         let config = GrcConfig::from_agreement().unwrap().unwrap();
-        let types = config.types().as_ref().unwrap();
+        let types = config.typ.as_ref().unwrap();
 
         assert_eq!(types[0], GRC_TOML_TYPE);
     }
@@ -95,7 +109,7 @@ mod tests {
     #[test]
     fn it_from() {
         let config = GrcConfig::from(GRC_TEST_CONFIG_FILE_NAME).unwrap().unwrap();
-        let types = config.types().as_ref().unwrap();
+        let types = config.typ.as_ref().unwrap();
 
         assert_eq!(types[0], GRC_TEST_TOML_TYPE);
     }
