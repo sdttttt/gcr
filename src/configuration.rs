@@ -1,4 +1,5 @@
 use std::fs;
+use std::io::{Error, ErrorKind};
 
 use serde::Deserialize;
 
@@ -11,33 +12,44 @@ pub struct GrcConfig {
 }
 
 impl GrcConfig {
-    // pub fn new() -> Result<Option<Self>, String> {
-    // 	fs::read_to_string(GRC_CONFIG_FILE_NAME)
-    // }
+    pub fn from_agreement() -> Result<Option<Self>, Error> {
+        let file_str = Self::read_config_file(GRC_CONFIG_FILE_NAME)?;
+        Ok(Self::deserialize(file_str)?)
+    }
+
+    pub fn from(filename: &str) -> Result<Option<Self>, Error> {
+        let file_str = Self::read_config_file(GRC_CONFIG_FILE_NAME)?;
+        Ok(Self::deserialize(file_str)?)
+    }
+
+    fn deserialize(file_str: String) -> Result<Option<Self>, Error> {
+        if file_str.len() == 0 || file_str == "" {
+            return Ok(None);
+        }
+
+        let config = toml::from_str(file_str.as_str())?;
+        Ok(config)
+    }
+
+    fn read_config_file(filename: &str) -> Result<String, Error> {
+        match fs::read_to_string(filename) {
+            Ok(content) => Ok(content),
+            Err(e) => {
+                if e.kind() == ErrorKind::NotFound {
+                    Ok(String::new())
+                } else {
+                    Err(e)
+                }
+            }
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
 
     use std::fs;
+    use std::io::ErrorKind;
 
     use super::*;
-
-    #[test]
-    fn grconf_deserializer() {
-        let file = match fs::read_to_string(GRC_CONFIG_FILE_NAME) {
-            Ok(content) => content,
-            Err(e) => panic!(e),
-        };
-
-        let config: GrcConfig = toml::from_str(file.as_str()).unwrap();
-
-        assert_ne!(config.typ, None);
-        let config_type: Vec<String> = config.typ.unwrap();
-
-        assert_eq!(config_type.len(), 1);
-        let version = config_type[0].clone();
-
-        assert_eq!(version.as_str(), "version: version is change.");
-    }
 }
