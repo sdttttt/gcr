@@ -15,9 +15,8 @@ const COMMIT_TYPES_DESCRIPTION: &[&str] = &[
     "Custom your type.",
 ];
 
-const COMMIT_TYPES: &[&str] = &[
-    "test", "feat", "fix", "chore", "docs", "refactor", "style", "perf", "ci",
-];
+const COMMIT_TYPES: &[&str] =
+    &["test", "feat", "fix", "chore", "docs", "refactor", "style", "perf", "ci"];
 
 // Messsager is Commit Message struct.
 pub struct Messager {
@@ -34,12 +33,7 @@ impl Messager {
         let subject = ask_subject();
         let body = Self::build_body();
 
-        Self {
-            typ,
-            scope,
-            subject,
-            body,
-        }
+        Self { typ, scope, subject, body }
     }
 
     // generate commit message.
