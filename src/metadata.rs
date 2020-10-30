@@ -4,8 +4,6 @@ pub const NAME: &str = "GRC";
 pub const DESCRIPTION: &str =
     "I'm here to help you make it more standardized and convenient to use Git.";
 
-
-
 // GRC four commit modes.
 pub enum Mode {
     Auto,
