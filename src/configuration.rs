@@ -84,9 +84,11 @@ mod tests {
         assert_eq!(types[0], GRC_TOML_TYPE);
     }
 
-    // #[test]
-    // fn it_from_agreement() {
-    //     let config = GrcConfig::from_agreement().unwrap().unwrap();
-    //     let types = config.types().as_ref().unwrap();
-    // }
+    #[test]
+    fn it_from_agreement() {
+        let config = GrcConfig::from_agreement().unwrap().unwrap();
+        let types = config.types().as_ref().unwrap();
+
+        assert_eq!(types[0], GRC_TOML_TYPE);
+    }
 }
