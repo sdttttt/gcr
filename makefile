@@ -11,3 +11,7 @@ build-dev:
 .PHONY: test
 test:
 	$(c) test -j 1 -v
+
+.PHONY: fmt
+fmt:
+	$(c) fmt -v

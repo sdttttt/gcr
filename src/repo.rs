@@ -1,9 +1,9 @@
 use git2::{
-    Commit, Error, Index, IndexAddOption, ObjectType, Repository as GRepository, Signature, StatusOptions, Statuses,
+    Commit, Error, Index, IndexAddOption, ObjectType, Repository as GRepository, Signature,
+    StatusOptions, Statuses,
 };
 
 use crate::{arguments::Arguments, metadata::Mode, util::is_all_workspace};
-
 
 // Repository in GRC.
 // is git2::Repository Encapsulation.
@@ -26,9 +26,9 @@ impl Repository {
         match self.arg.command_mode() {
             Mode::Commit => self.check_index()?,
             Mode::Add => self.add_files(self.arg.files())?,
-            Mode::Auto => {},
+            Mode::Auto => {}
             Mode::AddAll => self.add_all_files()?,
-            Mode::Push => {},
+            Mode::Push => {}
         };
 
         Ok(())
@@ -94,7 +94,7 @@ impl Repository {
     // add all files to Repository commit index.
     fn add_all_files(&self) -> Result<(), Error> {
         let mut index = self.index()?;
-        index.add_all(["*"].iter(),IndexAddOption::DEFAULT ,None)?;
+        index.add_all(["*"].iter(), IndexAddOption::DEFAULT, None)?;
         index.write()?;
         Ok(())
     }

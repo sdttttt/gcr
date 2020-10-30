@@ -12,7 +12,6 @@ use repo::*;
 use util::*;
 
 fn main() {
-
     // input parameters.
     let arg = {
         match Arguments::collect() {

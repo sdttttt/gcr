@@ -19,7 +19,6 @@ const COMMIT_TYPES: &[&str] = &[
     "test", "feat", "fix", "chore", "docs", "refactor", "style", "perf", "ci",
 ];
 
-
 // Messsager is Commit Message struct.
 pub struct Messager {
     typ: String,

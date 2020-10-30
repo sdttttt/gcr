@@ -2,7 +2,6 @@ use std::fmt::Display;
 
 use console::Style;
 
-
 // GCR logger.
 pub fn gcr_println(content: impl Display) {
     println!("GRC: {}", content)
