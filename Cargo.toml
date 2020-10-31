@@ -17,6 +17,6 @@ lto = "fat"
 clap = "2.33.3"
 console = "0.13.0"
 git2 = "0.13"
-dialoguer = "0.6.2"
+dialoguer = "0.7.1"
 toml = "0.5.7"
 serde = { version = "1.0.82", features = ["derive"] }
