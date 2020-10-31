@@ -1,4 +1,4 @@
-pub const VERSION: &str = "0.8.0";
+pub const VERSION: &str = "0.9.0-rc1";
 pub const AUTHOR: &str = "SDTTTTT. <sdttttt@outlook.com>";
 pub const NAME: &str = "GRC";
 pub const DESCRIPTION: &str =

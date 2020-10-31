@@ -21,11 +21,9 @@ Please Run:
 cargo install grc
 ```
 
-
 ### Release Package
 
 Go to [RELEASE](https://github.com/sdttttt/gcr/releases), download one you like.
-
 
 ### From Source
 
@@ -57,6 +55,20 @@ grc -a .
 
 // Add specified file
 grc -a <filename>...
+```
+
+### GRC config file
+
+> **TIP:**
+> This feature is supported above version 0.9.0
+
+You can append custom commit types in the `grc.toml` configuration file:
+
+```toml
+# A semicolon separates the type from the description of the type.
+type = [
+    "type: this is new commit type."
+]
 ```
 
 ## IDEA
