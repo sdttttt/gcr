@@ -140,7 +140,7 @@ dependencies = [
 
 [[package]]
 name = "grc"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "clap",
  "console 0.13.0",
