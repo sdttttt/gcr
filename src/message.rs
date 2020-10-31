@@ -208,4 +208,10 @@ mod tests {
         assert_eq!(tl[7].as_str(), "perf:       A code change that improves performance.");
         assert_eq!(tl[8].as_str(), "ci:         CI related changes.");
     }
+
+    #[test]
+    fn it_load_ext_td() {
+        let tl = new_messager().load_ext_td(&vec!["this: yes, like this.".to_string()]).type_list();
+        assert_eq!(tl[9].as_str(), "this:       yes, like this.");
+    }
 }
