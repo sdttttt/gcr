@@ -115,7 +115,7 @@ impl Messager {
                 .interact()
                 .unwrap()
         } else {
-            self.typ = String::from(BASE_COMMIT_TYPE_DESCRIPTION[selection].0)
+            self.typ = self.commit_type_descript[selection].0.clone()
         }
     }
 
