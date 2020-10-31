@@ -115,7 +115,7 @@ impl Messager {
             .unwrap();
 
         // Custom TYPE.
-        if selection == BASE_COMMIT_TYPE_DESCRIPTION.len() {
+        if selection == self.commit_type_descript.len() {
             self.typ = Input::with_theme(&ColorfulTheme::default())
                 .with_prompt("GRC: What Type ?")
                 .validate_with(|input: &str| -> Result<(), &str> {
