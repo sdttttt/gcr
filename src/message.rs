@@ -185,13 +185,9 @@ mod tests {
 
     use super::*;
 
-    fn new_messager() -> Messager {
-        Messager::new()
-    }
-
     #[test]
     fn it_type_list() {
-        let tl = new_messager().type_list();
+        let tl = Messager::new().type_list();
         assert_eq!(tl[0].as_str(), "test:       Adding missing tests.");
         assert_eq!(tl[1].as_str(), "feat:       A new feature.");
         assert_eq!(tl[2].as_str(), "fix:        A bug fix.");
@@ -211,7 +207,19 @@ mod tests {
 
     #[test]
     fn it_load_ext_td() {
-        let tl = new_messager().load_ext_td(&vec!["this: yes, like this.".to_string()]).type_list();
-        assert_eq!(tl[9].as_str(), "this:       yes, like this.");
+        let tl =
+            Messager::new().load_ext_td(&vec!["this: yes, like this.".to_string()]).type_list();
+        assert_eq!(tl[9].as_str(), "this:       yes, like this.")
+    }
+
+    #[test]
+    fn it_build() {
+        let mut message = Messager::new();
+        message.typ = "type".to_string();
+        message.scope = "scope".to_string();
+        message.subject = "subject.".to_string();
+
+        let commit_msg = message.build();
+        assert_eq!(commit_msg.as_str(), "type(scope): subject.")
     }
 }
