@@ -10,8 +10,14 @@ const COMMIT_TYPE_DESCRIPT: &[CommitTD] = &[
     CommitTD("fix", "A bug fix."),
     CommitTD("chore", "Build process or auxiliary tool changes."),
     CommitTD("docs", "Documentation only changes."),
-    CommitTD("refactor", "A code change that neither fixes a bug or adds a feature."),
-    CommitTD("style", "Markup, white-space, formatting, missing semi-colons..."),
+    CommitTD(
+        "refactor",
+        "A code change that neither fixes a bug or adds a feature.",
+    ),
+    CommitTD(
+        "style",
+        "Markup, white-space, formatting, missing semi-colons...",
+    ),
     CommitTD("perf", "A code change that improves performance."),
     CommitTD("ci", "CI related changes."),
 ];
