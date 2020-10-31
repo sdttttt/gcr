@@ -21,9 +21,11 @@ Please Run:
 cargo install grc
 ```
 
+
 ### Release Package
 
 Go to [RELEASE](https://github.com/sdttttt/gcr/releases), download one you like.
+
 
 ### From Source
 
