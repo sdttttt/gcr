@@ -58,14 +58,7 @@ impl Repository {
         let tree = self.repo.find_tree(tree_id)?;
         let commit = self.find_last_commit()?;
 
-        self.repo.commit(
-            Some("HEAD"),
-            &current_sign,
-            &current_sign,
-            message,
-            &tree,
-            &[&commit],
-        )?;
+        self.repo.commit(Some("HEAD"), &current_sign, &current_sign, message, &tree, &[&commit])?;
 
         Ok(())
     }
@@ -107,8 +100,7 @@ impl Repository {
     // the last commit in this repository.
     fn find_last_commit(&self) -> Result<Commit, Error> {
         let obj = self.repo.head()?.resolve()?.peel(ObjectType::Commit)?;
-        obj.into_commit()
-            .map_err(|_| Error::from_str("not fonund Commit."))
+        obj.into_commit().map_err(|_| Error::from_str("not fonund Commit."))
     }
 
     // Check to see if the repository commit index is empty.

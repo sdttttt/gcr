@@ -1,50 +1,59 @@
 use dialoguer::{theme::ColorfulTheme, Input, Select};
 
+use crate::metadata::*;
 use crate::util::remove_pound_prefix;
 
-const SPACE: &str = " ";
-
-const COMMIT_TYPE_DESCRIPT: &[CommitTD] = &[
-    CommitTD("test", "Adding missing tests."),
-    CommitTD("feat", "A new feature."),
-    CommitTD("fix", "A bug fix."),
-    CommitTD("chore", "Build process or auxiliary tool changes."),
-    CommitTD("docs", "Documentation only changes."),
-    CommitTD(
-        "refactor",
-        "A code change that neither fixes a bug or adds a feature.",
-    ),
-    CommitTD(
-        "style",
-        "Markup, white-space, formatting, missing semi-colons...",
-    ),
-    CommitTD("perf", "A code change that improves performance."),
-    CommitTD("ci", "CI related changes."),
-];
-
-pub struct CommitTD(&'static str, &'static str);
+struct CommitTD(String, String);
 
 // Messsager is Commit Message struct.
 pub struct Messager {
+    commit_type_descript: Vec<CommitTD>,
+
     typ: String,
     scope: String,
     subject: String,
     body: String,
 }
 
+impl CommitTD {
+    pub fn from(a1: &str, a2: &str) -> Self {
+        Self(a1.to_string(), a2.to_string())
+    }
+}
+
 impl Messager {
     pub fn new() -> Self {
-        let typ = Self::ask_type();
-        let scope = Self::ask_scope();
-        let subject = Self::ask_subject();
-        let body = Self::build_body();
+        let commit_type_descript = BASE_COMMIT_TYPE_DESCRIPTION
+            .iter()
+            .map(|td: &(&str, &str)| CommitTD::from(td.0, td.1))
+            .collect();
+        let typ = String::new();
+        let scope = String::new();
+        let subject = String::new();
+        let body = String::new();
 
-        Self {
-            typ,
-            scope,
-            subject,
-            body,
-        }
+        Self { commit_type_descript, typ, scope, subject, body }
+    }
+
+    pub fn load_ext_td(mut self, t: &Vec<String>) -> Self {
+        let mut td = t
+            .iter()
+            .map(|typ: &String| -> CommitTD {
+                let arr_td = typ.split(SEPARATOR_SYMBOL).collect::<Vec<&str>>();
+                CommitTD::from(arr_td[0].trim(), arr_td[1].trim())
+            })
+            .collect::<Vec<CommitTD>>();
+        self.commit_type_descript.append(&mut td);
+        self.append_custom_td();
+        self
+    }
+
+    pub fn ask(mut self) -> Self {
+        self.ask_type();
+        self.ask_scope();
+        self.ask_subject();
+        self.build_body();
+        self
     }
 
     // generate commit message.
@@ -62,35 +71,39 @@ impl Messager {
         }
     }
 
+    fn append_custom_td(&mut self) {
+        self.commit_type_descript.push(CommitTD::from("<~>", "Define your commit type."))
+    }
+
     // generate commit long description.
-    fn build_body() -> String {
-        let description = Self::ask_description();
-        let closes = Self::ask_close();
+    fn build_body(&mut self) {
+        let description = self.ask_description();
+        let closes = self.ask_close();
 
         let mut body = String::new();
 
-        if description.len() != 0 {
+        if description.len() > 0 {
             body = description;
         };
 
-        if closes.len() != 0 {
+        if closes.len() > 0 {
             body = format!("{}\n\nClose #{}", body, closes);
         };
 
-        body
+        self.body = body
     }
 
     // type of commit message.
-    fn ask_type() -> String {
+    fn ask_type(&mut self) {
         let selection = Select::with_theme(&ColorfulTheme::default())
-            .items(&Self::type_list())
+            .items(&self.type_list())
             .default(0)
             .interact()
             .unwrap();
 
         // Custom TYPE.
-        if selection == COMMIT_TYPE_DESCRIPT.len() {
-            Input::with_theme(&ColorfulTheme::default())
+        if selection == self.commit_type_descript.len() - 1 {
+            self.typ = Input::with_theme(&ColorfulTheme::default())
                 .with_prompt("GRC: What Type ?")
                 .validate_with(|input: &str| -> Result<(), &str> {
                     if input.len() == 0 || input.trim().len() == 0 {
@@ -102,23 +115,23 @@ impl Messager {
                 .interact()
                 .unwrap()
         } else {
-            String::from(COMMIT_TYPE_DESCRIPT[selection].0)
+            self.typ = self.commit_type_descript[selection].0.clone()
         }
     }
 
     // scope of commit scope.
-    fn ask_scope() -> String {
+    fn ask_scope(&mut self) {
         let scope = Input::<String>::with_theme(&ColorfulTheme::default())
             .with_prompt("GRC: Which scope? (Optional)")
             .allow_empty(true)
             .interact()
             .unwrap();
 
-        String::from(scope.trim())
+        self.scope = String::from(scope.trim())
     }
 
-    fn ask_subject() -> String {
-        Input::<String>::with_theme(&ColorfulTheme::default())
+    fn ask_subject(&mut self) {
+        self.subject = Input::<String>::with_theme(&ColorfulTheme::default())
             .with_prompt("GRC: Commit Message ?")
             .validate_with(|input: &str| -> Result<(), &str> {
                 if input.len() == 0 || input.trim().len() == 0 {
@@ -131,7 +144,7 @@ impl Messager {
             .unwrap()
     }
 
-    fn ask_description() -> String {
+    fn ask_description(&self) -> String {
         let description = Input::<String>::with_theme(&ColorfulTheme::default())
             .with_prompt("GRC: Provide a longer description? (Optional)")
             .allow_empty(true)
@@ -141,7 +154,7 @@ impl Messager {
         String::from(description.trim())
     }
 
-    fn ask_close() -> String {
+    fn ask_close(&self) -> String {
         let closes = Input::<String>::with_theme(&ColorfulTheme::default())
             .with_prompt("GRC: PR & Issues this commit closes, e.g 123: (Optional)")
             .allow_empty(true)
@@ -151,8 +164,8 @@ impl Messager {
         String::from(remove_pound_prefix(closes.trim()))
     }
 
-    fn type_list() -> Vec<String> {
-        COMMIT_TYPE_DESCRIPT
+    fn type_list(&self) -> Vec<String> {
+        self.commit_type_descript
             .iter()
             .map(|td: &CommitTD| -> String {
                 let mut space = String::new();
@@ -174,8 +187,39 @@ mod tests {
 
     #[test]
     fn it_type_list() {
-        let result = Messager::type_list();
+        let tl = Messager::new().type_list();
+        assert_eq!(tl[0].as_str(), "test:       Adding missing tests.");
+        assert_eq!(tl[1].as_str(), "feat:       A new feature.");
+        assert_eq!(tl[2].as_str(), "fix:        A bug fix.");
+        assert_eq!(tl[3].as_str(), "chore:      Build process or auxiliary tool changes.");
+        assert_eq!(tl[4].as_str(), "docs:       Documentation only changes.");
+        assert_eq!(
+            tl[5].as_str(),
+            "refactor:   A code change that neither fixes a bug or adds a feature."
+        );
+        assert_eq!(
+            tl[6].as_str(),
+            "style:      Markup, white-space, formatting, missing semi-colons..."
+        );
+        assert_eq!(tl[7].as_str(), "perf:       A code change that improves performance.");
+        assert_eq!(tl[8].as_str(), "ci:         CI related changes.");
+    }
 
-        assert_eq!(result[0].as_str(), "test:       Adding missing tests.")
+    #[test]
+    fn it_load_ext_td() {
+        let tl =
+            Messager::new().load_ext_td(&vec!["this: yes, like this.".to_string()]).type_list();
+        assert_eq!(tl[9].as_str(), "this:       yes, like this.")
+    }
+
+    #[test]
+    fn it_build() {
+        let mut message = Messager::new();
+        message.typ = "type".to_string();
+        message.scope = "scope".to_string();
+        message.subject = "subject.".to_string();
+
+        let commit_msg = message.build();
+        assert_eq!(commit_msg.as_str(), "type(scope): subject.")
     }
 }

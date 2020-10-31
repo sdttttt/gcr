@@ -1,6 +1,6 @@
 [package]
 name = "grc"
-version = "0.8.1"
+version = "0.9.0-rc1"
 authors = ["sdttttt <sdttttt@outlook.com>"]
 description = "Similar to git-cz, gcr will help you to provide a better Git experience."
 edition = "2018"
@@ -10,8 +10,13 @@ keywords = ["git-cz", "git", "cli"]
 categories = ["command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[profile.release]
+lto = "fat"
+
 [dependencies]
 clap = "2.33.3"
 console = "0.13.0"
 git2 = "0.13"
 dialoguer = "0.6.2"
+toml = "0.5.7"
+serde = { version = "1.0.82", features = ["derive"] }
