@@ -41,13 +41,13 @@ impl Messager {
     }
 
     pub fn load_ext_td(mut self, td: Vec<CommitTD>) -> Self {
-		self.commit_type_descript = if td.len() > 0 {
-			[BASE_COMMIT_TYPE_DESCRIPTION, &td].concat() 
-		} else {
-			BASE_COMMIT_TYPE_DESCRIPTION.iter().cloned().collect()
-		};
-		
-		self
+        self.commit_type_descript = if td.len() > 0 {
+            [BASE_COMMIT_TYPE_DESCRIPTION, &td].concat()
+        } else {
+            BASE_COMMIT_TYPE_DESCRIPTION.iter().cloned().collect()
+        };
+
+        self
     }
 
     pub fn ask(mut self) -> Self {
