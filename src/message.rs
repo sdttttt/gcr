@@ -38,7 +38,7 @@ impl Messager {
     pub fn new() -> Self {
         let commit_type_descript = BASE_COMMIT_TYPE_DESCRIPTION
             .iter()
-            .map(|td: &(&str, &str)| -> CommitTD { CommitTD::from(td.0, td.1) })
+            .map(|td: &(&str, &str)| CommitTD::from(td.0, td.1))
             .collect();
         let typ = String::new();
         let scope = String::new();
