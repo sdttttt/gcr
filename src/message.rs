@@ -1,20 +1,7 @@
 use dialoguer::{theme::ColorfulTheme, Input, Select};
 
 use crate::util::remove_pound_prefix;
-
-const SPACE: &str = " ";
-
-const BASE_COMMIT_TYPE_DESCRIPTION: &[(&str, &str)] = &[
-    ("test", "Adding missing tests."),
-    ("feat", "A new feature."),
-    ("fix", "A bug fix."),
-    ("chore", "Build process or auxiliary tool changes."),
-    ("docs", "Documentation only changes."),
-    ("refactor", "A code change that neither fixes a bug or adds a feature."),
-    ("style", "Markup, white-space, formatting, missing semi-colons..."),
-    ("perf", "A code change that improves performance."),
-    ("ci", "CI related changes."),
-];
+use crate::metadata::*;
 
 struct CommitTD(String, String);
 
@@ -53,7 +40,7 @@ impl Messager {
             .iter()
             .map(|typ: &String| -> CommitTD {
                 let arr_td = typ.split(":").collect::<Vec<&str>>();
-                CommitTD::from(arr_td[0], arr_td[1])
+                CommitTD::from(arr_td[0].trim(), arr_td[1].trim())
             })
             .collect::<Vec<CommitTD>>();
         self.commit_type_descript.append(&mut td);
@@ -115,7 +102,7 @@ impl Messager {
             .unwrap();
 
         // Custom TYPE.
-        if selection == self.commit_type_descript.len() {
+        if selection == self.commit_type_descript.len() - 1 {
             self.typ = Input::with_theme(&ColorfulTheme::default())
                 .with_prompt("GRC: What Type ?")
                 .validate_with(|input: &str| -> Result<(), &str> {

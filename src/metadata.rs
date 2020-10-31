@@ -4,6 +4,22 @@ pub const NAME: &str = "GRC";
 pub const DESCRIPTION: &str =
     "I'm here to help you make it more standardized and convenient to use Git.";
 
+pub const SEPARATOR_SYMBOL: &str = ":";
+
+pub const SPACE: &str = " ";
+
+pub const BASE_COMMIT_TYPE_DESCRIPTION: &[(&str, &str)] = &[
+    ("test", "Adding missing tests."),
+    ("feat", "A new feature."),
+    ("fix", "A bug fix."),
+    ("chore", "Build process or auxiliary tool changes."),
+    ("docs", "Documentation only changes."),
+    ("refactor", "A code change that neither fixes a bug or adds a feature."),
+    ("style", "Markup, white-space, formatting, missing semi-colons..."),
+    ("perf", "A code change that improves performance."),
+    ("ci", "CI related changes."),
+];
+
 // GRC four commit modes.
 pub enum Mode {
     Auto,
