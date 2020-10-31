@@ -1,7 +1,7 @@
 use dialoguer::{theme::ColorfulTheme, Input, Select};
 
-use crate::util::remove_pound_prefix;
 use crate::metadata::*;
+use crate::util::remove_pound_prefix;
 
 struct CommitTD(String, String);
 
@@ -39,7 +39,7 @@ impl Messager {
         let mut td = t
             .iter()
             .map(|typ: &String| -> CommitTD {
-                let arr_td = typ.split(":").collect::<Vec<&str>>();
+                let arr_td = typ.split(SEPARATOR_SYMBOL).collect::<Vec<&str>>();
                 CommitTD::from(arr_td[0].trim(), arr_td[1].trim())
             })
             .collect::<Vec<CommitTD>>();
@@ -181,4 +181,31 @@ impl Messager {
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+
+    use super::*;
+
+    fn new_messager() -> Messager {
+        Messager::new()
+    }
+
+    #[test]
+    fn it_type_list() {
+        let tl = new_messager().type_list();
+        assert_eq!(tl[0].as_str(), "test:       Adding missing tests.");
+        assert_eq!(tl[1].as_str(), "feat:       A new feature.");
+        assert_eq!(tl[2].as_str(), "fix:        A bug fix.");
+        assert_eq!(tl[3].as_str(), "chore:      Build process or auxiliary tool changes.");
+        assert_eq!(tl[4].as_str(), "docs:       Documentation only changes.");
+        assert_eq!(
+            tl[5].as_str(),
+            "refactor:   A code change that neither fixes a bug or adds a feature."
+        );
+        assert_eq!(
+            tl[6].as_str(),
+            "style:      Markup, white-space, formatting, missing semi-colons..."
+        );
+        assert_eq!(tl[7].as_str(), "perf:       A code change that improves performance.");
+        assert_eq!(tl[8].as_str(), "ci:         CI related changes.");
+    }
+}
