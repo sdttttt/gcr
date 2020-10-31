@@ -4,20 +4,19 @@ use crate::util::remove_pound_prefix;
 
 const SPACE: &str = " ";
 
-const BASE_COMMIT_TYPE_DESCRIPTION: &[CommitTD] = &[
-    CommitTD("test", "Adding missing tests."),
-    CommitTD("feat", "A new feature."),
-    CommitTD("fix", "A bug fix."),
-    CommitTD("chore", "Build process or auxiliary tool changes."),
-    CommitTD("docs", "Documentation only changes."),
-    CommitTD("refactor", "A code change that neither fixes a bug or adds a feature."),
-    CommitTD("style", "Markup, white-space, formatting, missing semi-colons..."),
-    CommitTD("perf", "A code change that improves performance."),
-    CommitTD("ci", "CI related changes."),
+const BASE_COMMIT_TYPE_DESCRIPTION: &[(&str, &str)] = &[
+    ("test", "Adding missing tests."),
+    ("feat", "A new feature."),
+    ("fix", "A bug fix."),
+    ("chore", "Build process or auxiliary tool changes."),
+    ("docs", "Documentation only changes."),
+    ("refactor", "A code change that neither fixes a bug or adds a feature."),
+    ("style", "Markup, white-space, formatting, missing semi-colons..."),
+    ("perf", "A code change that improves performance."),
+    ("ci", "CI related changes."),
 ];
 
-#[derive(Clone)]
-pub struct CommitTD(pub &'static str, pub &'static str);
+struct CommitTD(String, String);
 
 // Messsager is Commit Message struct.
 pub struct Messager {
@@ -29,9 +28,18 @@ pub struct Messager {
     body: String,
 }
 
+impl CommitTD {
+    pub fn from(a1: &str, a2: &str) -> Self {
+        Self(a1.to_string(), a2.to_string())
+    }
+}
+
 impl Messager {
     pub fn new() -> Self {
-        let commit_type_descript = vec![];
+        let commit_type_descript = BASE_COMMIT_TYPE_DESCRIPTION
+            .iter()
+            .map(|td: &(&str, &str)| -> CommitTD { CommitTD::from(td.0, td.1) })
+            .collect();
         let typ = String::new();
         let scope = String::new();
         let subject = String::new();
@@ -40,13 +48,16 @@ impl Messager {
         Self { commit_type_descript, typ, scope, subject, body }
     }
 
-    pub fn load_ext_td(mut self, td: Vec<CommitTD>) -> Self {
-        self.commit_type_descript = if td.len() > 0 {
-            [BASE_COMMIT_TYPE_DESCRIPTION, &td].concat()
-        } else {
-            BASE_COMMIT_TYPE_DESCRIPTION.iter().cloned().collect()
-        };
-
+    pub fn load_ext_td(mut self, t: &Vec<String>) -> Self {
+        let mut td = t
+            .iter()
+            .map(|typ: &String| -> CommitTD {
+                let arr_td = typ.split(":").collect::<Vec<&str>>();
+                CommitTD::from(arr_td[0], arr_td[1])
+            })
+            .collect::<Vec<CommitTD>>();
+        self.commit_type_descript.append(&mut td);
+        self.append_custom_td();
         self
     }
 
@@ -71,6 +82,10 @@ impl Messager {
         } else {
             format!("{} \n\n{}", header, self.body)
         }
+    }
+
+    fn append_custom_td(&mut self) {
+        self.commit_type_descript.push(CommitTD::from("<~>", "Define your commit type."))
     }
 
     // generate commit long description.

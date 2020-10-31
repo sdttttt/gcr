@@ -3,50 +3,36 @@ use std::io::{Error, ErrorKind};
 
 use serde::Deserialize;
 
-use crate::message::CommitTD;
 use crate::metadata::GRC_CONFIG_FILE_NAME;
 
 #[derive(Deserialize)]
-pub struct GrcConfig {
+pub struct Extensions {
     #[serde(rename = "type")]
-    typ: Option<Vec<String>>,
+    typ: Vec<String>,
 }
 
-impl GrcConfig {
-    pub fn from_agreement() -> Result<Option<Self>, Error> {
+impl Extensions {
+    pub fn from_agreement() -> Result<Self, Error> {
         let file_str = Self::read_config_file(GRC_CONFIG_FILE_NAME)?;
         Ok(Self::deserialize(file_str)?)
     }
 
-    pub fn from(filename: &str) -> Result<Option<Self>, Error> {
+    pub fn from(filename: &str) -> Result<Self, Error> {
         let file_str = Self::read_config_file(filename)?;
         Ok(Self::deserialize(file_str)?)
     }
 
-    pub fn ext_td(&'static self) -> Option<Vec<CommitTD>> {
-        match &self.typ {
-            None => None,
-            Some(types) => {
-                let t = types
-                    .iter()
-                    .map(|typ: &String| -> CommitTD {
-                        let arr_td = typ.split(":").collect::<Vec<&str>>();
-                        CommitTD(arr_td[0], arr_td[1])
-                    })
-                    .collect();
-
-                Some(t)
-            }
-        }
+    pub fn types(&self) -> &Vec<String> {
+        &self.typ
     }
 
-    fn deserialize(file_str: String) -> Result<Option<Self>, Error> {
+    fn deserialize(file_str: String) -> Result<Self, Error> {
         if file_str.len() == 0 || file_str == "" {
-            return Ok(None);
+            return Ok(Self { typ: vec![] });
         }
 
-        let config = toml::from_str::<GrcConfig>(file_str.as_str())?;
-        Ok(Some(config))
+        let config = toml::from_str::<Extensions>(file_str.as_str())?;
+        Ok(config)
     }
 
     fn read_config_file(filename: &str) -> Result<String, Error> {
@@ -78,38 +64,38 @@ mod tests {
 
     #[test]
     fn it_read_config_file() {
-        let file_str = GrcConfig::read_config_file(GRC_TEST_CONFIG_FILE_NAME).unwrap();
+        let file_str = Extensions::read_config_file(GRC_TEST_CONFIG_FILE_NAME).unwrap();
         assert_eq!(file_str.as_str(), GRC_TEST_TOML_CONTENT);
 
-        let file_str2 = GrcConfig::read_config_file("nullfile").unwrap();
+        let file_str2 = Extensions::read_config_file("nullfile").unwrap();
         assert_eq!(file_str2.len(), 0);
         assert_eq!(file_str2.as_str(), "");
 
-        let config = GrcConfig::read_config_file(GRC_CONFIG_FILE_NAME).unwrap();
+        let config = Extensions::read_config_file(GRC_CONFIG_FILE_NAME).unwrap();
         assert_eq!(config.as_str(), GRC_TOML_CONTENT);
     }
 
     #[test]
     fn it_deserialize() {
         let file_str = String::from(GRC_TOML_CONTENT);
-        let result = GrcConfig::deserialize(file_str).unwrap().unwrap();
+        let result = Extensions::deserialize(file_str).unwrap();
 
-        let types = result.typ.as_ref().unwrap();
+        let types = result.typ;
         assert_eq!(types[0], GRC_TOML_TYPE);
     }
 
     #[test]
     fn it_from_agreement() {
-        let config = GrcConfig::from_agreement().unwrap().unwrap();
-        let types = config.typ.as_ref().unwrap();
+        let config = Extensions::from_agreement().unwrap();
+        let types = config.typ;
 
         assert_eq!(types[0], GRC_TOML_TYPE);
     }
 
     #[test]
     fn it_from() {
-        let config = GrcConfig::from(GRC_TEST_CONFIG_FILE_NAME).unwrap().unwrap();
-        let types = config.typ.as_ref().unwrap();
+        let config = Extensions::from(GRC_TEST_CONFIG_FILE_NAME).unwrap();
+        let types = config.typ;
 
         assert_eq!(types[0], GRC_TEST_TOML_TYPE);
     }

@@ -23,7 +23,7 @@ pub const ADD_COMMAND_NO_FILE: &str = "The add command requires parameters.";
 pub const PUSH_COMMAND: &str = "push";
 pub const PUSH_PARAMS: &str = "push_file_name";
 pub const PUSH_COMMAND_SHORT: &str = "p";
-// TODO: Fill in the `push` command help
+
 pub const PUSH_COMMAND_HELP: &str = "...";
 pub const PUSH_COMMAND_NO_FILE: &str = "The 'push' command requires parameters.";
 
