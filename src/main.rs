@@ -45,7 +45,7 @@ fn main() {
     }
 
     // commit message.
-    let message = Messager::new().ask().build();
+    let message = Messager::new().load_ext_td(vec![]).ask().build();
     gcr_println(&message);
 
     // Git commit
