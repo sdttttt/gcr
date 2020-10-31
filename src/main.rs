@@ -1,4 +1,5 @@
 mod arguments;
+mod extensions;
 mod log;
 mod message;
 mod metadata;
@@ -6,13 +7,13 @@ mod repo;
 mod util;
 
 use arguments::*;
+use extensions::*;
 use log::*;
 use message::*;
 use repo::*;
 use util::*;
 
 fn main() {
-
     // input parameters.
     let arg = {
         match Arguments::collect() {
@@ -44,8 +45,14 @@ fn main() {
         return;
     }
 
+    let mut types: Vec<String> = vec![];
+
+    if let Ok(extends) = Extensions::from_agreement() {
+        types = extends.types().clone();
+    }
+
     // commit message.
-    let message = Messager::new().build();
+    let message = Messager::new().load_ext_td(&types).ask().build();
     gcr_println(&message);
 
     // Git commit

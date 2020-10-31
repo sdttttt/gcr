@@ -2,9 +2,9 @@ name: Rust
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master ]
   pull_request:
-    branches: "*"
+    branches: [ master ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -36,16 +36,16 @@ jobs:
           target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         
-    - name: Lint Code Base
-      if: ${{ runner.os != 'Windows' }}
-      uses: github/super-linter@v3
-      env:
-        VALIDATE_ALL_CODEBASE: false
-        DEFAULT_BRANCH: master
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Lint Code Base
+    #   if: ${{ runner.os != 'Windows' }}
+    #   uses: github/super-linter@v3
+    #   env:
+    #     VALIDATE_ALL_CODEBASE: false
+    #     DEFAULT_BRANCH: master
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Run tests
-      run: cargo test --verbose
+      run: make test
   
     - name: Run cargo-tarpaulin
       if: ${{ runner.os == 'Linux' }}
@@ -56,6 +56,6 @@ jobs:
     - name: Upload to codecov.io
       if: ${{ runner.os == 'Linux' }}
       run: bash <(curl -s https://codecov.io/bash)
-  
+
     - name: Build
-      run: cargo build --release --verbose
+      run: make

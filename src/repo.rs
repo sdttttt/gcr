@@ -1,9 +1,9 @@
 use git2::{
-    Commit, Error, Index, IndexAddOption, ObjectType, Repository as GRepository, Signature, StatusOptions, Statuses,
+    Commit, Error, Index, IndexAddOption, ObjectType, Repository as GRepository, Signature,
+    StatusOptions, Statuses,
 };
 
 use crate::{arguments::Arguments, metadata::Mode, util::is_all_workspace};
-
 
 // Repository in GRC.
 // is git2::Repository Encapsulation.
@@ -26,9 +26,9 @@ impl Repository {
         match self.arg.command_mode() {
             Mode::Commit => self.check_index()?,
             Mode::Add => self.add_files(self.arg.files())?,
-            Mode::Auto => {},
+            Mode::Auto => {}
             Mode::AddAll => self.add_all_files()?,
-            Mode::Push => {},
+            Mode::Push => {}
         };
 
         Ok(())
@@ -58,14 +58,7 @@ impl Repository {
         let tree = self.repo.find_tree(tree_id)?;
         let commit = self.find_last_commit()?;
 
-        self.repo.commit(
-            Some("HEAD"),
-            &current_sign,
-            &current_sign,
-            message,
-            &tree,
-            &[&commit],
-        )?;
+        self.repo.commit(Some("HEAD"), &current_sign, &current_sign, message, &tree, &[&commit])?;
 
         Ok(())
     }
@@ -94,7 +87,7 @@ impl Repository {
     // add all files to Repository commit index.
     fn add_all_files(&self) -> Result<(), Error> {
         let mut index = self.index()?;
-        index.add_all(["*"].iter(),IndexAddOption::DEFAULT ,None)?;
+        index.add_all(["*"].iter(), IndexAddOption::DEFAULT, None)?;
         index.write()?;
         Ok(())
     }
@@ -107,8 +100,7 @@ impl Repository {
     // the last commit in this repository.
     fn find_last_commit(&self) -> Result<Commit, Error> {
         let obj = self.repo.head()?.resolve()?.peel(ObjectType::Commit)?;
-        obj.into_commit()
-            .map_err(|_| Error::from_str("not fonund Commit."))
+        obj.into_commit().map_err(|_| Error::from_str("not fonund Commit."))
     }
 
     // Check to see if the repository commit index is empty.

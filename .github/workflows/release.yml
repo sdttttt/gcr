@@ -44,7 +44,7 @@ jobs:
       - name: Publish to crates.io
         run: |
           cargo login ${{ env.CARGO_LOGIN_TOKEN }}
-          cargo publish -v
+          make publish
         env:
           CARGO_LOGIN_TOKEN: ${{ secrets.CARGO_LOGIN_TOKEN }}
   
@@ -82,7 +82,7 @@ jobs:
       run: |
         cargo build --release --verbose
         zip --junk-paths grc.zip ./target/release/grc
-    
+
     - name: Build on Windows
       if: ${{ runner.os == 'Windows' }}
       run: |

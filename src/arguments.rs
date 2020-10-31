@@ -11,8 +11,6 @@ pub struct Arguments {
 
 // Get the external parameter and analyze it. Construct the behavior of GRC.
 impl Arguments {
-
-
     // get the external parameter.
     pub fn collect() -> Result<Self, Error> {
         let matches = Self::cli().get_matches();
@@ -38,7 +36,7 @@ impl Arguments {
             .author(AUTHOR)
             .about(DESCRIPTION)
             .args(&[Self::add_arg(ADD_PARAMS)])
-           // .args(&[Self::push_arg(PUSH_PARAMS), Self::add_arg(ADD_PARAMS)])
+        // .args(&[Self::push_arg(PUSH_PARAMS), Self::add_arg(ADD_PARAMS)])
     }
 
     fn push_arg(params_name: &str) -> Arg {
@@ -105,11 +103,11 @@ mod tests {
     }
 
     #[test]
-    fn add_all_mode() {
+    fn add_all_mode() -> Result<(), &'static str> {
         let args = quick_command_run(vec!["grc", "--add", "."]);
         match args.command_mode() {
-            Mode::AddAll => {}
-            _ => panic!("NOT ADDALL MODE!"),
+            Mode::AddAll => Ok(()),
+            _ => Err("NOT ADDALL MODE!"),
         }
     }
 
@@ -170,9 +168,10 @@ mod tests {
 
         let args = quick_command_run(vec!["grc", "--add", file_1, file_2, file_3]);
         for file_name in args.files() {
-            if file_name.as_str() != file_1 
-            && file_name.as_str() != file_2
-            && file_name.as_str() != file_3 {
+            if file_name.as_str() != file_1
+                && file_name.as_str() != file_2
+                && file_name.as_str() != file_3
+            {
                 panic!("NOT THIS FILE NAME.")
             }
         }

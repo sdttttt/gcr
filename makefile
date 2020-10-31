@@ -11,7 +11,7 @@ build-dev: fmt
 
 .PHONY: run
 run: fmt
-	$(c) run -a .
+	$(c) run
 
 .PHONY: test
 test: fmt

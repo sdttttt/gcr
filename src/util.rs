@@ -68,7 +68,6 @@ mod tests {
         assert_eq!(str_4, result_2);
     }
 
-    
     #[test]
     fn test_vec_str_to_string() {
         let one = "1";

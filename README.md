@@ -57,6 +57,22 @@ grc -a .
 grc -a <filename>...
 ```
 
+### GRC config file
+
+> **TIP:**
+> This feature is supported above version 0.9.0
+
+You can append custom commit types in the `grc.toml` configuration file:
+
+```toml
+# A semicolon separates the type from the description of the type.
+type = [
+    "type: this is new commit type."
+]
+```
+
 ## IDEA
 
 If you have any new ideas, you are welcome to talk to me.
+
+`grc` has taken over all git submissions from @sdttttt.
