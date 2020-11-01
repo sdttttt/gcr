@@ -1,4 +1,4 @@
-name: Rust
+name: Linux
 
 on:
   push:
@@ -14,6 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
+        toolchain: [nightly, stable]
 
     runs-on: ${{ matrix.os }}
 
@@ -27,11 +28,10 @@ jobs:
           ~/.cargo/git
           target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
- 
 
     - uses: actions-rs/toolchain@v1
       with:
-        toolchain: nightly
+        toolchain: ${{ matrix.toolchain }}
         override: true
 
     - uses: actions-rs/cargo@v1
