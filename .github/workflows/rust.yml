@@ -35,23 +35,17 @@ jobs:
         path: |
           target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-        
-    # - name: Lint Code Base
-    #   if: ${{ runner.os != 'Windows' }}
-    #   uses: github/super-linter@v3
-    #   env:
-    #     VALIDATE_ALL_CODEBASE: false
-    #     DEFAULT_BRANCH: master
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Run tests
       run: make test
   
-    - name: Run cargo-tarpaulin
+    - uses: actions-rs/grcov@v0.1
       if: ${{ runner.os == 'Linux' }}
-      uses: actions-rs/tarpaulin@v0.1
-      with:
-        args: '-- --test-threads 1'
+  
+#     - uses: actions-rs/tarpaulin@v0.1
+#       if: ${{ runner.os == 'Linux' }}
+#       with:
+#         args: '-- --test-threads 1'
 
     - name: Upload to codecov.io
       if: ${{ runner.os == 'Linux' }}
