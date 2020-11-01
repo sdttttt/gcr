@@ -8,6 +8,7 @@ GRC终于是诞生了. 我在构思程序的结构上花了很多时间.
 
 如果你喜欢GRC,欢迎你提出新的意见, 当然, 如果你能贡献PR我会非常高兴.
 
+![](https://imgkr2.cn-bj.ufileos.com/25979a0d-ee6c-48a7-81e4-0648c4fcd5f4.jpg?UCloudPublicKey=TOKEN_8d8b72be-579a-4e83-bfd0-5f6ce1546f13&Signature=LrdIdA8EUi70H65B3bonpzvLwuY%253D&Expires=1604294886)
 
 ---
 
