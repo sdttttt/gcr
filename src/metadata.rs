@@ -1,8 +1,9 @@
 pub const VERSION: &str = "0.9.0-rc1";
 pub const AUTHOR: &str = "SDTTTTT. <sdttttt@outlook.com>";
 pub const NAME: &str = "GRC";
-pub const DESCRIPTION: &str =
-    "I'm here to help you make it more standardized and convenient to use Git.";
+pub const DESCRIPTION: &str = r#"
+	I'm here to help you make it more standardized and convenient to use Git.
+	"#;
 
 pub const SEPARATOR_SYMBOL: &str = ":";
 
