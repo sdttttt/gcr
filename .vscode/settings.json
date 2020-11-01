@@ -1,4 +1,3 @@
 {
-	"editor.fontSize": 17,
-	"editor.fontFamily": "Consolas,Fira Code, Cascadia Code, 'Courier New', monospace"
+	"editor.fontFamily": "Consolas, 'Courier New', monospace"
 }
