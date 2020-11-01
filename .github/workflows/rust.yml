@@ -37,11 +37,13 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
     - uses: actions-rs/toolchain@v1
+      if: ${{ runner.os == 'Linux' }}
       with:
         toolchain: nightly
         override: true
 
     - uses: actions-rs/cargo@v1
+      if: ${{ runner.os == 'Linux' }}
       with:
         command: test
         args: --all-features --no-fail-fast
