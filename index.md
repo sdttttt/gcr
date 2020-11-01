@@ -1,37 +1,23 @@
-## Welcome to GitHub Pages
+## Welcome to GRC site.
 
-You can use the [editor on GitHub](https://github.com/sdttttt/gcr/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+欢迎来到GRC的小网站, 我是@sdttttt, 其实开发GRC的初衷很简单, 只是想把git-cz从nodejs的环境拿出来. 加上一些我认为更棒的功能.
+GRC是由Rust编写的, 别担心, 我是一位Rust的新手, GRC的源代码也并不复杂. 除去单元测试, 有效代码实际上只有几百行.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+在编写GRC的时期, 我每天都和`rustc`吵架, 不过在最后的我们双方都妥协了. 
+GRC终于是诞生了. 我在构思程序的结构上花了很多时间.
 
-### Markdown
+如果你喜欢GRC,欢迎你提出新的意见, 当然, 如果你能贡献PR我会非常高兴.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
-```markdown
-Syntax highlighted code block
+---
 
-# Header 1
-## Header 2
-### Header 3
+Welcome to the GRC site. I'm @sdttttt. The original purpose of GRC development was simple: to take gIT-CZ out of the NodeJS environment. Add some features that I think are even better.
 
-- Bulleted
-- List
+GRC is written by Rust. Don't worry, I am new to Rust, and GRC source code is not complicated. Apart from the unit tests, there are actually only a few hundred lines of valid code.
 
-1. Numbered
-2. List
 
-**Bold** and _Italic_ and `Code` text
 
-[Link](url) and ![Image](src)
-```
+During the writing of GRC, I quarreled with 'RUstc' every day, but in the end we both gave in.
+GRC was finally born. I spent a lot of time thinking about the structure of the program.
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/sdttttt/gcr/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+If you like GRC, you are welcome to make new Suggestions. Of course, I would be very happy if you could contribute PR.
