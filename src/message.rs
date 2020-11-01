@@ -105,7 +105,7 @@ impl Messager {
         if selection == self.commit_type_descript.len() - 1 {
             self.typ = Input::with_theme(&ColorfulTheme::default())
                 .with_prompt("GRC: What Type ?")
-                .validate_with(|input: &str| -> Result<(), &str> {
+                .validate_with(|input: &String| -> Result<(), &str> {
                     if input.len() == 0 || input.trim().len() == 0 {
                         Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
                     } else {
@@ -133,7 +133,7 @@ impl Messager {
     fn ask_subject(&mut self) {
         self.subject = Input::<String>::with_theme(&ColorfulTheme::default())
             .with_prompt("GRC: Commit Message ?")
-            .validate_with(|input: &str| -> Result<(), &str> {
+            .validate_with(|input: &String| -> Result<(), &str> {
                 if input.len() == 0 || input.trim().len() == 0 {
                     Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
                 } else {
