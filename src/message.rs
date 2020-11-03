@@ -5,7 +5,7 @@ use crate::util::remove_pound_prefix;
 
 struct CommitTD(String, String);
 
-// Messsager is Commit Message struct.
+/// Messsager is Commit Message struct.
 pub struct Messager {
     commit_type_descript: Vec<CommitTD>,
 
@@ -35,6 +35,7 @@ impl Messager {
         Self { commit_type_descript, typ, scope, subject, body }
     }
 
+	/// Load externally provided extension types.
     pub fn load_ext_td(mut self, t: &Vec<String>) -> Self {
         let mut td = t
             .iter()
@@ -48,6 +49,7 @@ impl Messager {
         self
     }
 
+	// got commit message for self.
     pub fn ask(mut self) -> Self {
         self.ask_type();
         self.ask_scope();
@@ -56,7 +58,7 @@ impl Messager {
         self
     }
 
-    // generate commit message.
+    /// generate commit message.
     pub fn build(&self) -> String {
         let header = if self.scope.trim().len() == 0 {
             format!("{}: {}", self.typ, self.subject)
@@ -75,7 +77,7 @@ impl Messager {
         self.commit_type_descript.push(CommitTD::from("<~>", "Define your commit type."))
     }
 
-    // generate commit long description.
+    /// generate commit long description.
     fn build_body(&mut self) {
         let description = self.ask_description();
         let closes = self.ask_close();
@@ -93,7 +95,7 @@ impl Messager {
         self.body = body
     }
 
-    // type of commit message.
+    /// type of commit message.
     fn ask_type(&mut self) {
         let selection = Select::with_theme(&ColorfulTheme::default())
             .items(&self.type_list())
@@ -119,7 +121,7 @@ impl Messager {
         }
     }
 
-    // scope of commit scope.
+    /// scope of commit message.
     fn ask_scope(&mut self) {
         let scope = Input::<String>::with_theme(&ColorfulTheme::default())
             .with_prompt("GRC: Which scope? (Optional)")
@@ -130,6 +132,7 @@ impl Messager {
         self.scope = String::from(scope.trim())
     }
 
+	/// subject of commit message.
     fn ask_subject(&mut self) {
         self.subject = Input::<String>::with_theme(&ColorfulTheme::default())
             .with_prompt("GRC: Commit Message ?")
@@ -144,6 +147,7 @@ impl Messager {
             .unwrap()
     }
 
+	/// description of commit message.
     fn ask_description(&self) -> String {
         let description = Input::<String>::with_theme(&ColorfulTheme::default())
             .with_prompt("GRC: Provide a longer description? (Optional)")
@@ -154,6 +158,7 @@ impl Messager {
         String::from(description.trim())
     }
 
+	// close PR or issue of commit message.
     fn ask_close(&self) -> String {
         let closes = Input::<String>::with_theme(&ColorfulTheme::default())
             .with_prompt("GRC: PR & Issues this commit closes, e.g 123: (Optional)")
@@ -164,6 +169,7 @@ impl Messager {
         String::from(remove_pound_prefix(closes.trim()))
     }
 
+	// self.commit_type_descript { Vec<CommitTD> } convert to { Vec<String> }.
     fn type_list(&self) -> Vec<String> {
         self.commit_type_descript
             .iter()

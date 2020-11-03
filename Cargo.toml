@@ -3,6 +3,8 @@ name = "grc"
 version = "0.9.0-rc.1"
 authors = ["sdttttt <sdttttt@outlook.com>"]
 description = "Similar to git-cz, gcr will help you to provide a better Git experience."
+readme = "README.md"
+exclude = ["/.github/", "/rustfmt.toml"]
 edition = "2018"
 license = "MIT"
 repository = "https://github.com/sdttttt/gcr.git"
@@ -11,7 +13,7 @@ categories = ["command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [profile.release]
-lto = "fat"
+lto = true
 
 [dependencies]
 clap = "2.33.3"

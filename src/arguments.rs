@@ -4,6 +4,7 @@ use git2::Error;
 use crate::metadata::*;
 use crate::util::*;
 
+/// Parse the behavior and extra parameters of GRC by entering commands.
 pub struct Arguments {
     mode: Mode,
     params: Vec<String>,
@@ -14,7 +15,6 @@ impl Arguments {
     // get the external parameter.
     pub fn collect() -> Result<Self, Error> {
         let matches = Self::cli().get_matches();
-
         Self::resolve_command(matches)
     }
 
@@ -59,7 +59,7 @@ impl Arguments {
             .takes_value(true)
     }
 
-    // Construct the behavior according to the input parameters.
+    /// Construct the behavior according to the input parameters.
     fn resolve_command(matches: ArgMatches) -> Result<Self, Error> {
         let arg: Self;
         if matches.is_present(ADD_PARAMS) {
