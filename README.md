@@ -3,6 +3,7 @@
  ![](https://img.shields.io/crates/v/grc.svg)
 ![Rust](https://github.com/sdttttt/gcr/workflows/Rust/badge.svg)
 ![Release](https://github.com/sdttttt/gcr/workflows/Release/badge.svg)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6501c2d5bc19413dbbd297c6ee39e060)](https://app.codacy.com/gh/sdttttt/gcr?utm_source=github.com&utm_medium=referral&utm_content=sdttttt/gcr&utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/sdttttt/gcr/branch/master/graph/badge.svg)](https://codecov.io/gh/sdttttt/gcr)
 
 Standardized Git submission tool. “Grc” is a temporary name.
