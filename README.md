@@ -66,7 +66,7 @@ grc -a <filename>...
 You can append custom commit types in the `grc.toml` configuration file:
 
 ```toml
-# A semicolon separates the type from the description of the type.
+# A colon separates the type from the description of the type.
 type = [
     "type: this is new commit type."
 ]
