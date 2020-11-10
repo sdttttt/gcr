@@ -63,7 +63,7 @@ grc -a <filename>...
 > **TIP:**
 > This feature is supported above version 0.9.0
 
-You can append custom commit types in the `grc.toml` configuration file:
+You can append custom commit types in the `grc.toml` configuration file at repo root directory:
 
 ```toml
 # A colon separates the type from the description of the type.
