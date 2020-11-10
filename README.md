@@ -74,7 +74,7 @@ type = [
 
 ## Contributor
 
-Thank [@KlausDevWalker](https://github.com/KlausDevWalker) for questions about Docs.
+Thanks to [@KlausDevWalker](https://github.com/KlausDevWalker) for helping the docs get better.
 
 ## IDEA
 
