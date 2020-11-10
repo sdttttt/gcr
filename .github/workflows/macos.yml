@@ -42,7 +42,7 @@ jobs:
     - uses: actions-rs/grcov@v0.1.5
   
     - name: Coverage
-      if: ${{ stable == matrix.toolchain }}
+      if: ${{ 'stable' == matrix.toolchain }}
       run: |
         cargo install cargo-tarpaulin
         cargo tarpaulin --out Xml
