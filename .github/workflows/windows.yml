@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        toolchain: [nightly]
+        toolchain: [nightly, beta, stable]
 
     runs-on: ${{ matrix.os }}
 
@@ -36,7 +36,7 @@ jobs:
     - uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --all-features --no-fail-fast
+        args: --no-fail-fast
 
     - uses: actions-rs/cargo@v1
       with:
