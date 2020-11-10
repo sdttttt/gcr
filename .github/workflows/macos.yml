@@ -41,9 +41,6 @@ jobs:
         command: test
         args: --no-fail-fast
 
-    - name: Upload to codecov.io
-      run: bash <(curl -s https://codecov.io/bash)
-
     - uses: actions-rs/cargo@v1
       with:
         command: build
