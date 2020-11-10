@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest]
-        toolchain: [nightly, beta, stable]
+        toolchain: [nightly]
 
     runs-on: ${{ matrix.os }}
 
@@ -33,6 +33,8 @@ jobs:
       with:
         toolchain: ${{ matrix.toolchain }}
         override: true
+        profile: minimal
+        default: true
 
     - uses: actions-rs/cargo@v1
       with:
