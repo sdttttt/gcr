@@ -72,8 +72,14 @@ type = [
 ]
 ```
 
+## Contributor
+
+Thank [@KlausDevWalker](https://github.com/KlausDevWalker) for questions about Docs.
+
 ## IDEA
 
 If you have any new ideas, you are welcome to talk to me.
 
-`grc` has taken over all git submissions from @sdttttt.
+`grc` has taken over all git submissions from @sdttttt
+
+
