@@ -38,8 +38,6 @@ jobs:
       with:
         command: test
         args: --no-fail-fast
-
-    - uses: actions-rs/grcov@v0.1.5
   
     - name: Coverage
       if: ${{ 'stable' == matrix.toolchain }}
