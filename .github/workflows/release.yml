@@ -78,7 +78,13 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
   
     - name: Build on UNIX
-      if: ${{ runner.os != 'Windows' }}
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        cargo build --release --verbose
+        zip --junk-paths grc.zip ./target/release/grc
+
+    - name: Build on MacOS
+      if: ${{ runner.os == 'macOS' }}
       run: |
         cargo build --release --verbose
         zip --junk-paths grc.zip ./target/release/grc
