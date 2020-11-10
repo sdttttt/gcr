@@ -41,4 +41,9 @@ jobs:
     - uses: actions-rs/cargo@v1
       with:
         command: build
-        args: --release
+        args: --release -v
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: grc.exe
+        path: target\release\grc.exe
