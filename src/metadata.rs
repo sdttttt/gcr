@@ -9,6 +9,8 @@ pub const SEPARATOR_SYMBOL: &str = ":";
 
 pub const SPACE: &str = " ";
 
+pub const GLOBAL_CONFIG_PATH: &str = ".config/grc/grc.toml";
+
 pub const BASE_COMMIT_TYPE_DESCRIPTION: &[(&str, &str)] = &[
     ("test", "Adding missing tests."),
     ("feat", "A new feature."),
