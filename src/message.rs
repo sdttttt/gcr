@@ -1,6 +1,6 @@
 use dialoguer::{theme::ColorfulTheme, Input, Select};
 
-use crate::log::gcr_err_println;
+use crate::log::grc_err_println;
 use crate::metadata::*;
 use crate::util::remove_pound_prefix;
 
@@ -43,7 +43,7 @@ impl Messager {
             .map(|typ: &String| -> CommitTD {
 				let arr_td = typ.split(SEPARATOR_SYMBOL).collect::<Vec<&str>>();
 				if arr_td.len() < 2 {
-					gcr_err_println("configuration file has not been parsed correctly. Please check your configuration content.");
+					grc_err_println("configuration file has not been parsed correctly. Please check your configuration content.");
 					std::process::exit(1);
 				};
                 CommitTD::from(arr_td[0].trim(), arr_td[1].trim())

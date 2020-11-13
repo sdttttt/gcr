@@ -3,12 +3,12 @@ use std::fmt::Display;
 use console::Style;
 
 // GCR logger.
-pub fn gcr_println(content: impl Display) {
+pub fn grc_println(content: impl Display) {
     println!("GRC: {}", content)
 }
 
 // GCR error logger.
-pub fn gcr_err_println(content: impl Display) {
+pub fn grc_err_println(content: impl Display) {
     let color = Style::new().red();
     let output = format!("GRC(ERROR): {}", content);
 
@@ -22,11 +22,11 @@ mod tests {
 
     #[test]
     fn test_gcr_println() {
-        gcr_println("TEST CONTENT.");
+        grc_println("TEST CONTENT.");
     }
 
     #[test]
     fn test_gcr_err_println() {
-        gcr_err_println("TEST ERROR CONTENT.");
+        grc_err_println("TEST ERROR CONTENT.");
     }
 }

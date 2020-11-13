@@ -18,7 +18,7 @@ fn main() {
     let arg = match Arguments::collect() {
         Ok(a) => a,
         Err(e) => {
-            gcr_err_println(e.message());
+            grc_err_println(e.message());
             return;
         }
     };
@@ -30,7 +30,7 @@ fn main() {
     let repo = match Repository::new(path, arg) {
         Ok(r) => r,
         Err(e) => {
-            gcr_err_println(e.message());
+            grc_err_println(e.message());
             return;
         }
     };
@@ -45,21 +45,21 @@ fn main() {
 
     // commit message.
     let message = Messager::new().load_ext_td(&types).ask().build();
-    gcr_println(&message);
+    grc_println(&message);
 
     // before commit hook.
     if let Err(e) = repo.pre_commit() {
-        gcr_err_println(e.message());
+        grc_err_println(e.message());
         return;
     }
 
     // Git commit
     if let Err(e) = repo.commit(message.as_str()) {
-        gcr_err_println(e.message());
+        grc_err_println(e.message());
     }
 
     // after commit hook.
     if let Err(e) = repo.after_commit() {
-        gcr_err_println(e.message());
+        grc_err_println(e.message());
     }
 }
