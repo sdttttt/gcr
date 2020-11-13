@@ -2,7 +2,7 @@ name: Windows
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master ]
   pull_request:
     branches: [ master, develop ]
 
@@ -26,7 +26,7 @@ jobs:
         path: |
           target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
- 
+
 
     - uses: actions-rs/toolchain@v1
       with:
