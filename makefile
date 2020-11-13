@@ -26,5 +26,4 @@ publish: fmt
 	$(c) publish -v
 
 .PHONY: commit
-commit: fmt test
-	$(g) -a .
+commit: fmt test run

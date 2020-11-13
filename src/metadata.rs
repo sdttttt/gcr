@@ -9,6 +9,9 @@ pub const SEPARATOR_SYMBOL: &str = ":";
 
 pub const SPACE: &str = " ";
 
+pub const GIT_AUTHOR_NAME: &str = "GIT_AUTHOR_NAME";
+pub const GIT_AUTHOR_EMAIL: &str = "GIT_AUTHOR_EMAIL";
+
 pub const GLOBAL_CONFIG_PATH: &str = ".config/grc/grc.toml";
 
 pub const BASE_COMMIT_TYPE_DESCRIPTION: &[(&str, &str)] = &[

@@ -2,9 +2,13 @@ use git2::{
     Commit, Error, Index, IndexAddOption, ObjectType, Repository as GRepository, Signature,
     StatusOptions, Statuses,
 };
+use std::env;
 
-use crate::{arguments::Arguments, metadata::Mode, util::is_all_workspace};
-
+use crate::{
+    arguments::Arguments,
+    metadata::Mode,
+    util::{git_sign_from_env, is_all_workspace},
+};
 // Repository in GRC.
 // is git2::Repository Encapsulation.
 pub struct Repository {
@@ -49,7 +53,6 @@ impl Repository {
 
     // execute git commit.
     pub fn commit(&self, message: &str) -> Result<(), Error> {
-        let current_sign = self.generate_sign();
         let tree_id = {
             let mut index = self.repo.index()?;
             index.write_tree()?
@@ -57,6 +60,14 @@ impl Repository {
 
         let tree = self.repo.find_tree(tree_id)?;
         let commit = self.find_last_commit()?;
+
+        let current_sign = match self.generate_sign() {
+            Ok(sign) => sign,
+            Err(_) => match git_sign_from_env() {
+                Ok(sign) => sign,
+                Err(e) => return Err(e),
+            },
+        };
 
         self.repo.commit(Some("HEAD"), &current_sign, &current_sign, message, &tree, &[&commit])?;
 
@@ -92,9 +103,9 @@ impl Repository {
         Ok(())
     }
 
-    // get sigin(email, authot ... ) from git config.
-    fn generate_sign(&self) -> Signature<'static> {
-        self.repo.signature().unwrap()
+    // get sigin(email, author ... ) from git config.
+    fn generate_sign(&self) -> Result<Signature<'static>, Error> {
+        self.repo.signature()
     }
 
     // the last commit in this repository.
