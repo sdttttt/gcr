@@ -1,0 +1,6 @@
+## Please check these before the version is released.
+
+1. Modify the constant in metadata.rs.
+2. Modify the properties in cargo.toml.
+3. Update your documents. (README)
+4. Figure out the type of version you released.
