@@ -1,5 +1,7 @@
-use git2::{Status, Statuses};
-use std::fs;
+use git2::{Error, Signature, Status, Statuses};
+use std::{env, fs};
+
+use crate::metadata::{GIT_AUTHOR_EMAIL, GIT_AUTHOR_NAME};
 
 pub fn current_path() -> String {
     let path = fs::canonicalize(".").unwrap();
@@ -40,6 +42,21 @@ pub fn vec_str_to_string(vec: Vec<&str>) -> Vec<String> {
         result.push(String::from(s));
     }
     result
+}
+
+pub fn git_sign_from_env() -> Result<Signature<'static>, Error> {
+    let username = match env::var(GIT_AUTHOR_NAME) {
+        Ok(v) => v,
+        Err(e) => return Err(Error::from_str(e.to_string().as_str())),
+    };
+
+    let email = match env::var(GIT_AUTHOR_EMAIL) {
+        Ok(v) => v,
+        Err(e) => return Err(Error::from_str(e.to_string().as_str())),
+    };
+
+    let sign = Signature::now(username.as_str(), email.as_str())?;
+    Ok(sign)
 }
 
 #[cfg(test)]
