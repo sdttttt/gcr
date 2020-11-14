@@ -14,7 +14,7 @@ Similar to `git-cz`, grc will help you to provide a better Git experience.
 
 You can install **grc** in the following ways:
 
-### From Cargo
+### From crates.io
 
 Please Run:
 
@@ -31,14 +31,8 @@ Go to [RELEASE](https://github.com/sdttttt/gcr/releases), download one you like.
 Please Run:
 
 ```sh
-git clone --depth=1 https://github.com/sdttttt/gcr.git
-
-cd gcr
-
-cargo build --release
+cargo install --git https://github.com/sdttttt/gcr.git
 ```
-
-grc under `target/release/`.
 
 ## Using
 
