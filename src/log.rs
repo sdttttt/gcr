@@ -36,11 +36,10 @@ mod tests {
     #[test]
     fn it_grc_err_println() {
         grc_err_println("TEST ERROR CONTENT.");
-	}
-	
+    }
 
-	#[test]
-	fn it_grc_warn_println() {
-		grc_warn_println("TEST WARN CONTENT.");
-	}
+    #[test]
+    fn it_grc_warn_println() {
+        grc_warn_println("TEST WARN CONTENT.");
+    }
 }

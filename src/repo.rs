@@ -5,12 +5,13 @@ use git2::{
 
 use crate::{
     arguments::Arguments,
-    log::grc_err_println,
+    log::{grc_err_println, grc_warn_println, grc_println},
     metadata::Mode,
-    util::{git_sign_from_env, is_all_workspace},
+    util::{author_sign_from_env, committer_sign_from_env, is_all_workspace},
 };
-// Repository in GRC.
-// is git2::Repository Encapsulation.
+
+/// Repository in GRC.
+/// is git2::Repository Encapsulation.
 pub struct Repository {
     repo: git2::Repository,
     arg: Arguments,
@@ -25,7 +26,7 @@ impl Repository {
         }
     }
 
-    // actions before commit.
+    /// actions before commit.
     pub fn pre_commit(&self) -> Result<(), Error> {
         match self.arg.command_mode() {
             Mode::Commit => self.check_index()?,
@@ -38,7 +39,7 @@ impl Repository {
         Ok(())
     }
 
-    // actions after commit.
+    /// actions after commit.
     pub fn after_commit(&self) -> Result<(), Error> {
         match self.arg.command_mode() {
             Mode::Commit => {}
@@ -51,7 +52,7 @@ impl Repository {
         Ok(())
     }
 
-    // execute git commit.
+    /// execute git commit.
     pub fn commit(&self, message: &str) -> Result<(), Error> {
         let tree_id = {
             let mut index = self.repo.index()?;
@@ -61,31 +62,32 @@ impl Repository {
         let tree = self.repo.find_tree(tree_id)?;
         let commit = self.find_last_commit()?;
 
-        let current_sign = match self.generate_sign().or(git_sign_from_env()) {
-            Ok(sign) => sign,
-            Err(_) => {
-                grc_err_println("You need to set the user or author information for `git config` Or `Environment Variables`.");
-                std::process::exit(0);
-            }
-        };
+		let (author_sign, committer_sign) = self.generate_sign()?;
 
-        self.repo.commit(Some("HEAD"), &current_sign, &current_sign, message, &tree, &[&commit])?;
+        self.repo.commit(
+            Some("HEAD"),
+            &author_sign,
+            &committer_sign,
+            message,
+            &tree,
+            &[&commit],
+        )?;
 
         Ok(())
     }
 
-    // Repository status.
+    /// Repository status.
     fn status(&self) -> Result<Statuses<'_>, Error> {
         let mut sp = StatusOptions::new();
         self.repo.statuses(Option::from(&mut sp))
     }
 
-    // Repository commit index.
+    /// Repository commit index.
     fn index(&self) -> Result<Index, Error> {
         self.repo.index()
     }
 
-    // add files to Repository commit index.
+    /// add files to Repository commit index.
     fn add_files(&self, files_path: &Vec<String>) -> Result<(), Error> {
         let mut index = self.index()?;
         for file_path in files_path {
@@ -95,7 +97,7 @@ impl Repository {
         Ok(())
     }
 
-    // add all files to Repository commit index.
+    /// add all files to Repository commit index.
     fn add_all_files(&self) -> Result<(), Error> {
         let mut index = self.index()?;
         index.add_all(["*"].iter(), IndexAddOption::DEFAULT, None)?;
@@ -103,18 +105,45 @@ impl Repository {
         Ok(())
     }
 
-    // get sigin(email, author ... ) from git config.
-    fn generate_sign(&self) -> Result<Signature<'static>, Error> {
-        self.repo.signature()
+	/// generate commit sign
+	/// Priority is given to reading the information of author and committer from env 
+	/// and if it does not exist
+	/// the user information that has been set up in repo is used. 
+	/// Otherwise, Error.
+    fn generate_sign(&self) -> Result<(Signature<'static>, Signature<'static>), Error> {
+
+		let mut use_env= false;
+
+		let author_sign = match author_sign_from_env() {
+			Ok(sign) => {
+				use_env = true;
+				sign
+			},
+			Err(_) => self.repo.signature()?
+		};
+
+		let committer_sign = match committer_sign_from_env() {
+			Ok(sign) => {
+				use_env = true;
+				sign
+			},
+			Err(_) => self.repo.signature()?
+		};
+
+		if use_env {
+			grc_println("you are using environment variables to generate commit sign.");
+		}
+
+        Ok((author_sign, committer_sign))
     }
 
-    // the last commit in this repository.
+    /// the last commit in this repository.
     fn find_last_commit(&self) -> Result<Commit, Error> {
         let obj = self.repo.head()?.resolve()?.peel(ObjectType::Commit)?;
         obj.into_commit().map_err(|_| Error::from_str("not fonund Commit."))
     }
 
-    // Check to see if the repository commit index is empty.
+    /// Check to see if the repository commit index is empty.
     fn check_index(&self) -> Result<(), Error> {
         match self.status() {
             Ok(statuses) => {

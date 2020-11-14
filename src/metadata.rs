@@ -2,8 +2,8 @@ pub const VERSION: &str = "0.9.1";
 pub const AUTHOR: &str = "SDTTTTT. <sdttttt@outlook.com>";
 pub const NAME: &str = "GRC";
 pub const DESCRIPTION: &str = r#"
-	I'm here to help you make it more standardized and convenient to use Git.
-	"#;
+I'm here to help you make it more standardized and convenient to use Git.
+"#;
 
 pub const SEPARATOR_SYMBOL: &str = ":";
 
@@ -11,6 +11,8 @@ pub const SPACE: &str = " ";
 
 pub const GIT_AUTHOR_NAME: &str = "GIT_AUTHOR_NAME";
 pub const GIT_AUTHOR_EMAIL: &str = "GIT_AUTHOR_EMAIL";
+pub const GIT_COMMITTER_NAME: &str = "GIT_COMMITTER_NAME";
+pub const GIT_COMMITTER_EMAIL: &str = "GIT_COMMITTER_EMAIL";
 
 pub const GLOBAL_CONFIG_PATH: &str = ".config/grc/grc.toml";
 
