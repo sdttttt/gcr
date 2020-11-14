@@ -1,14 +1,14 @@
 # GRC
 
- ![](https://img.shields.io/crates/v/grc.svg)
+ ![GRC](https://img.shields.io/crates/v/grc.svg)
 ![Rust](https://github.com/sdttttt/gcr/workflows/Rust/badge.svg)
 ![Release](https://github.com/sdttttt/gcr/workflows/Release/badge.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6501c2d5bc19413dbbd297c6ee39e060)](https://app.codacy.com/gh/sdttttt/gcr?utm_source=github.com&utm_medium=referral&utm_content=sdttttt/gcr&utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/sdttttt/gcr/branch/master/graph/badge.svg)](https://codecov.io/gh/sdttttt/gcr)
 
-Standardized Git submission tool. “Grc” is a temporary name.
+Semantic git commits tool.
 
-Similar to git-cz, grc will help you to provide a better Git experience.
+Similar to `git-cz`, grc will help you to provide a better Git experience.
 
 ## Install
 
@@ -72,14 +72,10 @@ type = [
 ]
 ```
 
-## Contributor
-
-Thanks to [@KlausDevWalker](https://github.com/KlausDevWalker) for helping the docs get better.
+Starting with **0.9.1**, grc using `~/.config/grc/grc.toml` as the default configuration file.
 
 ## IDEA
 
 If you have any new ideas, you are welcome to talk to me.
 
-`grc` has taken over all git submissions from @sdttttt
-
-
+`grc` has taken over all git submissions from @sdttttt.
