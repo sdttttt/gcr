@@ -44,18 +44,21 @@ pub fn vec_str_to_string(vec: Vec<&str>) -> Vec<String> {
     result
 }
 
-pub fn git_sign_from_env() -> Result<Signature<'static>, Error> {
+pub fn git_sign_from_env() -> Result<Signature<'static>, ()> {
     let username = match env::var(GIT_AUTHOR_NAME) {
         Ok(v) => v,
-        Err(e) => return Err(Error::from_str(e.to_string().as_str())),
+        Err(_) => return Err(()),
     };
 
     let email = match env::var(GIT_AUTHOR_EMAIL) {
         Ok(v) => v,
-        Err(e) => return Err(Error::from_str(e.to_string().as_str())),
+        Err(_) => return Err(()),
     };
 
-    let sign = Signature::now(username.as_str(), email.as_str())?;
+    let sign = Signature::now(username.as_str(), email.as_str()).expect(
+        "An error occurred while using the environment variable to generate the commit sign.",
+    );
+
     Ok(sign)
 }
 
