@@ -1,4 +1,4 @@
-pub const VERSION: &str = "0.9.0-rc1";
+pub const VERSION: &str = "0.9.1";
 pub const AUTHOR: &str = "SDTTTTT. <sdttttt@outlook.com>";
 pub const NAME: &str = "GRC";
 pub const DESCRIPTION: &str = r#"
@@ -8,6 +8,11 @@ pub const DESCRIPTION: &str = r#"
 pub const SEPARATOR_SYMBOL: &str = ":";
 
 pub const SPACE: &str = " ";
+
+pub const GIT_AUTHOR_NAME: &str = "GIT_AUTHOR_NAME";
+pub const GIT_AUTHOR_EMAIL: &str = "GIT_AUTHOR_EMAIL";
+
+pub const GLOBAL_CONFIG_PATH: &str = ".config/grc/grc.toml";
 
 pub const BASE_COMMIT_TYPE_DESCRIPTION: &[(&str, &str)] = &[
     ("test", "Adding missing tests."),

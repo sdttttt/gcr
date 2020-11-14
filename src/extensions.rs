@@ -1,9 +1,10 @@
+use std::env;
 use std::fs;
 use std::io::{Error, ErrorKind};
 
 use serde::Deserialize;
 
-use crate::metadata::GRC_CONFIG_FILE_NAME;
+use crate::metadata::{GLOBAL_CONFIG_PATH, GRC_CONFIG_FILE_NAME};
 
 /// Extensions is GRC future config.
 #[derive(Deserialize)]
@@ -13,25 +14,42 @@ pub struct Extensions {
 }
 
 impl Extensions {
-
-	/// Read Extension from the configuration file in the convention name.
-	pub fn from_agreement() -> Result<Self, Error> {
+    /// Read Extension from the configuration file in the convention name.
+    pub fn from_agreement() -> Result<Self, Error> {
         let file_str = Self::read_config_file(GRC_CONFIG_FILE_NAME)?;
-        Ok(Self::deserialize(file_str)?)
+        if file_str.len() == 0 {
+            Self::from_global()
+        } else {
+            Ok(Self::deserialize(file_str)?)
+        }
     }
 
-	/// Read Extension from the configuration file in the Specified name.
+    #[cfg(not(target_os = "windows"))]
+    pub fn from_global() -> Result<Self, Error> {
+        let home_dir = env::var("HOME").unwrap_or(String::new());
+        let file_path = format!("{}/{}", home_dir.as_str(), GLOBAL_CONFIG_PATH);
+        Self::from(file_path.as_str())
+    }
+
+    #[cfg(target_os = "windows")]
+    pub fn from_global() -> Result<Self, Error> {
+        let home_dir = env::var("USERPROFILE").unwrap_or(String::new());
+        let file_path = format!("{}\\{}", home_dir.as_str(), GLOBAL_CONFIG_PATH);
+        Self::from(file_path.as_str())
+    }
+
+    /// Read Extension from the configuration file in the Specified name.
     pub fn from(filename: &str) -> Result<Self, Error> {
         let file_str = Self::read_config_file(filename)?;
         Ok(Self::deserialize(file_str)?)
     }
 
-	/// got All Types in configuration file.
+    /// got All Types in configuration file.
     pub fn types(&self) -> &Vec<String> {
         &self.typ
     }
 
-	/// deserialize toml configuration file to struct.
+    /// deserialize toml configuration file to struct.
     fn deserialize(file_str: String) -> Result<Self, Error> {
         if file_str.len() == 0 || file_str == "" {
             return Ok(Self { typ: vec![] });
@@ -41,7 +59,7 @@ impl Extensions {
         Ok(config)
     }
 
-	/// read config file convert std::string::String
+    /// read config file convert std::string::String
     fn read_config_file(filename: &str) -> Result<String, Error> {
         match fs::read_to_string(filename) {
             Ok(content) => Ok(content),
