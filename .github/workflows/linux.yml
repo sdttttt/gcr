@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        toolchain: [nightly]
+        toolchain: [stable]
 
     runs-on: ${{ matrix.os }}
 
@@ -47,7 +47,9 @@ jobs:
         args: --no-fail-fast
       
     - name: Coverage
-      uses: actions-rs/tarpaulin@master
+      run: |
+        cargo install cargo-tarpaulin
+        cargo tarpaulin --out Xml
 
     - name: Upload to codecov.io
       run: bash <(curl -s https://codecov.io/bash)
