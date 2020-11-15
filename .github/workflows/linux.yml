@@ -47,9 +47,7 @@ jobs:
         args: --no-fail-fast
       
     - name: Coverage
-      run: |
-        cargo install cargo-tarpaulin
-        cargo tarpaulin --out Xml
+      uses: actions-rs/tarpaulin@master
 
     - name: Upload to codecov.io
       run: bash <(curl -s https://codecov.io/bash)
