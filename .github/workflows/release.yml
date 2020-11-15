@@ -2,16 +2,17 @@ name: Release
 
 on:
   push:
-    tags: 
-      - 'v**'
+  pull_request:
+
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  
+
   create:
     runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/tags/**' }}
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
@@ -38,6 +39,7 @@ jobs:
   
   publish:
     runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/tags/**' }}
     steps:
       - uses: actions/checkout@v2
   
@@ -54,9 +56,10 @@ jobs:
     
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     
     runs-on: ${{ matrix.os }}
+    if: ${{ github.ref == 'refs/tags/**' }}
 
     steps:
     - uses: actions/checkout@v2
