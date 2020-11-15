@@ -40,7 +40,6 @@ jobs:
         args: --no-fail-fast
       
     - name: Coverage
-      if: ${{ 'stable' == matrix.toolchain }}
       run: |
         cargo install cargo-tarpaulin
         cargo tarpaulin --out Xml
