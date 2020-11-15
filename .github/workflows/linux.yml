@@ -2,6 +2,13 @@ name: Linux
 
 on:
   push:
+    paths: 
+      - '**.rs'
+      - '**.yaml'
+      - '**.yml'
+      - '**.toml'
+      - 'makefile'
+      - 'rust-toolchain'
     branches: [ master ]
   pull_request:
     branches: [ master, develop ]
