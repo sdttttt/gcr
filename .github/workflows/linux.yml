@@ -51,12 +51,14 @@ jobs:
     - name: install cargo-tarpaulin
       uses: actions-rs/cargo@v1
       with:
-        command: install cargo-tarpaulin    
-        
-    - name: install cargo-tarpaulin
+        command: install 
+        args: cargo-tarpaulin    
+
+    - name: build coverage report
       uses: actions-rs/cargo@v1
       with:
-        command: tarpaulin --out Xml
+        command: tarpaulin 
+        args: --out Xml
 
     - name: Upload to codecov.io
       run: bash <(curl -s https://codecov.io/bash)
