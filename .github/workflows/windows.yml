@@ -39,8 +39,8 @@ jobs:
     - uses: actions/cache@v2
       with:
         path: |
-        C:\Rust\.cargo\registry
-        C:\Rust\.cargo\git
+        C:/Rust/.cargo/registry
+        C:/Rust/.cargo/git
         ./target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
