@@ -5,7 +5,7 @@ use git2::{
 
 use crate::{
     arguments::Arguments,
-    log::{grc_err_println, grc_warn_println, grc_println},
+    log::{grc_err_println, grc_println, grc_warn_println},
     metadata::Mode,
     util::{author_sign_from_env, committer_sign_from_env, is_all_workspace},
 };
@@ -62,7 +62,7 @@ impl Repository {
         let tree = self.repo.find_tree(tree_id)?;
         let commit = self.find_last_commit()?;
 
-		let (author_sign, committer_sign) = self.generate_sign()?;
+        let (author_sign, committer_sign) = self.generate_sign()?;
 
         self.repo.commit(
             Some("HEAD"),
@@ -105,34 +105,33 @@ impl Repository {
         Ok(())
     }
 
-	/// generate commit sign
-	/// Priority is given to reading the information of author and committer from env 
-	/// and if it does not exist
-	/// the user information that has been set up in repo is used. 
-	/// Otherwise, Error.
+    /// generate commit sign
+    /// Priority is given to reading the information of author and committer from env
+    /// and if it does not exist
+    /// the user information that has been set up in repo is used.
+    /// Otherwise, Error.
     fn generate_sign(&self) -> Result<(Signature<'static>, Signature<'static>), Error> {
+        let mut use_env = false;
 
-		let mut use_env= false;
+        let author_sign = match author_sign_from_env() {
+            Ok(sign) => {
+                use_env = true;
+                sign
+            }
+            Err(_) => self.repo.signature()?,
+        };
 
-		let author_sign = match author_sign_from_env() {
-			Ok(sign) => {
-				use_env = true;
-				sign
-			},
-			Err(_) => self.repo.signature()?
-		};
+        let committer_sign = match committer_sign_from_env() {
+            Ok(sign) => {
+                use_env = true;
+                sign
+            }
+            Err(_) => self.repo.signature()?,
+        };
 
-		let committer_sign = match committer_sign_from_env() {
-			Ok(sign) => {
-				use_env = true;
-				sign
-			},
-			Err(_) => self.repo.signature()?
-		};
-
-		if use_env {
-			grc_println("you are using environment variables to generate commit sign.");
-		}
+        if use_env {
+            grc_println("you are using environment variables to generate commit sign.");
+        }
 
         Ok((author_sign, committer_sign))
     }

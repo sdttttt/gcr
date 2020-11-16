@@ -29,9 +29,11 @@ publish: fmt
 commit: fmt test run
 
 .PHONY: cov
+cov:CARGO_INCREMENTAL=0
+cov:RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort"
+cov:RUSTDOCFLAGS="-Cpanic=abort"
 cov: fmt
-	export CARGO_INCREMENTAL=0
-	export RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort"
-	export RUSTDOCFLAGS="-Cpanic=abort"
+	
+	$(c) build
 	$(c) test
 	grcov ./target/debug/ -s . -t html --llvm --branch --ignore-not-existing -o ./target/debug/coverage/
