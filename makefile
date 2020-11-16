@@ -39,7 +39,3 @@ cov:
 	cargo build
 	cargo test
 	grcov ./target/debug/ -s . -t html --llvm --branch --ignore-not-existing -o ./target/debug/coverage/
-
-.PHONY: lcov
-lcov:
-	set -e
