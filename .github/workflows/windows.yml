@@ -41,7 +41,7 @@ jobs:
         path: |
         C:\Rust\.cargo\registry
         C:\Rust\.cargo\git
-          ./target
+        ./target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
     - uses: actions-rs/toolchain@v1
