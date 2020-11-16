@@ -52,4 +52,4 @@ lcov:
 
 	cargo build
 	cargo test
-	grcov ./target/debug/ -s . -t lcov --llvm --branch --ignore-not-existing -o lcov.info
+	~/.cargo/bin/grcov ./target/debug/ -s . -t lcov --llvm --branch --ignore-not-existing -o lcov.info
