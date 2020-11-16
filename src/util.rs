@@ -115,5 +115,5 @@ mod tests {
         let mut v2 = vec_str_to_string(v1);
         assert_eq!(v2.pop(), Some(String::from(two)));
         assert_eq!(v2.pop(), Some(String::from(one)));
-    }
+	}
 }
