@@ -1,13 +1,11 @@
+SHELL := /bin/bash
+
 c = cargo
 g = grc
 
 .PHONY: build
 build: fmt
 	$(c) build --release
-
-.PHONY: build-dev
-build-dev: fmt
-	$(c) build -v
 
 .PHONY: run
 run: fmt
@@ -29,11 +27,29 @@ publish: fmt
 commit: fmt test run
 
 .PHONY: cov
-cov:CARGO_INCREMENTAL=0
-cov:RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort"
-cov:RUSTDOCFLAGS="-Cpanic=abort"
-cov: fmt
-	
-	$(c) build
-	$(c) test
+cov:
+	set -e
+
+	export CARGO_INCREMENTAL=0
+	export RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort"
+	export RUSTDOCFLAGS="-Cpanic=abort"
+
+	rustup default nightly
+
+	cargo build
+	cargo test
 	grcov ./target/debug/ -s . -t html --llvm --branch --ignore-not-existing -o ./target/debug/coverage/
+
+.PHONY: lcov
+lcov:
+	set -e
+
+	export CARGO_INCREMENTAL=0
+	export RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort"
+	export RUSTDOCFLAGS="-Cpanic=abort"
+
+	rustup default nightly
+
+	cargo build
+	cargo test
+	grcov ./target/debug/ -s . -t lcov --llvm --branch --ignore-not-existing -o lcov.info

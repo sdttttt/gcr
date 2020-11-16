@@ -163,7 +163,7 @@ impl Messager {
         String::from(description.trim())
     }
 
-    // close PR or issue of commit message.
+    /// close PR or issue of commit message.
     fn ask_close(&self) -> String {
         let closes = Input::<String>::with_theme(&ColorfulTheme::default())
             .with_prompt("GRC: PR & Issues this commit closes, e.g 123: (Optional)")

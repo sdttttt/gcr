@@ -64,19 +64,13 @@ jobs:
         args: --no-fail-fast
 
     - name: install cargo-tarpaulin
-      uses: actions-rs/cargo@v1
-      with:
-        command: install 
-        args: cargo-tarpaulin    
+      run: cargo install grcov
 
     - name: build coverage report
-      uses: actions-rs/cargo@v1
-      with:
-        command: tarpaulin 
-        args: --out Xml
+      run: make lcov
 
     - name: Upload to codecov.io
-      run: bash <(curl -s https://codecov.io/bash)
+      run: bash <(curl -s https://codecov.io/bash) -f lcov.info
     
     - name: build
       uses: actions-rs/cargo@v1
