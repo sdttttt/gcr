@@ -172,5 +172,5 @@ mod tests {
         if let Err(e) = Repository::new(path, args) {
             panic!(e)
         }
-	}
+    }
 }
