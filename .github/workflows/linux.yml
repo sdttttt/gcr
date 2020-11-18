@@ -68,15 +68,15 @@ jobs:
 
     - name: build coverage report
       run: |
-        export CARGO_INCREMENTAL=0
-        export RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort"
-        export RUSTDOCFLAGS="-Cpanic=abort"
-
         rustup default nightly
-
+        
         cargo build
         cargo test
         ~/.cargo/bin/grcov ./target/debug/ -s . -t lcov --llvm --branch --ignore-not-existing -o lcov.info
+      env:
+        CARGO_INCREMENTAL: 0
+        RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort'
+        RUSTDOCFLAGS: -Cpanic=abort
 
     - name: Upload to codecov.io
       run: bash <(curl -s https://codecov.io/bash) -f lcov.info
