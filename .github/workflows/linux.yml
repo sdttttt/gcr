@@ -63,7 +63,7 @@ jobs:
         command: test
         args: --no-fail-fast
 
-    - name: install cargo-tarpaulin
+    - name: install grcov
       run: cargo install grcov
 
     - name: build coverage report
