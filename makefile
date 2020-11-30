@@ -20,7 +20,7 @@ fmt:
 	$(c) fmt
 
 .PHONY: publish
-publish: fmt
+publish:
 	$(c) publish -v
 
 .PHONY: commit
