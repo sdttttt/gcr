@@ -6,8 +6,9 @@ use crate::util::*;
 
 /// Parse the behavior and extra parameters of GRC by entering commands.
 pub struct Arguments {
-	mode:   Mode,
-	params: Vec<String>,
+	mode:            Mode,
+	params:          Vec<String>,
+	config_filename: String,
 }
 
 // Get the external parameter and analyze it. Construct the behavior of GRC.
@@ -26,15 +27,20 @@ impl Arguments {
 		&self.params
 	}
 
-	fn initializer() -> Self {
-		Self { mode: Mode::Commit, params: vec![] }
+	fn default() -> Self {
+		Self {
+			mode:            Mode::Commit,
+			params:          vec![],
+			config_filename: String::new(),
+		}
 	}
 
 	fn cli() -> App<'static, 'static> {
-		App::new(NAME).version(VERSION).author(AUTHOR).about(DESCRIPTION).args(&[
-			Self::add_arg(),
-			// Self::designate_config_arg()
-		])
+		App::new(NAME)
+			.version(VERSION)
+			.author(AUTHOR)
+			.about(DESCRIPTION)
+			.args(&[Self::add_arg(), Self::designate_config_arg()])
 	}
 
 	fn add_arg() -> Arg<'static, 'static> {
@@ -58,7 +64,35 @@ impl Arguments {
 
 	/// Construct the behavior according to the input parameters.
 	fn resolve_command(matches: ArgMatches) -> Result<Self, Error> {
-		let mut arg = Self::initializer();
+		let mut arg = Self::default();
+
+		match Self::finally_entry_handle(&mut arg, &matches) {
+			| Ok(_) => Ok(arg),
+			| Err(e) => Err(e),
+		}
+	}
+
+	// fn extend_handle() {
+	// 	// extend-handle: fn(&mut Arguments, &ArgMatches) -> Result<bool, Error>
+	// }
+
+	fn finally_entry_handle(arg: &mut Arguments, matches: &ArgMatches) -> Result<bool, Error> {
+		// finally-handle: fn(&mut Arguments, &ArgMatches) -> Result<bool, Error>
+		// that confirm the behavior to be used by the GRC and the required parameters.
+		let post_handlers = &[Self::add_params_handle];
+
+		for handle in post_handlers {
+			match handle(arg, &matches) {
+				| Ok(true) => return Ok(true),
+				| Ok(false) => {}
+				| Err(e) => return Err(e),
+			}
+		}
+
+		Ok(false)
+	}
+
+	fn add_params_handle(arg: &mut Arguments, matches: &ArgMatches) -> Result<bool, Error> {
 		if matches.is_present(ADD_PARAMS) {
 			if let Some(files) = matches.values_of(ADD_PARAMS) {
 				let files_vec: Vec<String> = vec_str_to_string(files.collect());
@@ -68,12 +102,12 @@ impl Arguments {
 					arg.mode = Mode::Add;
 					arg.params = files_vec;
 				}
+				return Ok(true);
 			} else {
 				return Err(Error::from_str(ADD_COMMAND_NO_FILE));
 			}
 		}
-
-		Ok(arg)
+		Ok(false)
 	}
 }
 

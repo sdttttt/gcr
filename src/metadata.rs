@@ -69,7 +69,7 @@ pub const PUSH_COMMAND_NO_FILE: &str = "The 'push' command requires parameters."
 /* -------------------------------------------------------------------------- */
 
 pub const DESIGNATE_CONFIG_COMMAND: &str = "config";
-pub const DESIGNATE_CONFIG_PARAMS: &str = "filename";
+pub const DESIGNATE_CONFIG_PARAMS: &str = "configfile";
 pub const DESIGNATE_CONFIG_COMMAND_SHORT: &str = "c";
 pub const DESIGNATE_CONFIG_COMMAND_HELP: &str =
 	"Manually specify a configuration file for the GRC.";
