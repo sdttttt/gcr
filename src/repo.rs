@@ -33,9 +33,7 @@ impl Repository {
 		match self.arg.command_mode() {
 			| Mode::Commit => self.check_index()?,
 			| Mode::Add => self.add_files(self.arg.files())?,
-			| Mode::Auto => {}
 			| Mode::AddAll => self.add_all_files()?,
-			| Mode::Push => {}
 		};
 
 		Ok(())
@@ -46,9 +44,7 @@ impl Repository {
 		match self.arg.command_mode() {
 			| Mode::Commit => {}
 			| Mode::Add => {}
-			| Mode::Auto => {}
 			| Mode::AddAll => {}
-			| Mode::Push => {}
 		};
 
 		Ok(())

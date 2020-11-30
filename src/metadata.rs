@@ -46,11 +46,9 @@ pub const BASE_COMMIT_TYPE_DESCRIPTION: &[(&str, &str)] = &[
 
 // GRC four commit modes.
 pub enum Mode {
-	Auto,
 	Add,
 	AddAll,
 	Commit,
-	Push,
 }
 
 /* --------------------------------------------------------------------------- */
