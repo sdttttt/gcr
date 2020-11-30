@@ -2,22 +2,37 @@ name: Release
 
 on:
   push:
-    tags: 
-      - 'v**'
+    branches: [ master ]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  
+
   create:
     runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/tags/**' }}
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-    
+
     - uses: actions/checkout@v2
     
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+
+    - name: Dump job context
+      env:
+        JOB_CONTEXT: ${{ toJson(job) }}
+      run: echo "$JOB_CONTEXT"
+
+    - name: Dump runner context
+      env:
+        RUNNER_CONTEXT: ${{ toJson(runner) }}
+      run: echo "$RUNNER_CONTEXT"
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -27,17 +42,13 @@ jobs:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
         body: |
-          ### Add
-          - none
-          ### Fix
-          - none
-          ### Change
-          - none
+          ${{ github.ref }}
         draft: false
         prerelease: false
-  
+
   publish:
     runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/tags/**' }}
     steps:
       - uses: actions/checkout@v2
   
@@ -54,9 +65,10 @@ jobs:
     
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     
     runs-on: ${{ matrix.os }}
+    if: ${{ github.ref == 'refs/tags/**' }}
 
     steps:
     - uses: actions/checkout@v2

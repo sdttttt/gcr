@@ -2,6 +2,13 @@ name: Linux
 
 on:
   push:
+    paths: 
+      - '**.rs'
+      - '**.yaml'
+      - '**.yml'
+      - '**.toml'
+      - 'makefile'
+      - 'rust-toolchain'
     branches: [ master ]
   pull_request:
     branches: [ master, develop ]
@@ -21,39 +28,67 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+
+    - name: Dump job context
+      env:
+        JOB_CONTEXT: ${{ toJson(job) }}
+      run: echo "$JOB_CONTEXT"
+
+    - name: Dump runner context
+      env:
+        RUNNER_CONTEXT: ${{ toJson(runner) }}
+      run: echo "$RUNNER_CONTEXT"
+
     - uses: actions/cache@v2
       with:
         path: |
           ~/.cargo/registry
           ~/.cargo/git
-          target
+          ./target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-    - uses: actions-rs/toolchain@v1
+    - name: install rust-toolchain
+      uses: actions-rs/toolchain@v1
       with:
         toolchain: ${{ matrix.toolchain }}
         override: true
 
-    - uses: actions-rs/cargo@v1
+    - name: test
+      uses: actions-rs/cargo@v1
       with:
         command: test
         args: --no-fail-fast
-      
-    - name: Coverage
-      if: ${{ 'stable' == matrix.toolchain }}
+
+    - name: install grcov
+      run: cargo install grcov
+
+    - name: build coverage report
       run: |
-        cargo install cargo-tarpaulin
-        cargo tarpaulin --out Xml
+        rustup default nightly
+        
+        cargo build
+        cargo test
+        ~/.cargo/bin/grcov ./target/debug/ -s . -t lcov --llvm --branch --ignore-not-existing -o lcov.info
+      env:
+        CARGO_INCREMENTAL: 0
+        RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort'
+        RUSTDOCFLAGS: -Cpanic=abort
 
     - name: Upload to codecov.io
-      run: bash <(curl -s https://codecov.io/bash)
-
-    - uses: actions-rs/cargo@v1
+      run: bash <(curl -s https://codecov.io/bash) -f lcov.info
+    
+    - name: build
+      uses: actions-rs/cargo@v1
       with:
         command: build
         args: --release -v
-
-    - uses: actions/upload-artifact@v2
+    
+    - name: upload artifact
+      uses: actions/upload-artifact@v2
       with:
         name: grc
         path: ./target/release/grc
