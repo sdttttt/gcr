@@ -81,7 +81,8 @@ mod tests {
 
 	const GRC_TEST_CONFIG_FILE_NAME: &str = "grc.test.toml";
 
-	const GRC_TOML_CONTENT: &str = r#"type = [ "version: version is change." ]"#;
+	const GRC_TOML_CONTENT: &str =
+		r#"type = ["version: version is change.", "deps: Dependencies change."]"#;
 	const GRC_TOML_TYPE: &str = "version: version is change.";
 
 	const GRC_TEST_TOML_CONTENT: &str = r#"type = [ "123" ]"#;

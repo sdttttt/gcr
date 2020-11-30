@@ -2,7 +2,7 @@
 /* GRC Metadata */
 /* -------------------------------------------------------------------------- */
 
-pub const VERSION: &str = "0.9.1";
+pub const VERSION: &str = "0.9.2";
 pub const AUTHOR: &str = "SDTTTTT. <sdttttt@outlook.com>";
 pub const NAME: &str = "GRC";
 pub const DESCRIPTION: &str = r#"
