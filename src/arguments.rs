@@ -19,6 +19,14 @@ impl Arguments {
 		Self::resolve_command(matches)
 	}
 
+	pub fn has_specified_config(&self) -> bool {
+		!self.config_filename.is_empty()
+	}
+
+	pub fn config_file(&self) -> &str {
+		&self.config_filename.as_str()
+	}
+
 	pub fn command_mode(&self) -> &Mode {
 		&self.mode
 	}
@@ -66,23 +74,47 @@ impl Arguments {
 	fn resolve_command(matches: ArgMatches) -> Result<Self, Error> {
 		let mut arg = Self::default();
 
-		match Self::finally_entry_handle(&mut arg, &matches) {
+		Self::extends_handle_chain(&mut arg, &matches)?;
+
+		match Self::finally_handle_chain(&mut arg, &matches) {
 			| Ok(_) => Ok(arg),
 			| Err(e) => Err(e),
 		}
 	}
 
-	// fn extend_handle() {
-	// 	// extend-handle: fn(&mut Arguments, &ArgMatches) -> Result<bool, Error>
-	// }
+	fn extends_handle_chain(arg: &mut Arguments, matches: &ArgMatches) -> Result<bool, Error> {
+		// extend-handle: fn(&mut Arguments, &ArgMatches) -> Result<bool, Error>
+		// extended GRC parameters will be handled here. They are processed before the
+		// final behavior is determined.
+		let before_handles = &[Self::designate_config_handle];
 
-	fn finally_entry_handle(arg: &mut Arguments, matches: &ArgMatches) -> Result<bool, Error> {
+		for handle in before_handles {
+			handle(arg, matches)?;
+		}
+
+		Ok(true)
+	}
+
+	fn designate_config_handle(arg: &mut Arguments, matches: &ArgMatches) -> Result<bool, Error> {
+		if matches.is_present(DESIGNATE_CONFIG_PARAMS) {
+			if let Some(config_filename) = matches.value_of(DESIGNATE_CONFIG_PARAMS) {
+				arg.config_filename = config_filename.to_string();
+				return Ok(true);
+			}
+		}
+
+		Ok(false)
+	}
+
+	fn finally_handle_chain(arg: &mut Arguments, matches: &ArgMatches) -> Result<bool, Error> {
 		// finally-handle: fn(&mut Arguments, &ArgMatches) -> Result<bool, Error>
-		// that confirm the behavior to be used by the GRC and the required parameters.
-		let post_handlers = &[Self::add_params_handle];
+		// that confirm the behavior to be finally used by the GRC and the required
+		// parameters. This is a chain of responsibility where only one processor will
+		// receive the job.
+		let post_handles = &[Self::add_params_handle];
 
-		for handle in post_handlers {
-			match handle(arg, &matches) {
+		for handle in post_handles {
+			match handle(arg, matches) {
 				| Ok(true) => return Ok(true),
 				| Ok(false) => {}
 				| Err(e) => return Err(e),

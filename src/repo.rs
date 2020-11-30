@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use git2::{
 	Commit, Error, Index, IndexAddOption, ObjectType, Repository as GRepository, Signature,
 	StatusOptions, Statuses,
@@ -14,11 +16,11 @@ use crate::{
 /// is git2::Repository Encapsulation.
 pub struct Repository {
 	repo: git2::Repository,
-	arg:  Arguments,
+	arg:  Rc<Arguments>,
 }
 
 impl Repository {
-	pub fn new(path: String, arg: Arguments) -> Result<Self, Error> {
+	pub fn new(path: String, arg: Rc<Arguments>) -> Result<Self, Error> {
 		let result = GRepository::open(&path);
 		match result {
 			| Ok(repo) => Ok(Self { repo, arg }),
@@ -54,6 +56,8 @@ impl Repository {
 
 	/// execute git commit.
 	pub fn commit(&self, message: &str) -> Result<(), Error> {
+		self.pre_commit()?;
+
 		let tree_id = {
 			let mut index = self.repo.index()?;
 			index.write_tree()?
@@ -72,6 +76,8 @@ impl Repository {
 			&tree,
 			&[&commit],
 		)?;
+
+		self.after_commit()?;
 
 		Ok(())
 	}

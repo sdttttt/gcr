@@ -25,14 +25,14 @@ impl Extensions {
 	}
 
 	#[cfg(not(target_os = "windows"))]
-	pub fn from_global() -> Result<Self, Error> {
+	fn from_global() -> Result<Self, Error> {
 		let home_dir = env::var("HOME").unwrap_or(String::new());
 		let file_path = format!("{}/{}", home_dir.as_str(), GLOBAL_CONFIG_PATH);
 		Self::from(file_path.as_str())
 	}
 
 	#[cfg(target_os = "windows")]
-	pub fn from_global() -> Result<Self, Error> {
+	fn from_global() -> Result<Self, Error> {
 		let home_dir = env::var("USERPROFILE").unwrap_or(String::new());
 		let file_path = format!("{}\\{}", home_dir.as_str(), GLOBAL_CONFIG_PATH);
 		Self::from(file_path.as_str())

@@ -62,7 +62,6 @@ pub const ADD_PARAMS: &str = "filename";
 pub const ADD_COMMAND_SHORT: &str = "a";
 pub const ADD_COMMAND_HELP: &str = "Help you add files before commit. If the parameter is `.`, Then GRC will help you add everything.";
 pub const ADD_COMMAND_NO_FILE: &str = "The add command requires parameters.";
-pub const PUSH_COMMAND_NO_FILE: &str = "The 'push' command requires parameters.";
 
 /* -------------------------------------------------------------------------- */
 /* CLI Designate Config File Command */
