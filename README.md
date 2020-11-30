@@ -72,4 +72,4 @@ Starting with **0.9.1**, grc using `~/.config/grc/grc.toml` as the default confi
 
 If you have any new ideas, you are welcome to talk to me.
 
-`grc` has taken over all git submissions from @sdttttt.
+GRC repo is used GRC to commit!
