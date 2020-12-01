@@ -45,6 +45,7 @@ pub const BASE_COMMIT_TYPE_DESCRIPTION: &[(&str, &str)] = &[
 /* -------------------------------------------------------------------------- */
 
 // GRC four commit modes.
+#[derive(Debug, PartialEq)]
 pub enum Mode {
 	Add,
 	AddAll,

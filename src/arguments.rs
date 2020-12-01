@@ -153,30 +153,22 @@ mod tests {
 	}
 
 	#[test]
-	fn add_all_mode() -> Result<(), &'static str> {
+	fn add_all_mode() {
 		let args = quick_command_run(vec!["grc", "--add", "."]);
-		match args.command_mode() {
-			| Mode::AddAll => Ok(()),
-			| _ => Err("NOT ADDALL MODE!"),
-		}
+
+		assert_eq!(args.command_mode(), &Mode::AddAll);
 	}
 
 	#[test]
 	fn add_mode() {
 		let args = quick_command_run(vec!["grc", "--add", "rusty"]);
-		match args.command_mode() {
-			| Mode::Add => {}
-			| _ => panic!("NOT ADD MODE!"),
-		}
+		assert_eq!(args.command_mode(), &Mode::Add);
 	}
 
 	#[test]
 	fn commit_mode() {
 		let args = quick_command_run(vec!["grc"]);
-		match args.command_mode() {
-			| Mode::Commit => {}
-			| _ => panic!("NOT COMMIT MODE!"),
-		}
+		assert_eq!(args.command_mode(), &Mode::Commit);
 	}
 
 	#[test]
@@ -184,9 +176,7 @@ mod tests {
 		let file_1 = "1.txt";
 		let args = quick_command_run(vec!["grc", "--add", file_1]);
 		for file_name in args.files() {
-			if file_name.as_str() != file_1 {
-				panic!("NOT THIS FILE NAME.")
-			}
+			assert_eq!(file_name.as_str(), file_1);
 		}
 	}
 
