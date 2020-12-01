@@ -75,11 +75,9 @@ impl Arguments {
 		let mut arg = Self::default();
 
 		Self::extends_handle_chain(&mut arg, &matches)?;
+		Self::finally_handle_chain(&mut arg, &matches)?;
 
-		match Self::finally_handle_chain(&mut arg, &matches) {
-			| Ok(_) => Ok(arg),
-			| Err(e) => Err(e),
-		}
+		Ok(arg)
 	}
 
 	fn extends_handle_chain(arg: &mut Arguments, matches: &ArgMatches) -> Result<bool, Error> {
