@@ -54,7 +54,7 @@ jobs:
         command: test
         args: --no-fail-fast -j 1
       env:
-        RUST_BACKTRACE: 1
+        RUST_BACKTRACE: full
 
     - uses: actions-rs/cargo@v1
       with:
