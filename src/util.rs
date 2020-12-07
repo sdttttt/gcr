@@ -44,60 +44,40 @@ pub fn vec_str_to_string(vec: Vec<&str>) -> Vec<String> {
 	result
 }
 
-pub fn author_sign_from_env() -> Result<Signature<'static>, ()> {
-	let name = match env::var(GIT_AUTHOR_NAME) {
-		| Ok(v) => {
-			if v.len() < 1 {
-				return Err(());
+pub fn author_sign_from_env() -> Option<Signature<'static>> {
+	let (name, email) = match (env::var(GIT_AUTHOR_NAME), env::var(GIT_AUTHOR_EMAIL)) {
+		| (Ok(n), Ok(e)) => {
+			if n.is_empty() || e.is_empty() {
+				return None;
 			}
-			v
+			(n, e)
 		}
-		| Err(_) => return Err(()),
-	};
-
-	let email = match env::var(GIT_AUTHOR_EMAIL) {
-		| Ok(v) => {
-			if v.len() < 1 {
-				return Err(());
-			}
-			v
-		}
-		| Err(_) => return Err(()),
+		| _ => return None,
 	};
 
 	let sign = Signature::now(name.as_str(), email.as_str()).expect(
 		"An error occurred while using the `GIT_AUTHOR_[USER, EMAIL]` to generate the commit sign.",
 	);
 
-	Ok(sign)
+	Some(sign)
 }
 
-pub fn committer_sign_from_env() -> Result<Signature<'static>, ()> {
-	let name = match env::var(GIT_COMMITTER_NAME) {
-		| Ok(v) => {
-			if v.len() < 1 {
-				return Err(());
+pub fn committer_sign_from_env() -> Option<Signature<'static>> {
+	let (name, email) = match (env::var(GIT_COMMITTER_NAME), env::var(GIT_COMMITTER_EMAIL)) {
+		| (Ok(n), Ok(e)) => {
+			if n.is_empty() || e.is_empty() {
+				return None;
 			}
-			v
+			(n, e)
 		}
-		| Err(_) => return Err(()),
-	};
-
-	let email = match env::var(GIT_COMMITTER_EMAIL) {
-		| Ok(v) => {
-			if v.len() < 1 {
-				return Err(());
-			}
-			v
-		}
-		| Err(_) => return Err(()),
+		| _ => return None,
 	};
 
 	let sign = Signature::now(name.as_str(), email.as_str()).expect(
 		"An error occurred while using the environment variable to generate the commit sign.",
 	);
 
-	Ok(sign)
+	Some(sign)
 }
 
 #[cfg(test)]
@@ -139,14 +119,10 @@ mod tests {
 
 	#[test]
 	fn it_committer_sign_from_null_env() {
-		env::set_var(GIT_COMMITTER_NAME, "");
-		env::set_var(GIT_COMMITTER_EMAIL, "");
+		env::remove_var(GIT_COMMITTER_NAME);
+		env::remove_var(GIT_COMMITTER_EMAIL);
 
-		if let Err(e) = committer_sign_from_env() {
-			assert_eq!(e, ());
-		} else {
-			panic!("WHAT?")
-		}
+		assert!(committer_sign_from_env().is_none())
 	}
 
 	#[test]
@@ -166,11 +142,7 @@ mod tests {
 		env::remove_var(GIT_AUTHOR_NAME);
 		env::remove_var(GIT_AUTHOR_EMAIL);
 
-		if let Err(e) = author_sign_from_env() {
-			assert_eq!(e, ());
-		} else {
-			panic!("WHAT?")
-		}
+		assert!(author_sign_from_env().is_none())
 	}
 
 	#[test]
