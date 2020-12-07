@@ -156,18 +156,15 @@ mod tests {
 		env::set_var(GIT_COMMITTER_NAME, name);
 		env::set_var(GIT_COMMITTER_EMAIL, email);
 
-		if let Ok(sign) = committer_sign_from_env() {
-			assert_eq!(sign.name().unwrap(), name);
-			assert_eq!(sign.email().unwrap(), email);
-		} else {
-			panic!("WHAT?")
-		}
+		let sign = committer_sign_from_env().unwrap();
+		assert_eq!(sign.name().unwrap(), name);
+		assert_eq!(sign.email().unwrap(), email);
 	}
 
 	#[test]
 	fn it_author_sign_from_null_env() {
-		env::set_var(GIT_AUTHOR_NAME, "");
-		env::set_var(GIT_AUTHOR_EMAIL, "");
+		env::remove_var(GIT_AUTHOR_NAME);
+		env::remove_var(GIT_AUTHOR_EMAIL);
 
 		if let Err(e) = author_sign_from_env() {
 			assert_eq!(e, ());
@@ -183,11 +180,8 @@ mod tests {
 		env::set_var(GIT_AUTHOR_NAME, name);
 		env::set_var(GIT_AUTHOR_EMAIL, email);
 
-		if let Ok(sign) = author_sign_from_env() {
-			assert_eq!(sign.name().unwrap(), name);
-			assert_eq!(sign.email().unwrap(), email);
-		} else {
-			panic!("WHAT?")
-		}
+		let sign = author_sign_from_env().unwrap();
+		assert_eq!(sign.name().unwrap(), name);
+		assert_eq!(sign.email().unwrap(), email);
 	}
 }

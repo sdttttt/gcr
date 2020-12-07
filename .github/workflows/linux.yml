@@ -63,24 +63,6 @@ jobs:
         command: test
         args: --no-fail-fast
 
-    - name: install grcov
-      run: cargo install grcov
-
-    - name: build coverage report
-      run: |
-        rustup default nightly
-        
-        cargo build
-        cargo test
-        ~/.cargo/bin/grcov ./target/debug/ -s . -t lcov --llvm --branch --ignore-not-existing -o lcov.info
-      env:
-        CARGO_INCREMENTAL: 0
-        RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort'
-        RUSTDOCFLAGS: -Cpanic=abort
-
-    - name: Upload to codecov.io
-      run: bash <(curl -s https://codecov.io/bash) -f lcov.info
-    
     - name: build
       uses: actions-rs/cargo@v1
       with:
