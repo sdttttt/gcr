@@ -22,3 +22,6 @@ git2 = "0.13"
 dialoguer = "0.7.1"
 toml = "0.5.7"
 serde = { version = "1.0.82", features = ["derive"] }
+
+[dev-dependencies]
+cargo-husky = "1.5.0"
