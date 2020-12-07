@@ -139,8 +139,8 @@ mod tests {
 
 	#[test]
 	fn it_committer_sign_from_null_env() {
-		env::set_var(GIT_COMMITTER_NAME, "");
-		env::set_var(GIT_COMMITTER_EMAIL, "");
+		env::remove_var(GIT_COMMITTER_NAME);
+		env::remove_var(GIT_COMMITTER_EMAIL);
 
 		assert!(committer_sign_from_env().is_none())
 	}
