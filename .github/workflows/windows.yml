@@ -53,6 +53,8 @@ jobs:
       with:
         command: test
         args: --no-fail-fast -j 1
+      env:
+        RUST_BACKTRACE: 1
 
     - uses: actions-rs/cargo@v1
       with:
