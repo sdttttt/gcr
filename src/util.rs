@@ -45,24 +45,14 @@ pub fn vec_str_to_string(vec: Vec<&str>) -> Vec<String> {
 }
 
 pub fn author_sign_from_env() -> Option<Signature<'static>> {
-	let name = match env::var(GIT_AUTHOR_NAME) {
-		| Ok(v) => {
-			if v.is_empty() {
+	let (name, email) = match (env::var(GIT_AUTHOR_NAME), env::var(GIT_AUTHOR_EMAIL)) {
+		| (Ok(n), Ok(e)) => {
+			if n.is_empty() || e.is_empty() {
 				return None;
 			}
-			v
+			(n, e)
 		}
-		| Err(_) => return None,
-	};
-
-	let email = match env::var(GIT_AUTHOR_EMAIL) {
-		| Ok(v) => {
-			if v.is_empty() {
-				return None;
-			}
-			v
-		}
-		| Err(_) => return None,
+		| _ => return None,
 	};
 
 	let sign = Signature::now(name.as_str(), email.as_str()).expect(
@@ -73,24 +63,14 @@ pub fn author_sign_from_env() -> Option<Signature<'static>> {
 }
 
 pub fn committer_sign_from_env() -> Option<Signature<'static>> {
-	let name = match env::var(GIT_COMMITTER_NAME) {
-		| Ok(v) => {
-			if v.is_empty() {
+	let (name, email) = match (env::var(GIT_COMMITTER_NAME), env::var(GIT_COMMITTER_EMAIL)) {
+		| (Ok(n), Ok(e)) => {
+			if n.is_empty() || e.is_empty() {
 				return None;
 			}
-			v
+			(n, e)
 		}
-		| Err(_) => return None,
-	};
-
-	let email = match env::var(GIT_COMMITTER_EMAIL) {
-		| Ok(v) => {
-			if v.is_empty() {
-				return None;
-			}
-			v
-		}
-		| Err(_) => return None,
+		| _ => return None,
 	};
 
 	let sign = Signature::now(name.as_str(), email.as_str()).expect(
