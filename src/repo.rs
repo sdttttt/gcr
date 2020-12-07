@@ -116,19 +116,19 @@ impl Repository {
 		let mut use_env = false;
 
 		let author_sign = match author_sign_from_env() {
-			| Ok(sign) => {
+			| Some(sign) => {
 				use_env = true;
 				sign
 			}
-			| Err(_) => self.repo.signature()?,
+			| None => self.repo.signature()?,
 		};
 
 		let committer_sign = match committer_sign_from_env() {
-			| Ok(sign) => {
+			| Some(sign) => {
 				use_env = true;
 				sign
 			}
-			| Err(_) => self.repo.signature()?,
+			| None => self.repo.signature()?,
 		};
 
 		if use_env {

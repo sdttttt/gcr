@@ -44,60 +44,60 @@ pub fn vec_str_to_string(vec: Vec<&str>) -> Vec<String> {
 	result
 }
 
-pub fn author_sign_from_env() -> Result<Signature<'static>, ()> {
+pub fn author_sign_from_env() -> Option<Signature<'static>> {
 	let name = match env::var(GIT_AUTHOR_NAME) {
 		| Ok(v) => {
 			if v.len() < 1 {
-				return Err(());
+				return None;
 			}
 			v
 		}
-		| Err(_) => return Err(()),
+		| Err(_) => return None,
 	};
 
 	let email = match env::var(GIT_AUTHOR_EMAIL) {
 		| Ok(v) => {
 			if v.len() < 1 {
-				return Err(());
+				return None;
 			}
 			v
 		}
-		| Err(_) => return Err(()),
+		| Err(_) => return None,
 	};
 
 	let sign = Signature::now(name.as_str(), email.as_str()).expect(
 		"An error occurred while using the `GIT_AUTHOR_[USER, EMAIL]` to generate the commit sign.",
 	);
 
-	Ok(sign)
+	Some(sign)
 }
 
-pub fn committer_sign_from_env() -> Result<Signature<'static>, ()> {
+pub fn committer_sign_from_env() -> Option<Signature<'static>> {
 	let name = match env::var(GIT_COMMITTER_NAME) {
 		| Ok(v) => {
 			if v.len() < 1 {
-				return Err(());
+				return None;
 			}
 			v
 		}
-		| Err(_) => return Err(()),
+		| Err(_) => return None,
 	};
 
 	let email = match env::var(GIT_COMMITTER_EMAIL) {
 		| Ok(v) => {
 			if v.len() < 1 {
-				return Err(());
+				return None;
 			}
 			v
 		}
-		| Err(_) => return Err(()),
+		| Err(_) => return None,
 	};
 
 	let sign = Signature::now(name.as_str(), email.as_str()).expect(
 		"An error occurred while using the environment variable to generate the commit sign.",
 	);
 
-	Ok(sign)
+	Some(sign)
 }
 
 #[cfg(test)]
@@ -142,11 +142,7 @@ mod tests {
 		env::set_var(GIT_COMMITTER_NAME, "");
 		env::set_var(GIT_COMMITTER_EMAIL, "");
 
-		if let Err(e) = committer_sign_from_env() {
-			assert_eq!(e, ());
-		} else {
-			panic!("WHAT?")
-		}
+		assert!(committer_sign_from_env().is_none())
 	}
 
 	#[test]
@@ -156,24 +152,17 @@ mod tests {
 		env::set_var(GIT_COMMITTER_NAME, name);
 		env::set_var(GIT_COMMITTER_EMAIL, email);
 
-		if let Ok(sign) = committer_sign_from_env() {
-			assert_eq!(sign.name().unwrap(), name);
-			assert_eq!(sign.email().unwrap(), email);
-		} else {
-			panic!("WHAT?")
-		}
+		let sign = committer_sign_from_env().unwrap();
+		assert_eq!(sign.name().unwrap(), name);
+		assert_eq!(sign.email().unwrap(), email);
 	}
 
 	#[test]
 	fn it_author_sign_from_null_env() {
-		env::set_var(GIT_AUTHOR_NAME, "");
-		env::set_var(GIT_AUTHOR_EMAIL, "");
+		env::remove_var(GIT_AUTHOR_NAME);
+		env::remove_var(GIT_AUTHOR_EMAIL);
 
-		if let Err(e) = author_sign_from_env() {
-			assert_eq!(e, ());
-		} else {
-			panic!("WHAT?")
-		}
+		assert!(author_sign_from_env().is_none())
 	}
 
 	#[test]
@@ -183,11 +172,8 @@ mod tests {
 		env::set_var(GIT_AUTHOR_NAME, name);
 		env::set_var(GIT_AUTHOR_EMAIL, email);
 
-		if let Ok(sign) = author_sign_from_env() {
-			assert_eq!(sign.name().unwrap(), name);
-			assert_eq!(sign.email().unwrap(), email);
-		} else {
-			panic!("WHAT?")
-		}
+		let sign = author_sign_from_env().unwrap();
+		assert_eq!(sign.name().unwrap(), name);
+		assert_eq!(sign.email().unwrap(), email);
 	}
 }
