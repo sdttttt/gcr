@@ -1,3 +1,4 @@
+
 /* -------------------------------------------------------------------------- */
 /* GRC Metadata */
 /* -------------------------------------------------------------------------- */
@@ -40,11 +41,22 @@ pub const BASE_COMMIT_TYPE_DESCRIPTION: &[(&str, &str)] = &[
 	("ci", "CI related changes."),
 ];
 
+pub const BASE_COMMIT_TYPE_EMOJI: &[(&str, &str)] = &[
+	("test", "🧪"),
+	("feat", "🎉"),
+	("fix", "🐞"),
+	("chore", "📦"),
+	("docs", "📝"),
+	("refactor", "✂"),
+	("style", "🎨"),
+	("perf", "⚡"),
+	("ci", "🚀")
+];
+
 /* -------------------------------------------------------------------------- */
 /* GRC Commit Mode */
 /* -------------------------------------------------------------------------- */
 
-// GRC four commit modes.
 #[derive(Debug, PartialEq)]
 pub enum Mode {
 	Add,
@@ -71,3 +83,10 @@ pub const DESIGNATE_CONFIG_PARAMS: &str = "configfile";
 pub const DESIGNATE_CONFIG_COMMAND_SHORT: &str = "c";
 pub const DESIGNATE_CONFIG_COMMAND_HELP: &str =
 	"Manually specify a configuration file for the GRC.";
+
+/* -------------------------------------------------------------------------- */
+/*                              CLI Enable EMOJI                              */
+/* -------------------------------------------------------------------------- */
+
+pub const EMOJI_COMMAND: &str = "emoji";
+pub const EMOJI_COMMAND_HELP: &str = "Make your submission record look beautiful.";

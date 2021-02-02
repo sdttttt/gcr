@@ -2,6 +2,7 @@ use std::rc::Rc;
 
 mod arguments;
 mod extensions;
+mod config;
 mod log;
 mod message;
 mod metadata;
@@ -9,6 +10,7 @@ mod repo;
 mod util;
 
 use arguments::*;
+use config::Configuration;
 use extensions::*;
 use log::*;
 use message::*;
@@ -18,16 +20,33 @@ use util::*;
 fn main() {
 	// input parameters.
 	let arg = match Arguments::collect() {
-		| Ok(a) => Rc::new(a),
+		| Ok(a) => a,
 		| Err(e) => {
 			grc_err_println(e.message());
 			return;
 		}
 	};
+	// parse configuration file to Extensions struct.
+	let ext = if arg.has_specified_config() {
+		Extensions::from(arg.config_file())
+	} else {
+		Extensions::from_agreement()
+	}
+	
+	let extensions = match ext {
+		| Ok(e) => e,
+		| Err(e) => {
+			grc_err_println(e.to_string());
+			return;
+		}
+	};
 
-	// repository path.
+	let config = Configuration::merge(arg, extensions);
+	
+	// extends types.
+	let mut types: Vec<String> = vec![];
+	
 	let path = current_path();
-
 	// repository Object instance.
 	let repo = match Repository::new(path, Rc::clone(&arg)) {
 		| Ok(r) => r,
@@ -37,22 +56,8 @@ fn main() {
 		}
 	};
 
-	// extends types.
-	let mut types: Vec<String> = vec![];
-
-	// parse configuration file to Extensions struct.
-	if arg.has_specified_config() {
-		if let Ok(extends) = Extensions::from(arg.config_file()) {
-			types = extends.types().clone();
-		}
-	} else {
-		if let Ok(extends) = Extensions::from_agreement() {
-			types = extends.types().clone();
-		}
-	}
-
 	// commit message.
-	let message = Messager::new().load_ext_td(&types).ask().build();
+	let message = Messager::new(Rc::clone(&arg)).load_ext_td(&types).ask().build();
 	grc_println(&message);
 
 	// Git commit

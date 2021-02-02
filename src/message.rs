@@ -1,5 +1,7 @@
 use dialoguer::{theme::ColorfulTheme, Input, Select};
+use std::rc::Rc;
 
+use crate::arguments::Arguments;
 use crate::log::grc_err_println;
 use crate::metadata::*;
 use crate::util::remove_pound_prefix;
@@ -8,6 +10,7 @@ struct CommitTD(String, String);
 
 /// Messsager is Commit Message struct.
 pub struct Messager {
+	arg:                  Rc<Arguments>,
 	commit_type_descript: Vec<CommitTD>,
 
 	typ:     String,
@@ -23,7 +26,7 @@ impl CommitTD {
 }
 
 impl Messager {
-	pub fn new() -> Self {
+	pub fn new(arg: Rc<Arguments>) -> Self {
 		let commit_type_descript = BASE_COMMIT_TYPE_DESCRIPTION
 			.iter()
 			.map(|td: &(&str, &str)| CommitTD::from(td.0, td.1))
@@ -33,7 +36,7 @@ impl Messager {
 		let subject = String::new();
 		let body = String::new();
 
-		Self { commit_type_descript, typ, scope, subject, body }
+		Self { arg, commit_type_descript, typ, scope, subject, body }
 	}
 
 	/// Load externally provided extension types.
@@ -149,7 +152,16 @@ impl Messager {
 				}
 			})
 			.interact()
-			.unwrap()
+			.unwrap();
+
+		if self.arg.emoji() {
+			for emoji in BASE_COMMIT_TYPE_EMOJI {
+				if self.typ.as_str() == emoji.0 {
+					self.subject = format!("{}{}", emoji.1, self.subject);
+					break;
+				}
+			}
+		}
 	}
 
 	/// description of commit message.
@@ -198,12 +210,21 @@ mod tests {
 
 	#[test]
 	fn it_type_list() {
-		let tl = Messager::new().type_list();
+		let arg = Rc::new(Arguments::default());
+		let tl = Messager::new(Rc::clone(&arg)).type_list();
 		assert_eq!(tl[0].as_str(), "test:       Adding missing tests.");
 		assert_eq!(tl[1].as_str(), "feat:       A new feature.");
 		assert_eq!(tl[2].as_str(), "fix:        A bug fix.");
-		assert_eq!(tl[3].as_str(), "chore:      Build process or auxiliary tool changes.");
-		assert_eq!(tl[4].as_str(), "docs:       Documentation only changes.");
+		assert_eq!(
+			tl[3].as_str(),
+			"chore:      Build process or auxiliary tool
+	 changes."
+		);
+		assert_eq!(
+			tl[4].as_str(),
+			"docs:       Documentation only
+	 changes."
+		);
 		assert_eq!(
 			tl[5].as_str(),
 			"refactor:   A code change that neither fixes a bug or adds a feature."
@@ -212,20 +233,38 @@ mod tests {
 			tl[6].as_str(),
 			"style:      Markup, white-space, formatting, missing semi-colons..."
 		);
-		assert_eq!(tl[7].as_str(), "perf:       A code change that improves performance.");
-		assert_eq!(tl[8].as_str(), "ci:         CI related changes.");
+		assert_eq!(
+			tl[7].as_str(),
+			"perf:       A code change that improves
+	 performance."
+		);
+		assert_eq!(
+			tl[8].as_str(),
+			"ci:         CI related
+	 changes."
+		);
 	}
 
 	#[test]
 	fn it_load_ext_td() {
-		let tl =
-			Messager::new().load_ext_td(&vec!["this: yes, like this.".to_string()]).type_list();
-		assert_eq!(tl[9].as_str(), "this:       yes, like this.")
+		let arg = Rc::new(Arguments::default());
+		let tl = Messager::new(Rc::clone(&arg))
+			.load_ext_td(&vec!["this: yes, like
+	 this."
+				.to_string()])
+			.type_list();
+		assert_eq!(
+			tl[9].as_str(),
+			"this:
+	 yes, like this."
+		)
 	}
 
 	#[test]
 	fn it_build() {
-		let mut message = Messager::new();
+		let arg = Rc::new(Arguments::default());
+
+		let mut message = Messager::new(Rc::clone(&arg));
 		message.typ = "type".to_string();
 		message.scope = "scope".to_string();
 		message.subject = "subject.".to_string();

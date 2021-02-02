@@ -11,6 +11,9 @@ use crate::metadata::{GLOBAL_CONFIG_PATH, GRC_CONFIG_FILE_NAME};
 pub struct Extensions {
 	#[serde(rename = "type")]
 	typ: Vec<String>,
+
+	#[serde(rename = "emoji")]
+	emoji: bool,
 }
 
 impl Extensions {
@@ -49,10 +52,14 @@ impl Extensions {
 		&self.typ
 	}
 
+	pub fn emoji(&self) -> bool {
+		self.emoji
+	}
+
 	/// deserialize toml configuration file to struct.
 	fn deserialize(file_str: String) -> Result<Self, Error> {
 		if file_str.len() == 0 || file_str == "" {
-			return Ok(Self { typ: vec![] });
+			return Ok(Self { typ: vec![], emoji: false });
 		}
 
 		let config = toml::from_str::<Extensions>(file_str.as_str())?;
