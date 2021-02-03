@@ -202,8 +202,10 @@ impl Messager {
 			})
 			.interact()
 			.unwrap();
-
-		self.subject = format!("{} {}", self.emoji, self.subject)
+		
+		if !self.emoji.is_empty() {
+			self.subject = format!("{} {}", self.emoji, self.subject)
+		}
 	}
 
 	/// description of commit message.
