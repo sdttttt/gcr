@@ -68,6 +68,23 @@ type = [
 
 Starting with **0.9.1**, grc using `~/.config/grc/grc.toml` as the default configuration file.
 
+Starting with **1.0.0**, grc can enhance your submission with the '--emoji' command line argument.
+
+Or in the configuration file:
+
+```toml
+emoji = true
+```
+
+You can also use `overwrite_emoji` to enhance custom submission types or override basic submission types in GRC.
+
+```toml
+overwrite_emoji = [
+    "deps:🚕", # Appends an emoji to a custom submission type
+    "test:🚗"  # Test is a GRC built-in submission type that you can override.
+]
+```
+
 ## IDEA
 
 If you have any new ideas, you are welcome to talk to me.
