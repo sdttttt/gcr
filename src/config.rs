@@ -15,7 +15,7 @@ pub struct Configuration {
 impl Configuration {
 	pub fn merge(arg: Arguments, ext: Extensions) -> Rc<Self> {
 		let params = arg.files().clone();
-		let extends_type = ext.types().clone();
+		let extends_type = ext.types().unwrap_or(&vec![]).clone();
 		let mode = arg.command_mode();
 		let emoji = ext.emoji() || arg.emoji();
 		let overwrite_emoji =

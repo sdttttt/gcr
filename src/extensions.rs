@@ -10,7 +10,7 @@ use crate::metadata::{GLOBAL_CONFIG_PATH, GRC_CONFIG_FILE_NAME};
 #[derive(Deserialize)]
 pub struct Extensions {
 	#[serde(rename = "type")]
-	typ: Vec<String>,
+	typ: Option<Vec<String>>,
 
 	emoji: Option<bool>,
 
@@ -49,8 +49,8 @@ impl Extensions {
 	}
 
 	/// got All Types in configuration file.
-	pub fn types(&self) -> &Vec<String> {
-		&self.typ
+	pub fn types(&self) -> Option<&Vec<String>> {
+		self.typ.as_ref()
 	}
 
 	pub fn emoji(&self) -> bool {
@@ -65,7 +65,7 @@ impl Extensions {
 	fn deserialize(file_str: String) -> Result<Self, Error> {
 		if file_str.len() == 0 || file_str == "" {
 			return Ok(Self {
-				typ:             vec![],
+				typ:             None,
 				emoji:           None,
 				overwrite_emoji: None,
 			});
@@ -121,7 +121,7 @@ mod tests {
 		let config = Extensions::read_config_file(GRC_CONFIG_FILE_NAME).unwrap();
 		let result = Extensions::deserialize(config).unwrap();
 
-		let types = result.typ;
+		let types = result.typ.unwrap();
 		let emoji = result.emoji;
 		assert_eq!(types[0], GRC_TOML_TYPE);
 		assert_eq!(emoji, GRC_TOML_EMOJI);
@@ -130,7 +130,7 @@ mod tests {
 	#[test]
 	fn it_from_agreement() {
 		let config = Extensions::from_agreement().unwrap();
-		let types = config.typ;
+		let types = config.typ.unwrap();
 
 		assert_eq!(types[0], GRC_TOML_TYPE);
 	}
@@ -138,7 +138,7 @@ mod tests {
 	#[test]
 	fn it_from() {
 		let config = Extensions::from(GRC_TEST_CONFIG_FILE_NAME).unwrap();
-		let types = config.typ;
+		let types = config.typ.unwrap();
 
 		assert_eq!(types[0], GRC_TEST_TOML_TYPE);
 	}

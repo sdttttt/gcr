@@ -90,7 +90,7 @@ impl Messager {
 					grc_err_println(OVERWRITE_PARSE_FAILED);
 					std::process::exit(1);
 				};
-				if td.0 == arr_emo[0] {
+				if td.0 == arr_emo[0].trim() {
 					td.update_emoji(arr_emo[1].to_string());
 					return;
 				}
