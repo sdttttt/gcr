@@ -13,6 +13,8 @@ pub struct Extensions {
 	typ: Vec<String>,
 
 	emoji: Option<bool>,
+
+	overwrite_emoji: Option<Vec<String>>,
 }
 
 impl Extensions {
@@ -55,10 +57,18 @@ impl Extensions {
 		self.emoji.unwrap_or_else(|| false)
 	}
 
+	pub fn overwrite_emoji(&self) -> Option<&Vec<String>> {
+		self.overwrite_emoji.as_ref()
+	}
+
 	/// deserialize toml configuration file to struct.
 	fn deserialize(file_str: String) -> Result<Self, Error> {
 		if file_str.len() == 0 || file_str == "" {
-			return Ok(Self { typ: vec![], emoji: None });
+			return Ok(Self {
+				typ:             vec![],
+				emoji:           None,
+				overwrite_emoji: None,
+			});
 		}
 
 		let config = toml::from_str::<Extensions>(file_str.as_str())?;

@@ -1,7 +1,5 @@
 use dialoguer::{theme::ColorfulTheme, Input, Select};
-use std::rc::Rc;
 
-use crate::config::Configuration;
 use crate::log::grc_err_println;
 use crate::metadata::*;
 use crate::util::remove_pound_prefix;
@@ -29,13 +27,13 @@ impl CommitTD {
 		Self(type_name, type_desc, emoji)
 	}
 
-	//pub fn update_emoji(&mut self, emoji: String) {
-	//	self.2 = emoji
-	//}
+	pub fn update_emoji(&mut self, emoji: String) {
+		self.2 = emoji
+	}
 }
 
 impl Messager {
-	pub fn new(config: Rc<Configuration>) -> Self {
+	pub fn new(enable_emoji: bool) -> Self {
 		let commit_type_descript = BASE_COMMIT_TYPE_DESCRIPTION
 			.iter()
 			.map(|td: &(&str, &str)| -> CommitTD {
@@ -43,7 +41,7 @@ impl Messager {
 				let type_desc = td.1.to_string();
 				let mut emoji = String::new();
 
-				if config.emoji() {
+				if enable_emoji {
 					for emj in BASE_COMMIT_TYPE_EMOJI {
 						if emj.0 == td.0 {
 							emoji = emj.1.to_string();
@@ -71,7 +69,7 @@ impl Messager {
 			.map(|typ: &String| -> CommitTD {
 				let arr_td = typ.split(SEPARATOR_SYMBOL).collect::<Vec<&str>>();
 				if arr_td.len() < 2 {
-					grc_err_println("configuration file has not been parsed correctly. Please check your configuration content.");
+					grc_err_println(TYPE_PARSE_FAILED);
 					std::process::exit(1);
 				};
 				CommitTD::from(arr_td[0].trim(), arr_td[1].trim())
@@ -79,6 +77,26 @@ impl Messager {
 			.collect::<Vec<CommitTD>>();
 		self.commit_type_descript.append(&mut td);
 		self.append_custom_td();
+		self
+	}
+
+	/// Load externally provided extension emoji.
+	/// This overrides the basic emoji settings.
+	pub fn load_ext_emoji(mut self, emo: &Vec<String>) -> Self {
+		for td in &mut self.commit_type_descript {
+			emo.iter().for_each(|type_emo: &String| {
+				let arr_emo = type_emo.split(SEPARATOR_SYMBOL).collect::<Vec<&str>>();
+				if arr_emo.len() < 2 {
+					grc_err_println(OVERWRITE_PARSE_FAILED);
+					std::process::exit(1);
+				};
+				if td.0 == arr_emo[0] {
+					td.update_emoji(arr_emo[1].to_string());
+					return;
+				}
+			})
+		}
+
 		self
 	}
 
@@ -223,7 +241,7 @@ impl Messager {
 				}
 
 				if td.2.is_empty() {
-					format!("{}:{}{}", td.0, space, td.1)
+					format!("   {}:{}{}", td.0, space, td.1)
 				} else {
 					format!("{} {}:{}{}", td.2, td.0, space, td.1)
 				}
@@ -239,7 +257,7 @@ mod tests {
 
 	#[test]
 	fn it_build() {
-		let mut message = Messager::new(Rc::clone(&Configuration::default()));
+		let mut message = Messager::new(false);
 		message.typ = "type".to_string();
 		message.scope = "scope".to_string();
 		message.subject = "subject.".to_string();

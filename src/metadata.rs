@@ -89,3 +89,11 @@ pub const DESIGNATE_CONFIG_COMMAND_HELP: &str =
 
 pub const EMOJI_COMMAND: &str = "emoji";
 pub const EMOJI_COMMAND_HELP: &str = "Make your submission record look beautiful.";
+
+/* -------------------------------------------------------------------------- */
+/* GRC ERROR */
+/* -------------------------------------------------------------------------- */
+
+pub const TYPE_PARSE_FAILED: &str = "Configuration File Parse Failed: ** type ** Is not correct.";
+pub const OVERWRITE_PARSE_FAILED: &str =
+	"Configuration File Parse Failed: ** overwrite_emoji ** Is not correct.";

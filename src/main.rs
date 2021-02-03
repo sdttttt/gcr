@@ -55,8 +55,12 @@ fn main() {
 	};
 
 	// commit message.
-	let message =
-		Messager::new(Rc::clone(&config)).load_ext_td(&config.extends_type()).ask().build();
+	let message = Messager::new(config.emoji())
+		.load_ext_td(&config.extends_type())
+		.load_ext_emoji(&config.overwrite_emoji())
+		.ask()
+		.build();
+
 	grc_println(&message);
 
 	// Git commit

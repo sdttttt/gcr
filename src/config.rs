@@ -5,10 +5,11 @@ use crate::{arguments::Arguments, extensions::Extensions, metadata::Mode};
 // Both command-line arguments and configuration files can specify configuration
 // options, and the two are combined here.
 pub struct Configuration {
-	mode:         Mode,
-	extends_type: Vec<String>,
-	params:       Vec<String>,
-	emoji:        bool,
+	mode:            Mode,
+	extends_type:    Vec<String>,
+	params:          Vec<String>,
+	overwrite_emoji: Vec<String>,
+	emoji:           bool,
 }
 
 impl Configuration {
@@ -17,17 +18,19 @@ impl Configuration {
 		let extends_type = ext.types().clone();
 		let mode = arg.command_mode();
 		let emoji = ext.emoji() || arg.emoji();
+		let overwrite_emoji =
+			if emoji { ext.overwrite_emoji().unwrap_or(&vec![]).clone() } else { vec![] };
 
-		Rc::new(Self { params, extends_type, emoji, mode })
+		Rc::new(Self { params, extends_type, emoji, mode, overwrite_emoji })
 	}
 
-	#[cfg(test)]
-	pub fn default() -> Rc<Self> {
-		let ext = Extensions::from_agreement().unwrap();
-		let arg = Arguments::default();
+	//#[cfg(test)]
+	//pub fn default() -> Rc<Self> {
+	//	let ext = Extensions::from_agreement().unwrap();
+	//	let arg = Arguments::default();
 
-		Self::merge(arg, ext)
-	}
+	//	Self::merge(arg, ext)
+	//}
 
 	pub fn command_mode(&self) -> &Mode {
 		&self.mode
@@ -43,5 +46,9 @@ impl Configuration {
 
 	pub fn emoji(&self) -> bool {
 		self.emoji
+	}
+
+	pub fn overwrite_emoji(&self) -> &Vec<String> {
+		&self.overwrite_emoji
 	}
 }
