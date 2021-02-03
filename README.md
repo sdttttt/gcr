@@ -68,7 +68,7 @@ type = [
 
 Starting with **0.9.1**, grc using `~/.config/grc/grc.toml` as the default configuration file.
 
-Starting with **1.0.0**, grc can enhance your submission with the '--emoji' command line argument.
+Starting with **1.0.0**, grc can enhance your submission with the `--emoji` command line argument.
 
 Or in the configuration file:
 
