@@ -10,7 +10,11 @@ use crate::metadata::{GLOBAL_CONFIG_PATH, GRC_CONFIG_FILE_NAME};
 #[derive(Deserialize)]
 pub struct Extensions {
 	#[serde(rename = "type")]
-	typ: Vec<String>,
+	typ: Option<Vec<String>>,
+
+	emoji: Option<bool>,
+
+	overwrite_emoji: Option<Vec<String>>,
 }
 
 impl Extensions {
@@ -45,14 +49,26 @@ impl Extensions {
 	}
 
 	/// got All Types in configuration file.
-	pub fn types(&self) -> &Vec<String> {
-		&self.typ
+	pub fn types(&self) -> Option<&Vec<String>> {
+		self.typ.as_ref()
+	}
+
+	pub fn emoji(&self) -> bool {
+		self.emoji.unwrap_or_else(|| false)
+	}
+
+	pub fn overwrite_emoji(&self) -> Option<&Vec<String>> {
+		self.overwrite_emoji.as_ref()
 	}
 
 	/// deserialize toml configuration file to struct.
 	fn deserialize(file_str: String) -> Result<Self, Error> {
 		if file_str.len() == 0 || file_str == "" {
-			return Ok(Self { typ: vec![] });
+			return Ok(Self {
+				typ:             None,
+				emoji:           None,
+				overwrite_emoji: None,
+			});
 		}
 
 		let config = toml::from_str::<Extensions>(file_str.as_str())?;
@@ -81,9 +97,8 @@ mod tests {
 
 	const GRC_TEST_CONFIG_FILE_NAME: &str = "grc.test.toml";
 
-	const GRC_TOML_CONTENT: &str =
-		r#"type = ["version: version is change.", "deps: Dependencies change."]"#;
 	const GRC_TOML_TYPE: &str = "version: version is change.";
+	const GRC_TOML_EMOJI: Option<bool> = Some(true);
 
 	const GRC_TEST_TOML_CONTENT: &str = r#"type = [ "123" ]"#;
 	const GRC_TEST_TOML_TYPE: &str = "123";
@@ -93,27 +108,29 @@ mod tests {
 		let file_str = Extensions::read_config_file(GRC_TEST_CONFIG_FILE_NAME).unwrap();
 		assert_eq!(file_str.as_str(), GRC_TEST_TOML_CONTENT);
 
-		let file_str2 = Extensions::read_config_file("nullfile").unwrap();
+		let file_str2 = Extensions::read_config_file("null_file").unwrap();
 		assert_eq!(file_str2.len(), 0);
 		assert_eq!(file_str2.as_str(), "");
 
 		let config = Extensions::read_config_file(GRC_CONFIG_FILE_NAME).unwrap();
-		assert_eq!(config.as_str(), GRC_TOML_CONTENT);
+		assert!(config.len() > 0);
 	}
 
 	#[test]
 	fn it_deserialize() {
-		let file_str = String::from(GRC_TOML_CONTENT);
-		let result = Extensions::deserialize(file_str).unwrap();
+		let config = Extensions::read_config_file(GRC_CONFIG_FILE_NAME).unwrap();
+		let result = Extensions::deserialize(config).unwrap();
 
-		let types = result.typ;
+		let types = result.typ.unwrap();
+		let emoji = result.emoji;
 		assert_eq!(types[0], GRC_TOML_TYPE);
+		assert_eq!(emoji, GRC_TOML_EMOJI);
 	}
 
 	#[test]
 	fn it_from_agreement() {
 		let config = Extensions::from_agreement().unwrap();
-		let types = config.typ;
+		let types = config.typ.unwrap();
 
 		assert_eq!(types[0], GRC_TOML_TYPE);
 	}
@@ -121,7 +138,7 @@ mod tests {
 	#[test]
 	fn it_from() {
 		let config = Extensions::from(GRC_TEST_CONFIG_FILE_NAME).unwrap();
-		let types = config.typ;
+		let types = config.typ.unwrap();
 
 		assert_eq!(types[0], GRC_TEST_TOML_TYPE);
 	}

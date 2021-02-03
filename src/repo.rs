@@ -6,7 +6,7 @@ use git2::{
 };
 
 use crate::{
-	arguments::Arguments,
+	config::Configuration,
 	log::grc_println,
 	metadata::Mode,
 	util::{author_sign_from_env, committer_sign_from_env, is_all_workspace},
@@ -15,24 +15,24 @@ use crate::{
 /// Repository in GRC.
 /// is git2::Repository Encapsulation.
 pub struct Repository {
-	repo: git2::Repository,
-	arg:  Rc<Arguments>,
+	repo:   git2::Repository,
+	config: Rc<Configuration>,
 }
 
 impl Repository {
-	pub fn new(path: String, arg: Rc<Arguments>) -> Result<Self, Error> {
+	pub fn new(path: String, arg: Rc<Configuration>) -> Result<Self, Error> {
 		let result = GRepository::open(&path);
 		match result {
-			| Ok(repo) => Ok(Self { repo, arg }),
+			| Ok(repo) => Ok(Self { repo, config: arg }),
 			| Err(e) => Err(e),
 		}
 	}
 
 	/// actions before commit.
 	pub fn pre_commit(&self) -> Result<(), Error> {
-		match self.arg.command_mode() {
+		match self.config.command_mode() {
 			| Mode::Commit => self.check_index()?,
-			| Mode::Add => self.add_files(self.arg.files())?,
+			| Mode::Add => self.add_files(self.config.files())?,
 			| Mode::AddAll => self.add_all_files()?,
 		};
 
@@ -41,7 +41,7 @@ impl Repository {
 
 	/// actions after commit.
 	pub fn after_commit(&self) -> Result<(), Error> {
-		match self.arg.command_mode() {
+		match self.config.command_mode() {
 			| Mode::Commit => {}
 			| Mode::Add => {}
 			| Mode::AddAll => {}

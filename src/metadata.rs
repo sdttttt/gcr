@@ -2,7 +2,7 @@
 /* GRC Metadata */
 /* -------------------------------------------------------------------------- */
 
-pub const VERSION: &str = "0.9.2";
+pub const VERSION: &str = "1.0.0.beta.1";
 pub const AUTHOR: &str = "SDTTTTT. <sdttttt@outlook.com>";
 pub const NAME: &str = "GRC";
 pub const DESCRIPTION: &str = r#"
@@ -40,12 +40,23 @@ pub const BASE_COMMIT_TYPE_DESCRIPTION: &[(&str, &str)] = &[
 	("ci", "CI related changes."),
 ];
 
+pub const BASE_COMMIT_TYPE_EMOJI: &[(&str, &str)] = &[
+	("test", "🧪"),
+	("feat", "🎉"),
+	("fix", "🐞"),
+	("chore", "📦"),
+	("docs", "📝"),
+	("refactor", "✂ "),
+	("style", "🎨"),
+	("perf", "⚡"),
+	("ci", "🚀"),
+];
+
 /* -------------------------------------------------------------------------- */
 /* GRC Commit Mode */
 /* -------------------------------------------------------------------------- */
 
-// GRC four commit modes.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Mode {
 	Add,
 	AddAll,
@@ -71,3 +82,18 @@ pub const DESIGNATE_CONFIG_PARAMS: &str = "configfile";
 pub const DESIGNATE_CONFIG_COMMAND_SHORT: &str = "c";
 pub const DESIGNATE_CONFIG_COMMAND_HELP: &str =
 	"Manually specify a configuration file for the GRC.";
+
+/* -------------------------------------------------------------------------- */
+/* CLI Enable EMOJI */
+/* -------------------------------------------------------------------------- */
+
+pub const EMOJI_COMMAND: &str = "emoji";
+pub const EMOJI_COMMAND_HELP: &str = "Make your submission record look beautiful.";
+
+/* -------------------------------------------------------------------------- */
+/* GRC ERROR */
+/* -------------------------------------------------------------------------- */
+
+pub const TYPE_PARSE_FAILED: &str = "Configuration File Parse Failed: ** type ** Is not correct.";
+pub const OVERWRITE_PARSE_FAILED: &str =
+	"Configuration File Parse Failed: ** overwrite_emoji ** Is not correct.";

@@ -9,6 +9,7 @@ pub struct Arguments {
 	mode:            Mode,
 	params:          Vec<String>,
 	config_filename: String,
+	emoji:           bool,
 }
 
 // Get the external parameter and analyze it. Construct the behavior of GRC.
@@ -27,28 +28,33 @@ impl Arguments {
 		&self.config_filename.as_str()
 	}
 
-	pub fn command_mode(&self) -> &Mode {
-		&self.mode
+	pub fn command_mode(&self) -> Mode {
+		self.mode.clone()
 	}
 
 	pub fn files(&self) -> &Vec<String> {
 		&self.params
 	}
 
-	fn default() -> Self {
+	pub fn emoji(&self) -> bool {
+		self.emoji
+	}
+
+	pub fn default() -> Self {
 		Self {
 			mode:            Mode::Commit,
 			params:          vec![],
 			config_filename: String::new(),
+			emoji:           false,
 		}
 	}
 
 	fn cli() -> App<'static, 'static> {
-		App::new(NAME)
-			.version(VERSION)
-			.author(AUTHOR)
-			.about(DESCRIPTION)
-			.args(&[Self::add_arg(), Self::designate_config_arg()])
+		App::new(NAME).version(VERSION).author(AUTHOR).about(DESCRIPTION).args(&[
+			Self::add_arg(),
+			Self::designate_config_arg(),
+			Self::emoji_arg(),
+		])
 	}
 
 	fn add_arg() -> Arg<'static, 'static> {
@@ -70,6 +76,14 @@ impl Arguments {
 			.takes_value(true)
 	}
 
+	fn emoji_arg() -> Arg<'static, 'static> {
+		Arg::with_name(EMOJI_COMMAND)
+			.long(EMOJI_COMMAND)
+			.required(false)
+			.help(EMOJI_COMMAND_HELP)
+			.takes_value(false)
+	}
+
 	/// Construct the behavior according to the input parameters.
 	fn resolve_command(matches: ArgMatches) -> Result<Self, Error> {
 		let mut arg = Self::default();
@@ -84,7 +98,7 @@ impl Arguments {
 		// extend-handle: fn(&mut Arguments, &ArgMatches) -> Result<bool, Error>
 		// extended GRC parameters will be handled here. They are processed before the
 		// final behavior is determined.
-		let before_handles = &[Self::designate_config_handle];
+		let before_handles = &[Self::designate_config_handle, Self::emoji_check_handle];
 
 		for handle in before_handles {
 			handle(arg, matches)?;
@@ -104,11 +118,18 @@ impl Arguments {
 		Ok(false)
 	}
 
+	fn emoji_check_handle(arg: &mut Arguments, matches: &ArgMatches) -> Result<bool, Error> {
+		if matches.is_present(EMOJI_COMMAND) {
+			arg.emoji = true;
+			return Ok(true);
+		}
+		return Ok(false);
+	}
+
 	fn finally_handle_chain(arg: &mut Arguments, matches: &ArgMatches) -> Result<bool, Error> {
 		// finally-handle: fn(&mut Arguments, &ArgMatches) -> Result<bool, Error>
 		// that confirm the behavior to be finally used by the GRC and the required
-		// parameters. This is a chain of responsibility where only one processor will
-		// receive the job.
+		// parameters. This is a chain of responsibility
 		let post_handles = &[Self::add_params_handle];
 
 		for handle in post_handles {
@@ -156,19 +177,25 @@ mod tests {
 	fn add_all_mode() {
 		let args = quick_command_run(vec!["grc", "--add", "."]);
 
-		assert_eq!(args.command_mode(), &Mode::AddAll);
+		assert_eq!(args.command_mode(), Mode::AddAll);
 	}
 
 	#[test]
 	fn add_mode() {
 		let args = quick_command_run(vec!["grc", "--add", "rusty"]);
-		assert_eq!(args.command_mode(), &Mode::Add);
+		assert_eq!(args.command_mode(), Mode::Add);
+	}
+
+	#[test]
+	fn enable_emoji() {
+		let args = quick_command_run(vec!["grc", "--emoji"]);
+		assert!(args.emoji())
 	}
 
 	#[test]
 	fn commit_mode() {
 		let args = quick_command_run(vec!["grc"]);
-		assert_eq!(args.command_mode(), &Mode::Commit);
+		assert_eq!(args.command_mode(), Mode::Commit);
 	}
 
 	#[test]
