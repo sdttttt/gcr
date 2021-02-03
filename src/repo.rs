@@ -15,8 +15,8 @@ use crate::{
 /// Repository in GRC.
 /// is git2::Repository Encapsulation.
 pub struct Repository {
-	repo: git2::Repository,
-	config:  Rc<Configuration>,
+	repo:   git2::Repository,
+	config: Rc<Configuration>,
 }
 
 impl Repository {

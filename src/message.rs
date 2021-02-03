@@ -6,7 +6,8 @@ use crate::log::grc_err_println;
 use crate::metadata::*;
 use crate::util::remove_pound_prefix;
 
-struct CommitTD(String, String);
+/// 0: name 1: description 2: emoji
+struct CommitTD(String, String, String);
 
 /// Messsager is Commit Message struct.
 pub struct Messager {
@@ -14,15 +15,24 @@ pub struct Messager {
 	commit_type_descript: Vec<CommitTD>,
 
 	typ:     String,
+	emoji:   String,
 	scope:   String,
 	subject: String,
 	body:    String,
 }
 
 impl CommitTD {
-	pub fn from(a1: &str, a2: &str) -> Self {
-		Self(a1.to_string(), a2.to_string())
+	pub fn from(type_name: &str, type_desc: &str) -> Self {
+		Self(type_name.to_string(), type_desc.to_string(), String::new())
 	}
+
+	pub fn with_emoji(type_name: String, type_desc: String, emoji: String) -> Self {
+		Self(type_name, type_desc, emoji)
+	}
+
+	//pub fn update_emoji(&mut self, emoji: String) {
+	//	self.2 = emoji
+	//}
 }
 
 impl Messager {
@@ -30,26 +40,29 @@ impl Messager {
 		let commit_type_descript = BASE_COMMIT_TYPE_DESCRIPTION
 			.iter()
 			.map(|td: &(&str, &str)| -> CommitTD {
-				let mut type_name = td.0.to_string();
+				let type_name = td.0.to_string();
 				let type_desc = td.1.to_string();
+				let mut emoji = String::new();
 
 				if config.emoji() {
 					for emj in BASE_COMMIT_TYPE_EMOJI {
 						if emj.0 == td.0 {
-							type_name = format!("{} {}", emj.1, td.0);
-						};
+							emoji = emj.1.to_string();
+							break;
+						}
 					}
 				}
 
-				CommitTD::from(type_name.as_str(), type_desc.as_str())
+				CommitTD::with_emoji(type_name, type_desc, emoji)
 			})
 			.collect();
 		let typ = String::new();
 		let scope = String::new();
 		let subject = String::new();
 		let body = String::new();
+		let emoji = String::new();
 
-		Self { config, commit_type_descript, typ, scope, subject, body }
+		Self { config, commit_type_descript, typ, scope, subject, body, emoji }
 	}
 
 	/// Load externally provided extension types.
@@ -138,7 +151,13 @@ impl Messager {
 				.interact()
 				.unwrap()
 		} else {
-			self.typ = self.commit_type_descript[selection].0.clone()
+			self.typ = self.commit_type_descript[selection].0.to_string();
+			for td in &self.commit_type_descript {
+				if self.typ == td.0 {
+					self.emoji = td.2.to_string();
+					break;
+				}
+			}
 		}
 	}
 
@@ -167,14 +186,7 @@ impl Messager {
 			.interact()
 			.unwrap();
 
-		if self.config.emoji() {
-			for emoji in BASE_COMMIT_TYPE_EMOJI {
-				if self.typ.as_str() == emoji.0 {
-					self.subject = format!("{}{}", emoji.1, self.subject);
-					break;
-				}
-			}
-		}
+		self.subject = format!("{}{}", self.emoji, self.subject)
 	}
 
 	/// description of commit message.
@@ -210,7 +222,12 @@ impl Messager {
 						space.push_str(SPACE);
 					}
 				}
-				format!("{}:{}{}", td.0, space, td.1)
+
+				if td.2.is_empty() {
+					format!("{}:{}{}", td.0, space, td.1)
+				} else {
+					format!("{} {}:{}{}", td.2, td.0, space, td.1)
+				}
 			})
 			.collect::<Vec<String>>()
 	}

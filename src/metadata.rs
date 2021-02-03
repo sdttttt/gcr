@@ -1,9 +1,8 @@
-
 /* -------------------------------------------------------------------------- */
 /* GRC Metadata */
 /* -------------------------------------------------------------------------- */
 
-pub const VERSION: &str = "0.9.2";
+pub const VERSION: &str = "1.0.0.beta.1";
 pub const AUTHOR: &str = "SDTTTTT. <sdttttt@outlook.com>";
 pub const NAME: &str = "GRC";
 pub const DESCRIPTION: &str = r#"
@@ -47,10 +46,10 @@ pub const BASE_COMMIT_TYPE_EMOJI: &[(&str, &str)] = &[
 	("fix", "🐞"),
 	("chore", "📦"),
 	("docs", "📝"),
-	("refactor", "✂"),
+	("refactor", "✂ "),
 	("style", "🎨"),
 	("perf", "⚡"),
-	("ci", "🚀")
+	("ci", "🚀"),
 ];
 
 /* -------------------------------------------------------------------------- */
@@ -85,7 +84,7 @@ pub const DESIGNATE_CONFIG_COMMAND_HELP: &str =
 	"Manually specify a configuration file for the GRC.";
 
 /* -------------------------------------------------------------------------- */
-/*                              CLI Enable EMOJI                              */
+/* CLI Enable EMOJI */
 /* -------------------------------------------------------------------------- */
 
 pub const EMOJI_COMMAND: &str = "emoji";
