@@ -139,7 +139,7 @@ impl Messager {
 		// Custom TYPE.
 		if selection == self.commit_type_descript.len() - 1 {
 			self.typ = Input::with_theme(&ColorfulTheme::default())
-				.with_prompt("GRC: What Type ?")
+				.with_prompt("What Type ?")
 				.validate_with(|input: &String| -> Result<(), &str> {
 					if input.len() == 0 || input.trim().len() == 0 {
 						Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
@@ -163,7 +163,7 @@ impl Messager {
 	/// scope of commit message.
 	fn ask_scope(&mut self) {
 		let scope = Input::<String>::with_theme(&ColorfulTheme::default())
-			.with_prompt("GRC: Which scope? (Optional)")
+			.with_prompt("Which scope? (Optional)")
 			.allow_empty(true)
 			.interact()
 			.unwrap();
@@ -174,7 +174,7 @@ impl Messager {
 	/// subject of commit message.
 	fn ask_subject(&mut self) {
 		self.subject = Input::<String>::with_theme(&ColorfulTheme::default())
-			.with_prompt("GRC: Commit Message ?")
+			.with_prompt("Commit Message ?")
 			.validate_with(|input: &String| -> Result<(), &str> {
 				if input.len() == 0 || input.trim().len() == 0 {
 					Err("(ﾟДﾟ*)ﾉPlease do not enter empty string.")
@@ -185,13 +185,13 @@ impl Messager {
 			.interact()
 			.unwrap();
 
-		self.subject = format!("{}{}", self.emoji, self.subject)
+		self.subject = format!("{} {}", self.emoji, self.subject)
 	}
 
 	/// description of commit message.
 	fn ask_description(&self) -> String {
 		let description = Input::<String>::with_theme(&ColorfulTheme::default())
-			.with_prompt("GRC: Provide a longer description? (Optional)")
+			.with_prompt("Provide a longer description? (Optional)")
 			.allow_empty(true)
 			.interact()
 			.unwrap();
@@ -202,7 +202,7 @@ impl Messager {
 	/// close PR or issue of commit message.
 	fn ask_close(&self) -> String {
 		let closes = Input::<String>::with_theme(&ColorfulTheme::default())
-			.with_prompt("GRC: PR & Issues this commit closes, e.g 123: (Optional)")
+			.with_prompt("PR & Issues this commit closes, e.g 123: (Optional)")
 			.allow_empty(true)
 			.interact()
 			.unwrap();
