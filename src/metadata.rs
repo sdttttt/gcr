@@ -57,7 +57,7 @@ pub const BASE_COMMIT_TYPE_EMOJI: &[(&str, &str)] = &[
 /* GRC Commit Mode */
 /* -------------------------------------------------------------------------- */
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Mode {
 	Add,
 	AddAll,

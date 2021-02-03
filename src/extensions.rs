@@ -12,8 +12,7 @@ pub struct Extensions {
 	#[serde(rename = "type")]
 	typ: Vec<String>,
 
-	#[serde(rename = "emoji")]
-	emoji: bool,
+	emoji: Option<bool>,
 }
 
 impl Extensions {
@@ -53,13 +52,13 @@ impl Extensions {
 	}
 
 	pub fn emoji(&self) -> bool {
-		self.emoji
+		self.emoji.unwrap_or_else(|| false)
 	}
 
 	/// deserialize toml configuration file to struct.
 	fn deserialize(file_str: String) -> Result<Self, Error> {
 		if file_str.len() == 0 || file_str == "" {
-			return Ok(Self { typ: vec![], emoji: false });
+			return Ok(Self { typ: vec![], emoji: None });
 		}
 
 		let config = toml::from_str::<Extensions>(file_str.as_str())?;
@@ -89,8 +88,11 @@ mod tests {
 	const GRC_TEST_CONFIG_FILE_NAME: &str = "grc.test.toml";
 
 	const GRC_TOML_CONTENT: &str =
-		r#"type = ["version: version is change.", "deps: Dependencies change."]"#;
+		r#"emoji = true
+type = ["version: version is change.", "deps: Dependencies change."]"#;
+
 	const GRC_TOML_TYPE: &str = "version: version is change.";
+	const GRC_TOML_EMOJI: Option<bool> = Some(true);
 
 	const GRC_TEST_TOML_CONTENT: &str = r#"type = [ "123" ]"#;
 	const GRC_TEST_TOML_TYPE: &str = "123";
@@ -114,7 +116,9 @@ mod tests {
 		let result = Extensions::deserialize(file_str).unwrap();
 
 		let types = result.typ;
+		let emoji = result.emoji;
 		assert_eq!(types[0], GRC_TOML_TYPE);
+		assert_eq!(emoji, GRC_TOML_EMOJI);
 	}
 
 	#[test]

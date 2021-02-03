@@ -1,1 +1,2 @@
+emoji = true
 type = ["version: version is change.", "deps: Dependencies change."]

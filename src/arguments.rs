@@ -28,8 +28,8 @@ impl Arguments {
 		&self.config_filename.as_str()
 	}
 
-	pub fn command_mode(&self) -> &Mode {
-		&self.mode
+	pub fn command_mode(&self) -> Mode {
+		self.mode.clone()
 	}
 
 	pub fn files(&self) -> &Vec<String> {
@@ -177,19 +177,19 @@ mod tests {
 	fn add_all_mode() {
 		let args = quick_command_run(vec!["grc", "--add", "."]);
 
-		assert_eq!(args.command_mode(), &Mode::AddAll);
+		assert_eq!(args.command_mode(), Mode::AddAll);
 	}
 
 	#[test]
 	fn add_mode() {
 		let args = quick_command_run(vec!["grc", "--add", "rusty"]);
-		assert_eq!(args.command_mode(), &Mode::Add);
+		assert_eq!(args.command_mode(), Mode::Add);
 	}
 
 	#[test]
 	fn commit_mode() {
 		let args = quick_command_run(vec!["grc"]);
-		assert_eq!(args.command_mode(), &Mode::Commit);
+		assert_eq!(args.command_mode(), Mode::Commit);
 	}
 
 	#[test]
