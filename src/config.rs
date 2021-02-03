@@ -16,14 +16,7 @@ impl Configuration {
 		let params = arg.files().clone();
 		let extends_type = ext.types().clone();
 		let mode = arg.command_mode();
-
-		let emoji = {
-			if ext.emoji() || arg.emoji() {
-				ext.emoji()
-			} else {
-				false
-			}
-		};
+		let emoji = ext.emoji() || arg.emoji();
 
 		Rc::new(Self { params, extends_type, emoji, mode })
 	}

@@ -11,7 +11,6 @@ struct CommitTD(String, String, String);
 
 /// Messsager is Commit Message struct.
 pub struct Messager {
-	config:               Rc<Configuration>,
 	commit_type_descript: Vec<CommitTD>,
 
 	typ:     String,
@@ -62,7 +61,7 @@ impl Messager {
 		let body = String::new();
 		let emoji = String::new();
 
-		Self { config, commit_type_descript, typ, scope, subject, body, emoji }
+		Self { commit_type_descript, typ, scope, subject, body, emoji }
 	}
 
 	/// Load externally provided extension types.

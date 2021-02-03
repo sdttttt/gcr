@@ -98,7 +98,7 @@ mod tests {
 		let file_str = Extensions::read_config_file(GRC_TEST_CONFIG_FILE_NAME).unwrap();
 		assert_eq!(file_str.as_str(), GRC_TEST_TOML_CONTENT);
 
-		let file_str2 = Extensions::read_config_file("nullfile").unwrap();
+		let file_str2 = Extensions::read_config_file("null_file").unwrap();
 		assert_eq!(file_str2.len(), 0);
 		assert_eq!(file_str2.as_str(), "");
 

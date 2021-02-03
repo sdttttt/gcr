@@ -187,6 +187,12 @@ mod tests {
 	}
 
 	#[test]
+	fn enable_emoji() {
+		let args = quick_command_run(vec!["grc", "--emoji"]);
+		assert!(args.emoji())
+	}
+
+	#[test]
 	fn commit_mode() {
 		let args = quick_command_run(vec!["grc"]);
 		assert_eq!(args.command_mode(), Mode::Commit);
