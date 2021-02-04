@@ -46,17 +46,17 @@ jobs:
         draft: false
         prerelease: false
 
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+#   publish:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
   
-      - name: Publish to crates.io
-        run: |
-          cargo login ${{ env.CARGO_LOGIN_TOKEN }}
-          make publish
-        env:
-          CARGO_LOGIN_TOKEN: ${{ secrets.CARGO_LOGIN_TOKEN }}
+#       - name: Publish to crates.io
+#         run: |
+#           cargo login ${{ env.CARGO_LOGIN_TOKEN }}
+#           make publish
+#         env:
+#           CARGO_LOGIN_TOKEN: ${{ secrets.CARGO_LOGIN_TOKEN }}
   
   upload:
     
