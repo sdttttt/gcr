@@ -2,8 +2,8 @@ use std::rc::Rc;
 
 use crate::{arguments::Arguments, extensions::Extensions, metadata::Mode};
 
-// Both command-line arguments and configuration files can specify configuration
-// options, and the two are combined here.
+// Both command-line arguments and configuration files can specify
+// configuration. options, and the two are combined here.
 pub struct Configuration {
 	mode:            Mode,
 	extends_type:    Vec<String>,

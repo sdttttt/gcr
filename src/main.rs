@@ -6,6 +6,7 @@ mod extensions;
 mod log;
 mod message;
 mod metadata;
+mod plugins;
 mod repo;
 mod util;
 

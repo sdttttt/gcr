@@ -12,18 +12,22 @@ use crate::{
 	util::{author_sign_from_env, committer_sign_from_env, is_all_workspace},
 };
 
+// GRC ACTION HOOK.
+// To reduce complexity, this hook does not change the GRC's original behavior.
+pub type CommitHook = fn(&Repository, &String) -> Option<Error>;
+
 /// Repository in GRC.
 /// is git2::Repository Encapsulation.
 pub struct Repository {
-	repo:   git2::Repository,
+	repo:   GRepository,
 	config: Rc<Configuration>,
 }
 
 impl Repository {
-	pub fn new(path: String, arg: Rc<Configuration>) -> Result<Self, Error> {
+	pub fn new(path: String, config: Rc<Configuration>) -> Result<Self, Error> {
 		let result = GRepository::open(&path);
 		match result {
-			| Ok(repo) => Ok(Self { repo, config: arg }),
+			| Ok(repo) => Ok(Self { repo, config }),
 			| Err(e) => Err(e),
 		}
 	}

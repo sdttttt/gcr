@@ -202,7 +202,7 @@ impl Messager {
 			})
 			.interact()
 			.unwrap();
-		
+
 		if !self.emoji.is_empty() {
 			self.subject = format!("{} {}", self.emoji, self.subject)
 		}
