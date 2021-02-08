@@ -12,10 +12,6 @@ use crate::{
 	util::{author_sign_from_env, committer_sign_from_env, is_all_workspace},
 };
 
-// GRC ACTION HOOK.
-// To reduce complexity, this hook does not change the GRC's original behavior.
-pub type CommitHook = fn(&Repository, &String) -> Option<Error>;
-
 /// Repository in GRC.
 /// is git2::Repository Encapsulation.
 pub struct Repository {
@@ -33,23 +29,31 @@ impl Repository {
 	}
 
 	/// actions before commit.
-	pub fn pre_commit(&self) -> Result<(), Error> {
+	fn pre_commit(&self) -> Result<(), Error> {
 		match self.config.command_mode() {
 			| Mode::Commit => self.check_index()?,
 			| Mode::Add => self.add_files(self.config.files())?,
 			| Mode::AddAll => self.add_all_files()?,
 		};
 
+		self.config.plugins().iter().for_each(|plug| {
+			plug.before(&self);
+		});
+
 		Ok(())
 	}
 
 	/// actions after commit.
-	pub fn after_commit(&self) -> Result<(), Error> {
+	fn after_commit(&self) -> Result<(), Error> {
 		match self.config.command_mode() {
 			| Mode::Commit => {}
 			| Mode::Add => {}
 			| Mode::AddAll => {}
 		};
+
+		self.config.plugins().iter().for_each(|plug| {
+			plug.after(&self);
+		});
 
 		Ok(())
 	}

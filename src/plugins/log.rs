@@ -1,4 +1,4 @@
-use std::fmt::Error;
+use git2::Error;
 
 use crate::repo::Repository;
 
@@ -14,12 +14,12 @@ impl LogPlugin {
 }
 
 impl CommitPlugin for LogPlugin {
-	fn before(&self, _: &Repository, _: &String) -> Option<Error> {
+	fn before(&self, _: &Repository) -> Option<Error> {
 		println!("log plugin runing.");
 		None
 	}
 
-	fn after(&self, _: &Repository, _: &String) -> Option<Error> {
+	fn after(&self, _: &Repository) -> Option<Error> {
 		println!("log plugin runing.");
 		None
 	}

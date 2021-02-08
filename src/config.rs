@@ -1,14 +1,20 @@
 use std::rc::Rc;
 
-use crate::{arguments::Arguments, extensions::Extensions, metadata::Mode};
+use crate::{
+	arguments::Arguments,
+	extensions::Extensions,
+	metadata::Mode,
+	plugins::{find_plug, CommitPlugin},
+};
 
-// Both command-line arguments and configuration files can specify
-// configuration. options, and the two are combined here.
+// Both command-line arguments and configuration files can specify configuration
+// options, and the two are combined here.
 pub struct Configuration {
 	mode:            Mode,
 	extends_type:    Vec<String>,
 	params:          Vec<String>,
 	overwrite_emoji: Vec<String>,
+	plugs:           Vec<Rc<dyn CommitPlugin>>,
 	emoji:           bool,
 }
 
@@ -21,7 +27,9 @@ impl Configuration {
 		let overwrite_emoji =
 			if emoji { ext.overwrite_emoji().unwrap_or(&vec![]).clone() } else { vec![] };
 
-		Rc::new(Self { params, extends_type, emoji, mode, overwrite_emoji })
+		let plugs = find_plug(ext.plug().unwrap_or(&vec![]));
+
+		Rc::new(Self { params, extends_type, emoji, mode, overwrite_emoji, plugs })
 	}
 
 	//#[cfg(test)]
@@ -50,5 +58,9 @@ impl Configuration {
 
 	pub fn overwrite_emoji(&self) -> &Vec<String> {
 		&self.overwrite_emoji
+	}
+
+	pub fn plugins(&self) -> &Vec<Rc<dyn CommitPlugin>> {
+		&self.plugs
 	}
 }

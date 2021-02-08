@@ -1,4 +1,4 @@
-use std::fmt::Error;
+use git2::Error;
 use std::rc::Rc;
 
 use crate::repo::Repository;
@@ -10,8 +10,8 @@ use log::LogPlugin;
 use push::PushPlugin;
 
 pub trait CommitPlugin {
-	fn before(&self, repo: &Repository, msg: &String) -> Option<Error>;
-	fn after(&self, repo: &Repository, msg: &String) -> Option<Error>;
+	fn before(&self, repo: &Repository) -> Option<Error>;
+	fn after(&self, repo: &Repository) -> Option<Error>;
 }
 
 pub fn find_plug(plug_names: &Vec<String>) -> Vec<Rc<dyn CommitPlugin>> {
