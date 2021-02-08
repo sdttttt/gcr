@@ -10,8 +10,13 @@ use log::LogPlugin;
 use push::PushPlugin;
 
 pub trait CommitPlugin {
-	fn before(&self, repo: &Repository) -> Option<Error>;
-	fn after(&self, repo: &Repository) -> Option<Error>;
+	fn before(&self, _: &Repository) -> Result<(), Error> {
+		Ok(())
+	}
+
+	fn after(&self, _: &Repository) -> Result<(), Error> {
+		Ok(())
+	}
 }
 
 pub fn find_plug(plug_names: &Vec<String>) -> Vec<Rc<dyn CommitPlugin>> {

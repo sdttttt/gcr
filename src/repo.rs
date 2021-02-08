@@ -28,36 +28,11 @@ impl Repository {
 		}
 	}
 
+	pub fn real_repo(&self) -> &GRepository {
+		&self.repo
+	}
+
 	/// actions before commit.
-	fn pre_commit(&self) -> Result<(), Error> {
-		match self.config.command_mode() {
-			| Mode::Commit => self.check_index()?,
-			| Mode::Add => self.add_files(self.config.files())?,
-			| Mode::AddAll => self.add_all_files()?,
-		};
-
-		self.config.plugins().iter().for_each(|plug| {
-			plug.before(&self);
-		});
-
-		Ok(())
-	}
-
-	/// actions after commit.
-	fn after_commit(&self) -> Result<(), Error> {
-		match self.config.command_mode() {
-			| Mode::Commit => {}
-			| Mode::Add => {}
-			| Mode::AddAll => {}
-		};
-
-		self.config.plugins().iter().for_each(|plug| {
-			plug.after(&self);
-		});
-
-		Ok(())
-	}
-
 	/// execute git commit.
 	pub fn commit(&self, message: &str) -> Result<(), Error> {
 		self.pre_commit()?;
@@ -85,6 +60,36 @@ impl Repository {
 
 		Ok(())
 	}
+
+	fn pre_commit(&self) -> Result<(), Error> {
+		match self.config.command_mode() {
+			| Mode::Commit => self.check_index()?,
+			| Mode::Add => self.add_files(self.config.files())?,
+			| Mode::AddAll => self.add_all_files()?,
+		};
+
+		for plug in self.config.plugins() {
+			plug.before(&self)?;
+		};
+
+		Ok(())
+	}
+
+	/// actions after commit.
+	fn after_commit(&self) -> Result<(), Error> {
+		match self.config.command_mode() {
+			| Mode::Commit => {}
+			| Mode::Add => {}
+			| Mode::AddAll => {}
+		};
+
+		for plug in self.config.plugins() {
+			plug.after(&self)?;
+		};
+
+		Ok(())
+	}
+
 
 	/// Repository status.
 	fn status(&self) -> Result<Statuses<'_>, Error> {

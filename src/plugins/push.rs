@@ -1,4 +1,4 @@
-use git2::Error;
+	use git2::{Error, Direction};
 
 use crate::repo::Repository;
 
@@ -14,13 +14,13 @@ impl PushPlugin {
 }
 
 impl CommitPlugin for PushPlugin {
-	fn before(&self, _: &Repository) -> Option<Error> {
-		println!("log plugin runing.");
-		None
-	}
 
-	fn after(&self, _: &Repository) -> Option<Error> {
-		println!("log plugin runing.");
-		None
+	fn after(&self, repo: &Repository) ->  Result<(), Error> {
+		println!("[+] running push ...");
+		let real_repo = repo.real_repo();
+		let mut remote = real_repo.find_remote("origin")?;
+		remote.connect(Direction::Push)?;
+		remote.push(&[""], None)?;
+		Ok(())
 	}
 }

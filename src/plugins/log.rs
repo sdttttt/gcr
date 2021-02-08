@@ -14,13 +14,13 @@ impl LogPlugin {
 }
 
 impl CommitPlugin for LogPlugin {
-	fn before(&self, _: &Repository) -> Option<Error> {
+	fn before(&self, _: &Repository) ->  Result<(), Error> {
 		println!("log plugin runing.");
-		None
+		Ok(())
 	}
 
-	fn after(&self, _: &Repository) -> Option<Error> {
+	fn after(&self, _: &Repository) ->  Result<(), Error> {
 		println!("log plugin runing.");
-		None
+		Ok(())
 	}
 }
