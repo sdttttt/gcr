@@ -1,5 +1,5 @@
 use crate::repo::Repository;
-use git2::{Cred, Direction, Error, PushOptions, RemoteCallbacks};
+use git2::{Cred, Error, PushOptions, RemoteCallbacks};
 use std::env;
 use std::path::Path;
 

@@ -70,7 +70,7 @@ impl Repository {
 
 		for plug in self.config.plugins() {
 			plug.before(&self)?;
-		};
+		}
 
 		Ok(())
 	}
@@ -85,11 +85,10 @@ impl Repository {
 
 		for plug in self.config.plugins() {
 			plug.after(&self)?;
-		};
+		}
 
 		Ok(())
 	}
-
 
 	/// Repository status.
 	fn status(&self) -> Result<Statuses<'_>, Error> {

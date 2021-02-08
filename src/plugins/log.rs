@@ -14,12 +14,12 @@ impl LogPlugin {
 }
 
 impl CommitPlugin for LogPlugin {
-	fn before(&self, _: &Repository) ->  Result<(), Error> {
+	fn before(&self, _: &Repository) -> Result<(), Error> {
 		println!("log plugin runing.");
 		Ok(())
 	}
 
-	fn after(&self, _: &Repository) ->  Result<(), Error> {
+	fn after(&self, _: &Repository) -> Result<(), Error> {
 		println!("log plugin runing.");
 		Ok(())
 	}
