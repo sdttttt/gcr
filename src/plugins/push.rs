@@ -22,9 +22,9 @@ impl CommitPlugin for PushPlugin {
 		let head = real_repo.head().unwrap();
 		let branch_name = head.shorthand().unwrap_or_else(|| "");
 		let config = real_repo.config()?;
-		let remote_name = config.get_str(format!("branch.{}.remote", branch_name).as_str())?;
+		let remote_name = config.get_string(format!("branch.{}.remote", branch_name).as_str())?;
 
-		let mut remote = real_repo.find_remote(remote_name)?;
+		let mut remote = real_repo.find_remote(remote_name.as_str())?;
 		let mut callbacks = RemoteCallbacks::new();
 		callbacks.credentials(|_, username_from_url, _| {
 			Cred::ssh_key(
@@ -48,3 +48,26 @@ impl CommitPlugin for PushPlugin {
 		Ok(())
 	}
 }
+
+//#[cfg(test)]
+//mod tests {
+//	use git2::Repository;
+
+//	#[test]
+//	fn it_remote_name() {
+//		let repo = Repository::open(".").unwrap();
+//		let config = repo.config().unwrap();
+//		let remote_name = config.get_string("branch.develop.remote").unwrap();
+
+//		assert_eq!("origin", remote_name.as_str());
+//	}
+
+//	#[test]
+//	fn it_branch_name() {
+//		let repo = Repository::open(".").unwrap();
+//		let head = repo.head().unwrap();
+//		let branch_name = head.shorthand().unwrap_or_else(|| "");
+
+//		assert_eq!("develop", branch_name);
+//	}
+//}
