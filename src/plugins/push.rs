@@ -2,6 +2,7 @@ use crate::{log::grc_warn_println, repo::Repository};
 use git2::{Cred, Error, PushOptions, RemoteCallbacks};
 use std::env;
 use std::path::Path;
+use console::Style;
 
 use super::CommitPlugin;
 
@@ -16,7 +17,7 @@ impl PushPlugin {
 
 impl CommitPlugin for PushPlugin {
 	fn after(&self, repo: &Repository) -> Result<(), Error> {
-		println!("[*] running push ...");
+		println!("[{}] running push ...", Style::new().yellow().apply_to("-"));
 		let real_repo = repo.real_repo();
 
 		let head = real_repo.head().unwrap();
@@ -45,6 +46,8 @@ impl CommitPlugin for PushPlugin {
 			&[format!("refs/heads/{}:refs/heads/{}", branch_name, branch_name).as_str()],
 			Some(&mut push_option),
 		)?;
+
+		println!("[{}] push is end.", Style::new().green().apply_to("~"));
 		Ok(())
 	}
 }
