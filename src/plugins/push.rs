@@ -1,4 +1,4 @@
-use crate::repo::Repository;
+use crate::{log::grc_warn_println, repo::Repository};
 use git2::{Cred, Error, PushOptions, RemoteCallbacks};
 use std::env;
 use std::path::Path;
@@ -16,7 +16,7 @@ impl PushPlugin {
 
 impl CommitPlugin for PushPlugin {
 	fn after(&self, repo: &Repository) -> Result<(), Error> {
-		println!("[+] running push ...");
+		println!("[*] running push ...");
 		let real_repo = repo.real_repo();
 
 		let head = real_repo.head()?;
@@ -35,6 +35,8 @@ impl CommitPlugin for PushPlugin {
 
 		let mut push_option: PushOptions = PushOptions::new();
 		push_option.remote_callbacks(callbacks);
+
+		grc_warn_println(format!("Target Branch: {}", head));
 
 		remote.push(
 			&[format!("refs/heads/{}:refs/heads/{}", head, head).as_str()],
