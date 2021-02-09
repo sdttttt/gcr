@@ -19,10 +19,12 @@ impl CommitPlugin for PushPlugin {
 		println!("[*] running push ...");
 		let real_repo = repo.real_repo();
 
-		let head = real_repo.head()?;
-		let head = head.shorthand().unwrap_or_else(|| "");
+		let head = real_repo.head().unwrap();
+		let branch_name = head.shorthand().unwrap_or_else(|| "");
+		let config = real_repo.config()?;
+		let remote_name = config.get_str(format!("branch.{}.remote", branch_name).as_str())?;
 
-		let mut remote = real_repo.find_remote("origin")?;
+		let mut remote = real_repo.find_remote(remote_name)?;
 		let mut callbacks = RemoteCallbacks::new();
 		callbacks.credentials(|_, username_from_url, _| {
 			Cred::ssh_key(
@@ -36,10 +38,11 @@ impl CommitPlugin for PushPlugin {
 		let mut push_option: PushOptions = PushOptions::new();
 		push_option.remote_callbacks(callbacks);
 
-		grc_warn_println(format!("Target Branch: {}", head));
+		grc_warn_println(format!("Remote: {}", remote_name));
+		grc_warn_println(format!("Branch: {}", branch_name));
 
 		remote.push(
-			&[format!("refs/heads/{}:refs/heads/{}", head, head).as_str()],
+			&[format!("refs/heads/{}:refs/heads/{}", branch_name, branch_name).as_str()],
 			Some(&mut push_option),
 		)?;
 		Ok(())

@@ -10,17 +10,15 @@ pub fn grc_println(content: impl Display) {
 /// GCR error logger.
 pub fn grc_err_println(content: impl Display) {
 	let color = Style::new().red();
-	let output = format!("GRC: {}", content);
 
-	println!("{}", color.apply_to(output))
+	println!("{}", color.apply_to(content))
 }
 
 /// GCR error logger.
 pub fn grc_warn_println(content: impl Display) {
 	let color = Style::new().yellow();
-	let output = format!("GRC: {}", content);
 
-	println!("{}", color.apply_to(output))
+	println!("{}", color.apply_to(content))
 }
 
 #[cfg(test)]
