@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Generate code coverage
-      run: cargo +nightly tarpaulin --verbose --all-features --workspace --timeout 300 --out Xml
+      run: cargo tarpaulin --verbose --all-features --workspace --timeout 2400 --out Xml
       env:
         RUST_BACKTRACE: 1
       
