@@ -85,6 +85,10 @@ overwrite_emoji = [
 ]
 ```
 
+### Plug
+
+plug are a new feature added in `1.1.0`. Details of the plug-in and usage can be found [here](https://github.com/sdttttt/gcr/tree/develop/src/plugins).
+
 ## IDEA
 
 If you have any new ideas, you are welcome to talk to me.
