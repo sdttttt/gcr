@@ -1,8 +1,8 @@
 use crate::{log::grc_warn_println, repo::Repository};
+use console::Style;
 use git2::{Cred, Error, PushOptions, RemoteCallbacks};
 use std::env;
 use std::path::Path;
-use console::Style;
 
 use super::CommitPlugin;
 

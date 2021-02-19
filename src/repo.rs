@@ -7,7 +7,7 @@ use git2::{
 
 use crate::{
 	config::Configuration,
-	log::grc_println,
+	log::{grc_println, grc_warn_println},
 	metadata::Mode,
 	util::{author_sign_from_env, committer_sign_from_env, is_all_workspace},
 };
@@ -43,18 +43,32 @@ impl Repository {
 		};
 
 		let tree = self.repo.find_tree(tree_id)?;
-		let commit = self.find_last_commit()?;
 
 		let (author_sign, committer_sign) = self.generate_sign()?;
 
-		self.repo.commit(
-			Some("HEAD"),
-			&author_sign,
-			&committer_sign,
-			message,
-			&tree,
-			&[&commit],
-		)?;
+		match self.find_last_commit() {
+			| Ok(commit) => {
+				self.repo.commit(
+					Some("HEAD"),
+					&author_sign,
+					&committer_sign,
+					message,
+					&tree,
+					&[&commit],
+				)?;
+			}
+			| Err(_) => {
+				grc_warn_println("grc think this is the repo's first commit.");
+				self.repo.commit(
+					Some("HEAD"),
+					&author_sign,
+					&committer_sign,
+					message,
+					&tree,
+					&[],
+				)?;
+			}
+		};
 
 		self.after_commit()?;
 

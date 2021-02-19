@@ -5,7 +5,7 @@ g = grc
 
 .PHONY: build
 build: fmt
-	$(c) build --release
+	$(c) build --release -v
 
 .PHONY: run
 run: fmt
