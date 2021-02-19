@@ -35,6 +35,25 @@ plug = ["push"]
 ```
 
 
+The output after using the `push` plug-in will look like this:
+
+```
+$ grc -a .
+✔ Which scope? (Optional) · module
+✔ Commit Message ? · update view of part module selector.
+✔ Provide a longer description? (Optional) ·
+✔ PR & Issues this commit closes, e.g 123: (Optional) ·
+feat(module): 🎉 update part view module selector.
+[-] running push ...
+Remote: origin
+Branch: sdttttt
+[~] push is end.
+
+$
+```
+
+Well, it looks clean. I like the feeling. :)
+
 # Contribution
 
 plug-in access is a difficult task.
