@@ -140,7 +140,7 @@ dependencies = [
 
 [[package]]
 name = "grc"
-version = "1.1.0-alpha.0"
+version = "1.1.0-beta.1"
 dependencies = [
  "cargo-husky",
  "clap",
