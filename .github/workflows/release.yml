@@ -17,21 +17,6 @@ jobs:
     steps:
 
     - uses: actions/checkout@v2
-    
-    - name: Dump GitHub context
-      env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-      run: echo "$GITHUB_CONTEXT"
-
-    - name: Dump job context
-      env:
-        JOB_CONTEXT: ${{ toJson(job) }}
-      run: echo "$JOB_CONTEXT"
-
-    - name: Dump runner context
-      env:
-        RUNNER_CONTEXT: ${{ toJson(runner) }}
-      run: echo "$RUNNER_CONTEXT"
 
     - name: Create Release
       id: create_release
@@ -45,18 +30,6 @@ jobs:
           ${{ github.ref }}
         draft: false
         prerelease: false
-
-#   publish:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v2
-  
-#       - name: Publish to crates.io
-#         run: |
-#           cargo login ${{ env.CARGO_LOGIN_TOKEN }}
-#           make publish
-#         env:
-#           CARGO_LOGIN_TOKEN: ${{ secrets.CARGO_LOGIN_TOKEN }}
   
   upload:
     
@@ -87,22 +60,28 @@ jobs:
           target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
   
+    - uses: actions-rs/toolchain@v1
+      with:
+        override: true
+  
+    - uses: actions-rs/cargo@v1
+      with:
+        command: build
+        args: --release --verbose
+  
     - name: Build on UNIX
       if: ${{ runner.os == 'Linux' }}
       run: |
-        cargo build --release --verbose
         zip --junk-paths grc.zip ./target/release/grc
 
     - name: Build on MacOS
       if: ${{ runner.os == 'macOS' }}
       run: |
-        cargo build --release --verbose
         zip --junk-paths grc.zip ./target/release/grc
 
     - name: Build on Windows
       if: ${{ runner.os == 'Windows' }}
       run: |
-        cargo build --release --verbose
         makecab .\target\release\grc.exe grc.zip
   
     - name: Upload Artifact

@@ -7,7 +7,7 @@ use git2::{
 
 use crate::{
 	config::Configuration,
-	log::grc_println,
+	log::{grc_println, grc_warn_println},
 	metadata::Mode,
 	util::{author_sign_from_env, committer_sign_from_env, is_all_workspace},
 };
@@ -15,41 +15,24 @@ use crate::{
 /// Repository in GRC.
 /// is git2::Repository Encapsulation.
 pub struct Repository {
-	repo:   git2::Repository,
+	repo:   GRepository,
 	config: Rc<Configuration>,
 }
 
 impl Repository {
-	pub fn new(path: String, arg: Rc<Configuration>) -> Result<Self, Error> {
+	pub fn new(path: String, config: Rc<Configuration>) -> Result<Self, Error> {
 		let result = GRepository::open(&path);
 		match result {
-			| Ok(repo) => Ok(Self { repo, config: arg }),
+			| Ok(repo) => Ok(Self { repo, config }),
 			| Err(e) => Err(e),
 		}
 	}
 
+	pub fn real_repo(&self) -> &GRepository {
+		&self.repo
+	}
+
 	/// actions before commit.
-	pub fn pre_commit(&self) -> Result<(), Error> {
-		match self.config.command_mode() {
-			| Mode::Commit => self.check_index()?,
-			| Mode::Add => self.add_files(self.config.files())?,
-			| Mode::AddAll => self.add_all_files()?,
-		};
-
-		Ok(())
-	}
-
-	/// actions after commit.
-	pub fn after_commit(&self) -> Result<(), Error> {
-		match self.config.command_mode() {
-			| Mode::Commit => {}
-			| Mode::Add => {}
-			| Mode::AddAll => {}
-		};
-
-		Ok(())
-	}
-
 	/// execute git commit.
 	pub fn commit(&self, message: &str) -> Result<(), Error> {
 		self.pre_commit()?;
@@ -60,20 +43,63 @@ impl Repository {
 		};
 
 		let tree = self.repo.find_tree(tree_id)?;
-		let commit = self.find_last_commit()?;
 
 		let (author_sign, committer_sign) = self.generate_sign()?;
 
-		self.repo.commit(
-			Some("HEAD"),
-			&author_sign,
-			&committer_sign,
-			message,
-			&tree,
-			&[&commit],
-		)?;
+		match self.find_last_commit() {
+			| Ok(commit) => {
+				self.repo.commit(
+					Some("HEAD"),
+					&author_sign,
+					&committer_sign,
+					message,
+					&tree,
+					&[&commit],
+				)?;
+			}
+			| Err(_) => {
+				grc_warn_println("grc think this is the repo's first commit.");
+				self.repo.commit(
+					Some("HEAD"),
+					&author_sign,
+					&committer_sign,
+					message,
+					&tree,
+					&[],
+				)?;
+			}
+		};
 
 		self.after_commit()?;
+
+		Ok(())
+	}
+
+	fn pre_commit(&self) -> Result<(), Error> {
+		match self.config.command_mode() {
+			| Mode::Commit => self.check_index()?,
+			| Mode::Add => self.add_files(self.config.files())?,
+			| Mode::AddAll => self.add_all_files()?,
+		};
+
+		for plug in self.config.plugins() {
+			plug.before(&self)?;
+		}
+
+		Ok(())
+	}
+
+	/// actions after commit.
+	fn after_commit(&self) -> Result<(), Error> {
+		match self.config.command_mode() {
+			| Mode::Commit => {}
+			| Mode::Add => {}
+			| Mode::AddAll => {}
+		};
+
+		for plug in self.config.plugins() {
+			plug.after(&self)?;
+		}
 
 		Ok(())
 	}
