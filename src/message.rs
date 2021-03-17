@@ -1,6 +1,6 @@
 use dialoguer::{theme::ColorfulTheme, Input, Select};
 
-use crate::log::grc_err_println;
+use crate::log::grc_err;
 use crate::metadata::*;
 use crate::util::remove_pound_prefix;
 
@@ -69,7 +69,7 @@ impl Messager {
 			.map(|typ: &String| -> CommitTD {
 				let arr_td = typ.split(SEPARATOR_SYMBOL).collect::<Vec<&str>>();
 				if arr_td.len() < 2 {
-					grc_err_println(TYPE_PARSE_FAILED);
+					grc_err(TYPE_PARSE_FAILED);
 					std::process::exit(1);
 				};
 				CommitTD::from(arr_td[0].trim(), arr_td[1].trim())
@@ -87,7 +87,7 @@ impl Messager {
 			emo.iter().for_each(|type_emo: &String| {
 				let arr_emo = type_emo.split(SEPARATOR_SYMBOL).collect::<Vec<&str>>();
 				if arr_emo.len() < 2 {
-					grc_err_println(OVERWRITE_PARSE_FAILED);
+					grc_err(OVERWRITE_PARSE_FAILED);
 					std::process::exit(1);
 				};
 				if td.0 == arr_emo[0].trim() {

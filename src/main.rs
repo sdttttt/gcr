@@ -23,7 +23,7 @@ fn main() {
 	let arg = match Arguments::collect() {
 		| Ok(a) => a,
 		| Err(e) => {
-			grc_err_println(e.message());
+			grc_err(e.message());
 			return;
 		}
 	};
@@ -38,7 +38,7 @@ fn main() {
 	let extensions = match ext {
 		| Ok(e) => e,
 		| Err(e) => {
-			grc_err_println(e.to_string());
+			grc_err(e.to_string());
 			return;
 		}
 	};
@@ -50,7 +50,7 @@ fn main() {
 	let repo = match Repository::new(path, Rc::clone(&config)) {
 		| Ok(r) => r,
 		| Err(e) => {
-			grc_err_println(e.message());
+			grc_err(e.message());
 			return;
 		}
 	};
@@ -62,10 +62,10 @@ fn main() {
 		.ask()
 		.build();
 
-	grc_println(&message);
+	grc_log(&message);
 
 	// Git commit
 	if let Err(e) = repo.commit(message.as_str()) {
-		grc_err_println(e.message());
+		grc_err(e.message());
 	}
 }

@@ -1,13 +1,35 @@
-use git2::{Signature, Status, Statuses};
+use git2::{Repository, Signature, Status, Statuses};
 use std::{env, fs};
 
-use crate::metadata::{GIT_AUTHOR_EMAIL, GIT_AUTHOR_NAME, GIT_COMMITTER_EMAIL, GIT_COMMITTER_NAME};
+use crate::{
+	log::grc_warn,
+	metadata::{GIT_AUTHOR_EMAIL, GIT_AUTHOR_NAME, GIT_COMMITTER_EMAIL, GIT_COMMITTER_NAME},
+};
 
 pub fn current_path() -> String {
 	let path = fs::canonicalize(".").unwrap();
 	String::from(path.to_str().unwrap())
 }
 
+/// if gpg available at repo. then return user.signingKey.
+pub fn repo_gpg_available(repo: &Repository) -> Option<String> {
+	let config = repo.config().unwrap();
+	let gpg_enabled = config.get_bool("commit.gpgsign").unwrap_or_else(|_| false);
+	if gpg_enabled {
+		let gpg_sign_key = config.get_str("user.signingkey").unwrap_or_else(|_| "");
+		if gpg_sign_key.is_empty() {
+			grc_warn(
+				"It looks like you configured `gpgSign`, but grc did not find your `signingKey`.",
+			);
+			return None;
+		} else {
+			return Some(String::from(gpg_sign_key));
+		}
+	}
+	None
+}
+
+/// Check the workspace for file changes.
 pub fn is_all_workspace(statuses: &Statuses) -> bool {
 	let mut tip = false;
 	for state in statuses.iter() {
