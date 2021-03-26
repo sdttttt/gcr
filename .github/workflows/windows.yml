@@ -1,4 +1,4 @@
-name: Windows
+name: Windows [not contain unit test]
 
 on:
   push:
@@ -48,13 +48,6 @@ jobs:
       with:
         toolchain: ${{ matrix.toolchain }}
         override: true
-
-    - uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: --no-fail-fast -j 1
-      env:
-        RUST_BACKTRACE: full
 
     - uses: actions-rs/cargo@v1
       with:
