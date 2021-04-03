@@ -27,6 +27,15 @@ There are two things to note about this process:
 
 > Because `push plug-in` has no way to deal with complex situations. If there is a **branch conflict** or **inconsistent commit record**, you need to resolve it yourself.
 
+
+> If you encounter a problem with GRC output `"Failed to authenticate SSH session: "`. This is the key that `libgit2` SSH recognizes only in the older format of PEM. You can use the following command to convert your key to PEM.
+>
+> `ssh-keygen -p -m PEM -f ~/.ssh/id_rsa`
+> 
+> https://github.com/ytti/oxidized/issues/1517#issuecomment-519661606
+
+
+
 In the end, all you need is to **enable** it:
 
 ```toml
