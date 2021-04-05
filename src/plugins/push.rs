@@ -1,4 +1,4 @@
-use crate::{log::grc_warn_println, repo::Repository};
+use crate::{log::grc_warn, repo::Repository};
 use console::Style;
 use git2::{Cred, Error, PushOptions, RemoteCallbacks};
 use std::env;
@@ -39,8 +39,8 @@ impl CommitPlugin for PushPlugin {
 		let mut push_option: PushOptions = PushOptions::new();
 		push_option.remote_callbacks(callbacks);
 
-		grc_warn_println(format!("Remote: {}", remote_name));
-		grc_warn_println(format!("Branch: {}", branch_name));
+		grc_warn(format!("Remote: {}", remote_name));
+		grc_warn(format!("Branch: {}", branch_name));
 
 		remote.push(
 			&[format!("refs/heads/{}:refs/heads/{}", branch_name, branch_name).as_str()],

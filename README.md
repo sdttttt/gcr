@@ -26,6 +26,8 @@ cargo install grc
 
 Go to [RELEASE](https://github.com/sdttttt/gcr/releases), download one you like.
 
+> **🚧Note:** The bad news is that my workflow is broken and I have no time to fix it. In Release, only download the highest `0.9.2` version of GRC. If possible, use Cargo to install it.
+
 ### From Source
 
 Please Run:

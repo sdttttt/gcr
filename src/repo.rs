@@ -7,9 +7,9 @@ use git2::{
 
 use crate::{
 	config::Configuration,
-	log::{grc_println, grc_warn_println},
+	log::{grc_log, grc_warn},
 	metadata::Mode,
-	util::{author_sign_from_env, committer_sign_from_env, is_all_workspace},
+	util::{author_sign_from_env, committer_sign_from_env, is_all_workspace, repo_gpg_available},
 };
 
 /// Repository in GRC.
@@ -37,13 +37,23 @@ impl Repository {
 	pub fn commit(&self, message: &str) -> Result<(), Error> {
 		self.pre_commit()?;
 
+		let is_gpg_commit = self.gpg_sign_commit(message)?;
+		if !is_gpg_commit {
+			self.general_commit(message)?;
+		}
+
+		self.after_commit()?;
+
+		Ok(())
+	}
+
+	fn general_commit(&self, message: &str) -> Result<(), Error> {
 		let tree_id = {
 			let mut index = self.repo.index()?;
 			index.write_tree()?
 		};
 
 		let tree = self.repo.find_tree(tree_id)?;
-
 		let (author_sign, committer_sign) = self.generate_sign()?;
 
 		match self.find_last_commit() {
@@ -58,7 +68,7 @@ impl Repository {
 				)?;
 			}
 			| Err(_) => {
-				grc_warn_println("grc think this is the repo's first commit.");
+				grc_warn("grc think this is the repo's first commit.");
 				self.repo.commit(
 					Some("HEAD"),
 					&author_sign,
@@ -68,11 +78,54 @@ impl Repository {
 					&[],
 				)?;
 			}
-		};
-
-		self.after_commit()?;
-
+		}
 		Ok(())
+	}
+
+	/// check gpg is available, if true then using gpg sign commit.
+	/// github.com/sdttttt/gcr/issues/52 Thinks @Enter-tainer @CoelacanthusHex
+	fn gpg_sign_commit(&self, message: &str) -> Result<bool, Error> {
+		match repo_gpg_available(&self.repo) {
+			| Some(ref key) => {
+				let tree_id = {
+					let mut index = self.repo.index()?;
+					index.write_tree()?
+				};
+
+				let tree = self.repo.find_tree(tree_id)?;
+				let (author_sign, committer_sign) = self.generate_sign()?;
+
+				let buf = match self.find_last_commit() {
+					| Ok(commit) => self.repo.commit_create_buffer(
+						&author_sign,
+						&committer_sign,
+						message,
+						&tree,
+						&[&commit],
+					)?,
+					| Err(_) => {
+						grc_warn("grc think this is the repo's first commit.");
+						self.repo.commit_create_buffer(
+							&author_sign,
+							&committer_sign,
+							message,
+							&tree,
+							&[],
+						)?
+					}
+				};
+
+				// https://github.com/rust-lang/git2-rs/issues/507 Thinks @cole-h
+				let commit_content = std::str::from_utf8(&buf).unwrap();
+				let ret = self.repo.commit_signed(commit_content, key, Some(key))?;
+				let commit = self.repo.find_commit(ret)?;
+				self.repo.branch(&self.current_branch_name(), &commit, false)?;
+
+				Ok(true)
+			}
+
+			| None => Ok(false),
+		}
 	}
 
 	fn pre_commit(&self) -> Result<(), Error> {
@@ -158,7 +211,7 @@ impl Repository {
 		};
 
 		if use_env {
-			grc_println("you are using environment variables to generate commit sign.");
+			grc_log("you are using environment variables to generate commit sign.");
 		}
 
 		Ok((author_sign, committer_sign))
@@ -168,6 +221,12 @@ impl Repository {
 	fn find_last_commit(&self) -> Result<Commit, Error> {
 		let obj = self.repo.head()?.resolve()?.peel(ObjectType::Commit)?;
 		obj.into_commit().map_err(|_| Error::from_str("not fonund Commit."))
+	}
+
+	fn current_branch_name(&self) -> String {
+		let head = &self.repo.head().unwrap();
+		let branch_name = head.shorthand().unwrap_or_else(|| "");
+		String::from(branch_name)
 	}
 
 	/// Check to see if the repository commit index is empty.
@@ -185,3 +244,16 @@ impl Repository {
 		}
 	}
 }
+
+//#[cfg(test)]
+//mod tests {
+
+//	use git2::Repository;
+
+//	#[test]
+//	fn check_gpg() {
+//		let repo = Repository::open(".").unwrap();
+//		let config = repo.config().unwrap();
+//		let gpg_enabled = config.get_bool("commit.gpgsign").unwrap_or_else(|_|
+// false); 		assert_eq!(gpg_enabled, true); 	}
+//}
