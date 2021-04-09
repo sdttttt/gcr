@@ -3,7 +3,7 @@ use std::{process::Command, rc::Rc};
 use crate::{
 	arguments::Arguments,
 	extensions::Extensions,
-	metadata::{Mode, SPACE},
+	metadata::Mode,
 	plugins::{find_plug, CommitPlugin},
 	util::parse_command,
 };
@@ -92,6 +92,7 @@ impl Configuration {
 	}
 }
 
+#[cfg(test)]
 mod tests {
 
 	use super::*;
@@ -106,6 +107,6 @@ mod tests {
 		assert_eq!(conf.overwrite_emoji().len(), 0);
 		assert!(conf.extends_type().len() > 0);
 		assert!(conf.pre_command().len() > 0);
-		assert!(conf.after_command().len() > 0);
+		assert_eq!(conf.after_command().len(), 0);
 	}
 }

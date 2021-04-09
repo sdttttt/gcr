@@ -3,4 +3,4 @@ type = ["version: version is change.", "deps: Dependencies change."]
 plug = ["push"]
 
 pre = ["cargo make format", "echo hello"]
-after = ["echo Ok"]
+after = []
