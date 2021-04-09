@@ -1,3 +1,4 @@
+use std::process::Command;
 use std::rc::Rc;
 
 use git2::{
@@ -82,23 +83,7 @@ impl Repository {
 			Mode::AddAll => self.add_all_files()?,
 		};
 
-		for mut command in self.config.pre_command() {
-			match command.output() {
-				Ok(ok_out) => {
-					grc_println(String::from_utf8_lossy(&ok_out.stdout));
-					if !ok_out.status.success() {
-						return Err(git2::Error::from_str("per command error."));
-					}
-				}
-
-				Err(err_out) => {
-					return Err(git2::Error::from_str(
-						format!("per command error: {}", err_out.to_string()).as_str(),
-					));
-				}
-			}
-		}
-
+		self.execute_hook_command(self.config.pre_command())?;
 		for plug in self.config.plugins() {
 			plug.before(&self)?;
 		}
@@ -114,6 +99,7 @@ impl Repository {
 			Mode::AddAll => {}
 		};
 
+		self.execute_hook_command(self.config.after_command())?;
 		for plug in self.config.plugins() {
 			plug.after(&self)?;
 		}
@@ -200,5 +186,26 @@ impl Repository {
 			}
 			Err(e) => Err(e),
 		}
+	}
+
+	fn execute_hook_command(&self, commands: Vec<Command>) -> Result<(), Error> {
+		for mut command in commands {
+			match command.output() {
+				Ok(ok_out) => {
+					grc_println(String::from_utf8_lossy(&ok_out.stdout));
+					if !ok_out.status.success() {
+						return Err(git2::Error::from_str("per command error."));
+					}
+				}
+
+				Err(err_out) => {
+					return Err(git2::Error::from_str(
+						format!("per command error: {}", err_out.to_string()).as_str(),
+					));
+				}
+			}
+		}
+
+		Ok(())
 	}
 }

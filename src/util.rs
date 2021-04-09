@@ -1,7 +1,9 @@
 use git2::{Signature, Status, Statuses};
-use std::{env, fs};
+use std::{env, fs, process::Command};
 
-use crate::metadata::{GIT_AUTHOR_EMAIL, GIT_AUTHOR_NAME, GIT_COMMITTER_EMAIL, GIT_COMMITTER_NAME};
+use crate::metadata::{
+	GIT_AUTHOR_EMAIL, GIT_AUTHOR_NAME, GIT_COMMITTER_EMAIL, GIT_COMMITTER_NAME, SPACE,
+};
 
 pub fn current_path() -> String {
 	let path = fs::canonicalize(".").unwrap();
@@ -42,6 +44,30 @@ pub fn vec_str_to_string(vec: Vec<&str>) -> Vec<String> {
 		result.push(String::from(s));
 	}
 	result
+}
+
+pub fn parse_command(commands_text: &Vec<String>) -> Vec<Command> {
+	let mut commands = vec![];
+	for command_str in commands_text {
+		if command_str.trim().is_empty() {
+			continue;
+		}
+
+		let args_str = command_str.split(SPACE).collect::<Vec<&str>>();
+		// 0 index is main command.
+		let mut command = Command::new(args_str[0]);
+		// 1.. index is command args.
+		for argv in args_str[1..].into_iter() {
+			if argv.is_empty() {
+				continue;
+			}
+
+			command.arg(argv);
+		}
+		commands.push(command)
+	}
+
+	commands
 }
 
 pub fn author_sign_from_env() -> Option<Signature<'static>> {
@@ -115,6 +141,17 @@ mod tests {
 		let mut v2 = vec_str_to_string(v1);
 		assert_eq!(v2.pop().unwrap().as_str(), two);
 		assert_eq!(v2.pop().unwrap().as_str(), one);
+	}
+
+	#[test]
+	fn it_parse_command() {
+		let commands = parse_command(&vec![
+			"ddd".to_string(),
+			"".to_string(),
+			"aaa".to_string(),
+			" ".to_string(),
+		]);
+		assert_eq!(commands.len(), 2);
 	}
 
 	#[test]

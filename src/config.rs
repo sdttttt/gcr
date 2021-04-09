@@ -5,6 +5,7 @@ use crate::{
 	extensions::Extensions,
 	metadata::{Mode, SPACE},
 	plugins::{find_plug, CommitPlugin},
+	util::parse_command,
 };
 
 // Both command-line arguments and configuration files can specify configuration
@@ -16,22 +17,38 @@ pub struct Configuration {
 	overwrite_emoji: Vec<String>,
 	plugs: Vec<Rc<dyn CommitPlugin>>,
 	pre_command: Vec<String>,
+	after_command: Vec<String>,
 	emoji: bool,
 }
 
 impl Configuration {
 	pub fn merge(arg: Arguments, ext: Extensions) -> Rc<Self> {
 		let params = arg.files().clone();
+
 		let extends_type = ext.types().unwrap_or(&vec![]).clone();
+
 		let mode = arg.command_mode();
+
 		let emoji = ext.emoji() || arg.emoji();
+
 		let pre_command = ext.pre_command().unwrap_or(&vec![]).clone();
+		let after_command = ext.after_command().unwrap_or(&vec![]).clone();
+
 		let overwrite_emoji =
 			if emoji { ext.overwrite_emoji().unwrap_or(&vec![]).clone() } else { vec![] };
 
 		let plugs = find_plug(ext.plug().unwrap_or(&vec![]));
 
-		Rc::new(Self { params, extends_type, emoji, mode, overwrite_emoji, plugs, pre_command })
+		Rc::new(Self {
+			params,
+			extends_type,
+			emoji,
+			mode,
+			overwrite_emoji,
+			plugs,
+			pre_command,
+			after_command,
+		})
 	}
 
 	#[cfg(test)]
@@ -63,27 +80,11 @@ impl Configuration {
 	}
 
 	pub fn pre_command(&self) -> Vec<Command> {
-		let mut commands = vec![];
-		for command_str in &self.pre_command {
-			if command_str.is_empty() {
-				continue;
-			}
+		parse_command(&self.pre_command)
+	}
 
-			let args_str = command_str.split(SPACE).collect::<Vec<&str>>();
-			// 0 index is main command.
-			let mut command = Command::new(args_str[0]);
-			// 1.. index is command args.
-			for argv in args_str[1..].into_iter() {
-				if argv.is_empty() {
-					continue;
-				}
-
-				command.arg(argv);
-			}
-			commands.push(command)
-		}
-
-		commands
+	pub fn after_command(&self) -> Vec<Command> {
+		parse_command(&self.after_command)
 	}
 
 	pub fn plugins(&self) -> &Vec<Rc<dyn CommitPlugin>> {
@@ -105,5 +106,6 @@ mod tests {
 		assert_eq!(conf.overwrite_emoji().len(), 0);
 		assert!(conf.extends_type().len() > 0);
 		assert!(conf.pre_command().len() > 0);
+		assert!(conf.after_command().len() > 0);
 	}
 }

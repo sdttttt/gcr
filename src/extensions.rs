@@ -18,6 +18,7 @@ pub struct Extensions {
 	plug: Option<Vec<String>>,
 
 	pre: Option<Vec<String>>,
+	after: Option<Vec<String>>,
 }
 
 impl Extensions {
@@ -72,6 +73,10 @@ impl Extensions {
 		self.pre.as_ref()
 	}
 
+	pub fn after_command(&self) -> Option<&Vec<String>> {
+		self.after.as_ref()
+	}
+
 	/// deserialize toml configuration file to struct.
 	fn deserialize(file_str: String) -> Result<Self, Error> {
 		if file_str.len() == 0 || file_str == "" {
@@ -81,6 +86,7 @@ impl Extensions {
 				overwrite_emoji: None,
 				plug: None,
 				pre: None,
+				after: None,
 			});
 		}
 
