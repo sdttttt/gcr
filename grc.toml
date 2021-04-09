@@ -2,4 +2,4 @@ emoji = true
 type = ["version: version is change.", "deps: Dependencies change."]
 plug = ["push"]
 
-pre = ["echo hello"]
+pre = ["cargo make test"]
