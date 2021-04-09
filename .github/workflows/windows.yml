@@ -27,6 +27,12 @@ jobs:
                   profile: minimal
                   override: true
 
+            - uses: actions/cache@v2
+              with:
+                  path: |
+                      target
+                  key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
             - name: Install cargo-make
               uses: actions-rs/cargo@v1
               with:
