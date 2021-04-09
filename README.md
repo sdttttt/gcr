@@ -6,9 +6,10 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6501c2d5bc19413dbbd297c6ee39e060)](https://app.codacy.com/gh/sdttttt/gcr?utm_source=github.com&utm_medium=referral&utm_content=sdttttt/gcr&utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/sdttttt/gcr/branch/master/graph/badge.svg)](https://codecov.io/gh/sdttttt/gcr)
 
-Semantic git commits tool.
 
-Similar to `git-cz`, grc will help you to provide a better Git experience.
+Compact specification git commit tool, it has a variety of practical small functions. 
+
+Similar to `git-cz`, GRC will help you to provide a better git commit experience.
 
 ## Install
 
