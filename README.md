@@ -1,6 +1,6 @@
 # GRC
 
- ![GRC](https://img.shields.io/crates/v/grc.svg)
+![GRC](https://img.shields.io/crates/v/grc.svg)
 ![Rust](https://github.com/sdttttt/gcr/workflows/Rust/badge.svg)
 ![Release](https://github.com/sdttttt/gcr/workflows/Release/badge.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6501c2d5bc19413dbbd297c6ee39e060)](https://app.codacy.com/gh/sdttttt/gcr?utm_source=github.com&utm_medium=referral&utm_content=sdttttt/gcr&utm_campaign=Badge_Grade)
@@ -25,8 +25,6 @@ cargo install grc
 ### Release Package
 
 Go to [RELEASE](https://github.com/sdttttt/gcr/releases), download one you like.
-
-> **🚧Note:** The bad news is that my workflow is broken and I have no time to fix it. In Release, only download the highest `0.9.2` version of GRC. If possible, use Cargo to install it.
 
 ### From Source
 
@@ -60,31 +58,33 @@ grc -a <filename>...
 > This feature is supported above version 0.9.0
 
 You can append custom commit types in the `grc.toml` configuration file at repo root directory:
+Starting with **0.9.1**, grc using `~/.config/grc/grc.toml` as the default configuration file.
 
 ```toml
 # A colon separates the type from the description of the type.
 type = [
     "type: this is new commit type."
 ]
-```
 
-Starting with **0.9.1**, grc using `~/.config/grc/grc.toml` as the default configuration file.
-
-Starting with **1.0.0**, grc can enhance your submission with the `--emoji` command line argument.
-
-Or in the configuration file:
-
-```toml
+# Starting with **1.0.0**, grc can enhance your submission with the `--emoji` command line argument.
 emoji = true
-```
 
-You can also use `overwrite_emoji` to enhance custom submission types or override basic submission types in GRC.
-
-```toml
+# You can also use `overwrite_emoji` to enhance custom submission types or override basic submission types in GRC.
 overwrite_emoji = [
     "deps:🚕", # Appends an emoji to a custom submission type
     "test:🚗"  # Test is a GRC built-in submission type that you can override.
 ]
+
+
+# Starting with **1.2.0**, Added two new options to the configuration file, `pre` and `after`, which are similar to githook. Here you can enter the actions of the commands before and after COMMIT.
+pre = [
+"cargo test"
+]
+
+after = [
+"echo Ok!"
+]
+
 ```
 
 ### Plug
