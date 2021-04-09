@@ -84,7 +84,12 @@ impl Repository {
 
 		for mut command in self.config.pre_command() {
 			match command.output() {
-				Ok(ok_out) => grc_println(String::from_utf8_lossy(&ok_out.stdout)),
+				Ok(ok_out) => {
+					grc_println(String::from_utf8_lossy(&ok_out.stdout));
+					if !ok_out.status.success() {
+						return Err(git2::Error::from_str("per command error."));
+					}
+				}
 
 				Err(err_out) => {
 					return Err(git2::Error::from_str(
