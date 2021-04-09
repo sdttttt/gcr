@@ -82,6 +82,14 @@ impl Repository {
 			Mode::AddAll => self.add_all_files()?,
 		};
 
+		for mut command in self.config.pre_command() {
+			if let Err(err_out) = command.output() {
+				return Err(git2::Error::from_str(
+					format!("per command error: {}", err_out.to_string()).as_str(),
+				));
+			}
+		}
+
 		for plug in self.config.plugins() {
 			plug.before(&self)?;
 		}
