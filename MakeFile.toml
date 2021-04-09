@@ -17,3 +17,7 @@ dependencies = ["format"]
 command = "cargo"
 args = ["run"]
 dependencies = ["format"]
+
+[tasks.build-release]
+command = "cargo"
+args = ["build", "--release"]

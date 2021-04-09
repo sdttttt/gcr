@@ -43,7 +43,7 @@ jobs:
               uses: actions-rs/cargo@v1
               with:
                   command: make
-                  args: build
+                  args: build-release
 
             - name: Run cargo bloat
               uses: orf/cargo-bloat-action@v1
