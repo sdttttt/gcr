@@ -32,13 +32,13 @@ impl Configuration {
 		Rc::new(Self { params, extends_type, emoji, mode, overwrite_emoji, plugs })
 	}
 
-	//#[cfg(test)]
-	//pub fn default() -> Rc<Self> {
-	//	let ext = Extensions::from_agreement().unwrap();
-	//	let arg = Arguments::default();
+	#[cfg(test)]
+	pub fn default() -> Rc<Self> {
+		let ext = Extensions::from_agreement().unwrap();
+		let arg = Arguments::default();
 
-	//	Self::merge(arg, ext)
-	//}
+		Self::merge(arg, ext)
+	}
 
 	pub fn command_mode(&self) -> &Mode {
 		&self.mode
@@ -62,5 +62,21 @@ impl Configuration {
 
 	pub fn plugins(&self) -> &Vec<Rc<dyn CommitPlugin>> {
 		&self.plugs
+	}
+}
+
+mod tests {
+
+	use super::*;
+
+	#[test]
+	fn it_merge() {
+		let conf = Configuration::default();
+		assert!(conf.emoji());
+		assert_eq!(conf.files().len(), 0);
+		assert_eq!(conf.command_mode(), &Mode::Commit);
+		assert!(conf.plugins().len() > 0);
+		assert_eq!(conf.overwrite_emoji().len(), 0);
+		assert!(conf.extends_type().len() > 0);
 	}
 }
