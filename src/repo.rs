@@ -83,10 +83,14 @@ impl Repository {
 		};
 
 		for mut command in self.config.pre_command() {
-			if let Err(err_out) = command.spawn() {
-				return Err(git2::Error::from_str(
-					format!("per command error: {}", err_out.to_string()).as_str(),
-				));
+			match command.output() {
+				Ok(ok_out) => grc_println(String::from_utf8_lossy(&ok_out.stdout)),
+
+				Err(err_out) => {
+					return Err(git2::Error::from_str(
+						format!("per command error: {}", err_out.to_string()).as_str(),
+					));
+				}
 			}
 		}
 
