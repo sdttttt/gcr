@@ -7,7 +7,7 @@
 [![codecov](https://codecov.io/gh/sdttttt/gcr/branch/master/graph/badge.svg)](https://codecov.io/gh/sdttttt/gcr)
 
 
-Compact specification git commit tool, it has a variety of practical small functions. 
+Compact specification git commit tool, written in Rust, it has a variety of practical small functions. 
 
 Similar to `git-cz`, GRC will help you to provide a better git commit experience.
 
