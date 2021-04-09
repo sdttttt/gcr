@@ -90,7 +90,7 @@ after = [
 
 ### Plug
 
-plug are a new feature added in `1.1.0`. Details of the plug-in and usage can be found [here](https://github.com/sdttttt/gcr/tree/develop/src/plugins).
+plug are a new feature added in `1.1.0`. Details of the plug-in and usage can be found [here](https://github.com/sdttttt/gcr/tree/master/src/plugins).
 
 ## IDEA
 
