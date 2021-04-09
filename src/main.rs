@@ -21,8 +21,8 @@ use util::*;
 fn main() {
 	// input parameters.
 	let arg = match Arguments::collect() {
-		| Ok(a) => a,
-		| Err(e) => {
+		Ok(a) => a,
+		Err(e) => {
 			grc_err_println(e.message());
 			return;
 		}
@@ -36,8 +36,8 @@ fn main() {
 	};
 
 	let extensions = match ext {
-		| Ok(e) => e,
-		| Err(e) => {
+		Ok(e) => e,
+		Err(e) => {
 			grc_err_println(e.to_string());
 			return;
 		}
@@ -48,8 +48,8 @@ fn main() {
 	let path = current_path();
 	// repository Object instance.
 	let repo = match Repository::new(path, Rc::clone(&config)) {
-		| Ok(r) => r,
-		| Err(e) => {
+		Ok(r) => r,
+		Err(e) => {
 			grc_err_println(e.message());
 			return;
 		}

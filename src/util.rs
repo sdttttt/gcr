@@ -12,7 +12,7 @@ pub fn is_all_workspace(statuses: &Statuses) -> bool {
 	let mut tip = false;
 	for state in statuses.iter() {
 		match state.status() {
-			| Status::INDEX_NEW
+			Status::INDEX_NEW
 			| Status::INDEX_MODIFIED
 			| Status::INDEX_DELETED
 			| Status::INDEX_RENAMED
@@ -20,7 +20,7 @@ pub fn is_all_workspace(statuses: &Statuses) -> bool {
 				tip = true;
 				break;
 			}
-			| _ => {}
+			_ => {}
 		}
 	}
 	tip
@@ -28,11 +28,11 @@ pub fn is_all_workspace(statuses: &Statuses) -> bool {
 
 pub fn remove_pound_prefix(input: &str) -> &str {
 	match input.find("#") {
-		| Some(index) => match input.get(index + 1..input.len()) {
-			| Some(s) => s,
-			| _ => input,
+		Some(index) => match input.get(index + 1..input.len()) {
+			Some(s) => s,
+			_ => input,
 		},
-		| _ => input,
+		_ => input,
 	}
 }
 
@@ -46,13 +46,13 @@ pub fn vec_str_to_string(vec: Vec<&str>) -> Vec<String> {
 
 pub fn author_sign_from_env() -> Option<Signature<'static>> {
 	let (name, email) = match (env::var(GIT_AUTHOR_NAME), env::var(GIT_AUTHOR_EMAIL)) {
-		| (Ok(n), Ok(e)) => {
+		(Ok(n), Ok(e)) => {
 			if n.is_empty() || e.is_empty() {
 				return None;
 			}
 			(n, e)
 		}
-		| _ => return None,
+		_ => return None,
 	};
 
 	let sign = Signature::now(name.as_str(), email.as_str()).expect(
@@ -64,13 +64,13 @@ pub fn author_sign_from_env() -> Option<Signature<'static>> {
 
 pub fn committer_sign_from_env() -> Option<Signature<'static>> {
 	let (name, email) = match (env::var(GIT_COMMITTER_NAME), env::var(GIT_COMMITTER_EMAIL)) {
-		| (Ok(n), Ok(e)) => {
+		(Ok(n), Ok(e)) => {
 			if n.is_empty() || e.is_empty() {
 				return None;
 			}
 			(n, e)
 		}
-		| _ => return None,
+		_ => return None,
 	};
 
 	let sign = Signature::now(name.as_str(), email.as_str()).expect(

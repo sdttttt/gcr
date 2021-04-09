@@ -1,76 +1,71 @@
 name: Linux
 
 on:
-  push:
-    paths: 
-      - '**.rs'
-      - '**.yaml'
-      - '**.yml'
-      - '**.toml'
-      - 'makefile'
-      - 'rust-toolchain'
-    branches: [ master ]
-  pull_request:
-    branches: [ master, develop ]
+    push:
+        paths:
+            - "**.rs"
+            - "**.yaml"
+            - "**.yml"
+            - "**.toml"
+        branches: [master]
+    pull_request:
+        branches: [master, develop]
 
 env:
-  CARGO_TERM_COLOR: always
+    CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        toolchain: [nightly]
+    build:
+        strategy:
+            matrix:
+                os: [ubuntu-latest]
+                toolchain: [nightly]
 
-    runs-on: ${{ matrix.os }}
+        runs-on: ${{ matrix.os }}
 
-    steps:
-    - uses: actions/checkout@v2
-    
-    - name: Dump GitHub context
-      env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-      run: echo "$GITHUB_CONTEXT"
+        steps:
+            - uses: actions/checkout@v2
 
-    - name: Dump job context
-      env:
-        JOB_CONTEXT: ${{ toJson(job) }}
-      run: echo "$JOB_CONTEXT"
+            - name: install rust-toolchain
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: ${{ matrix.toolchain }}
+                  override: true
+                  profile: minimal
 
-    - name: Dump runner context
-      env:
-        RUNNER_CONTEXT: ${{ toJson(runner) }}
-      run: echo "$RUNNER_CONTEXT"
+            - uses: actions/cache@v2
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      target
+                  key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-    - uses: actions/cache@v2
-      with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          ./target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+            - name: Install cargo-make
+              uses: actions-rs/cargo@v1
+              with:
+                  command: install
+                  args: --debug cargo-make
 
-    - name: install rust-toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ matrix.toolchain }}
-        override: true
+            - name: Unit Test
+              uses: actions-rs/cargo@v1
+              with:
+                  command: make
+                  args: test
 
-    - name: test
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: --no-fail-fast
+            - name: Build
+              uses: actions-rs/cargo@v1
+              with:
+                  command: make
+                  args: build-release
 
-    - name: build
-      uses: actions-rs/cargo@v1
-      with:
-        command: build
-        args: --release -v
-    
-    - name: upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: grc
-        path: ./target/release/grc
+            - name: Run cargo bloat
+              uses: orf/cargo-bloat-action@v1
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: upload artifact
+              uses: actions/upload-artifact@v2
+              with:
+                  name: grc
+                  path: ./target/release/grc

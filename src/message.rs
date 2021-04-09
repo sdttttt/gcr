@@ -11,11 +11,11 @@ struct CommitTD(String, String, String);
 pub struct Messager {
 	commit_type_descript: Vec<CommitTD>,
 
-	typ:     String,
-	emoji:   String,
-	scope:   String,
+	typ: String,
+	emoji: String,
+	scope: String,
 	subject: String,
-	body:    String,
+	body: String,
 }
 
 impl CommitTD {
