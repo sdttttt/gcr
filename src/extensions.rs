@@ -16,6 +16,9 @@ pub struct Extensions {
 
 	overwrite_emoji: Option<Vec<String>>,
 	plug: Option<Vec<String>>,
+
+	pre: Option<Vec<String>>,
+	after: Option<Vec<String>>,
 }
 
 impl Extensions {
@@ -66,10 +69,25 @@ impl Extensions {
 		self.plug.as_ref()
 	}
 
+	pub fn pre_command(&self) -> Option<&Vec<String>> {
+		self.pre.as_ref()
+	}
+
+	pub fn after_command(&self) -> Option<&Vec<String>> {
+		self.after.as_ref()
+	}
+
 	/// deserialize toml configuration file to struct.
 	fn deserialize(file_str: String) -> Result<Self, Error> {
 		if file_str.len() == 0 || file_str == "" {
-			return Ok(Self { typ: None, emoji: None, overwrite_emoji: None, plug: None });
+			return Ok(Self {
+				typ: None,
+				emoji: None,
+				overwrite_emoji: None,
+				plug: None,
+				pre: None,
+				after: None,
+			});
 		}
 
 		let config = toml::from_str::<Extensions>(file_str.as_str())?;
