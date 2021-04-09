@@ -10,12 +10,12 @@ use crate::{
 // Both command-line arguments and configuration files can specify configuration
 // options, and the two are combined here.
 pub struct Configuration {
-	mode:            Mode,
-	extends_type:    Vec<String>,
-	params:          Vec<String>,
+	mode: Mode,
+	extends_type: Vec<String>,
+	params: Vec<String>,
 	overwrite_emoji: Vec<String>,
-	plugs:           Vec<Rc<dyn CommitPlugin>>,
-	emoji:           bool,
+	plugs: Vec<Rc<dyn CommitPlugin>>,
+	emoji: bool,
 }
 
 impl Configuration {

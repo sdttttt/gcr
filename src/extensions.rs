@@ -15,7 +15,7 @@ pub struct Extensions {
 	emoji: Option<bool>,
 
 	overwrite_emoji: Option<Vec<String>>,
-	plug:            Option<Vec<String>>,
+	plug: Option<Vec<String>>,
 }
 
 impl Extensions {
@@ -69,12 +69,7 @@ impl Extensions {
 	/// deserialize toml configuration file to struct.
 	fn deserialize(file_str: String) -> Result<Self, Error> {
 		if file_str.len() == 0 || file_str == "" {
-			return Ok(Self {
-				typ:             None,
-				emoji:           None,
-				overwrite_emoji: None,
-				plug:            None,
-			});
+			return Ok(Self { typ: None, emoji: None, overwrite_emoji: None, plug: None });
 		}
 
 		let config = toml::from_str::<Extensions>(file_str.as_str())?;
@@ -84,8 +79,8 @@ impl Extensions {
 	/// read config file convert std::string::String
 	fn read_config_file(filename: &str) -> Result<String, Error> {
 		match fs::read_to_string(filename) {
-			| Ok(content) => Ok(content),
-			| Err(e) => {
+			Ok(content) => Ok(content),
+			Err(e) => {
 				if e.kind() == ErrorKind::NotFound {
 					Ok(String::new())
 				} else {

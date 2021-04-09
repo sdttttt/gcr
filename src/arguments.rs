@@ -6,10 +6,10 @@ use crate::util::*;
 
 /// Parse the behavior and extra parameters of GRC by entering commands.
 pub struct Arguments {
-	mode:            Mode,
-	params:          Vec<String>,
+	mode: Mode,
+	params: Vec<String>,
 	config_filename: String,
-	emoji:           bool,
+	emoji: bool,
 }
 
 // Get the external parameter and analyze it. Construct the behavior of GRC.
@@ -41,12 +41,7 @@ impl Arguments {
 	}
 
 	pub fn default() -> Self {
-		Self {
-			mode:            Mode::Commit,
-			params:          vec![],
-			config_filename: String::new(),
-			emoji:           false,
-		}
+		Self { mode: Mode::Commit, params: vec![], config_filename: String::new(), emoji: false }
 	}
 
 	fn cli() -> App<'static, 'static> {
@@ -134,9 +129,9 @@ impl Arguments {
 
 		for handle in post_handles {
 			match handle(arg, matches) {
-				| Ok(true) => return Ok(true),
-				| Ok(false) => {}
-				| Err(e) => return Err(e),
+				Ok(true) => return Ok(true),
+				Ok(false) => {}
+				Err(e) => return Err(e),
 			}
 		}
 

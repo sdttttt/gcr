@@ -15,7 +15,7 @@ use crate::{
 /// Repository in GRC.
 /// is git2::Repository Encapsulation.
 pub struct Repository {
-	repo:   GRepository,
+	repo: GRepository,
 	config: Rc<Configuration>,
 }
 
@@ -23,8 +23,8 @@ impl Repository {
 	pub fn new(path: String, config: Rc<Configuration>) -> Result<Self, Error> {
 		let result = GRepository::open(&path);
 		match result {
-			| Ok(repo) => Ok(Self { repo, config }),
-			| Err(e) => Err(e),
+			Ok(repo) => Ok(Self { repo, config }),
+			Err(e) => Err(e),
 		}
 	}
 
@@ -47,7 +47,7 @@ impl Repository {
 		let (author_sign, committer_sign) = self.generate_sign()?;
 
 		match self.find_last_commit() {
-			| Ok(commit) => {
+			Ok(commit) => {
 				self.repo.commit(
 					Some("HEAD"),
 					&author_sign,
@@ -57,7 +57,7 @@ impl Repository {
 					&[&commit],
 				)?;
 			}
-			| Err(_) => {
+			Err(_) => {
 				grc_warn_println("grc think this is the repo's first commit.");
 				self.repo.commit(
 					Some("HEAD"),
@@ -77,9 +77,9 @@ impl Repository {
 
 	fn pre_commit(&self) -> Result<(), Error> {
 		match self.config.command_mode() {
-			| Mode::Commit => self.check_index()?,
-			| Mode::Add => self.add_files(self.config.files())?,
-			| Mode::AddAll => self.add_all_files()?,
+			Mode::Commit => self.check_index()?,
+			Mode::Add => self.add_files(self.config.files())?,
+			Mode::AddAll => self.add_all_files()?,
 		};
 
 		for plug in self.config.plugins() {
@@ -92,9 +92,9 @@ impl Repository {
 	/// actions after commit.
 	fn after_commit(&self) -> Result<(), Error> {
 		match self.config.command_mode() {
-			| Mode::Commit => {}
-			| Mode::Add => {}
-			| Mode::AddAll => {}
+			Mode::Commit => {}
+			Mode::Add => {}
+			Mode::AddAll => {}
 		};
 
 		for plug in self.config.plugins() {
@@ -142,19 +142,19 @@ impl Repository {
 		let mut use_env = false;
 
 		let author_sign = match author_sign_from_env() {
-			| Some(sign) => {
+			Some(sign) => {
 				use_env = true;
 				sign
 			}
-			| None => self.repo.signature()?,
+			None => self.repo.signature()?,
 		};
 
 		let committer_sign = match committer_sign_from_env() {
-			| Some(sign) => {
+			Some(sign) => {
 				use_env = true;
 				sign
 			}
-			| None => self.repo.signature()?,
+			None => self.repo.signature()?,
 		};
 
 		if use_env {
@@ -173,7 +173,7 @@ impl Repository {
 	/// Check to see if the repository commit index is empty.
 	fn check_index(&self) -> Result<(), Error> {
 		match self.status() {
-			| Ok(statuses) => {
+			Ok(statuses) => {
 				let tip = is_all_workspace(&statuses);
 				if tip {
 					Ok(())
@@ -181,7 +181,7 @@ impl Repository {
 					Err(Error::from_str("No files commit to the index."))
 				}
 			}
-			| Err(e) => Err(e),
+			Err(e) => Err(e),
 		}
 	}
 }
