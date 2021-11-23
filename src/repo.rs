@@ -1,5 +1,8 @@
-use std::process::Command;
 use std::rc::Rc;
+use std::{
+	path::{Path, PathBuf},
+	process::Command,
+};
 
 use git2::{
 	Commit, Error, Index, IndexAddOption, ObjectType, Repository as GRepository, Signature,
@@ -10,7 +13,7 @@ use crate::{
 	config::Configuration,
 	log::{grc_println, grc_warn_println},
 	metadata::Mode,
-	util::{author_sign_from_env, committer_sign_from_env, is_all_workspace},
+	util::{author_sign_from_env, committer_sign_from_env, get_tracked_files},
 };
 
 /// Repository in GRC.
@@ -77,16 +80,21 @@ impl Repository {
 	}
 
 	fn pre_commit(&self) -> Result<(), Error> {
-		match self.config.command_mode() {
+		let tracked = match self.config.command_mode() {
 			Mode::Commit => self.check_index()?,
-			Mode::Add => self.add_files(self.config.files())?,
-			Mode::AddAll => self.add_all_files()?,
+			_ => Vec::new(),
 		};
 
 		self.execute_hook_command(self.config.pre_command())?;
 		for plug in self.config.plugins() {
 			plug.before(&self)?;
 		}
+
+		match self.config.command_mode() {
+			Mode::Commit => self.add_files(&tracked)?,
+			Mode::Add => self.add_files(self.config.files())?,
+			Mode::AddAll => self.add_all_files()?,
+		};
 
 		Ok(())
 	}
@@ -119,7 +127,7 @@ impl Repository {
 	}
 
 	/// add files to Repository commit index.
-	fn add_files(&self, files_path: &Vec<String>) -> Result<(), Error> {
+	fn add_files<'a, P: AsRef<Path>>(&self, files_path: &'a Vec<P>) -> Result<(), Error> {
 		let mut index = self.index()?;
 		for file_path in files_path {
 			index.add_path(file_path.as_ref())?;
@@ -173,13 +181,12 @@ impl Repository {
 		obj.into_commit().map_err(|_| Error::from_str("not fonund Commit."))
 	}
 
-	/// Check to see if the repository commit index is empty.
-	fn check_index(&self) -> Result<(), Error> {
+	fn check_index(&self) -> Result<Vec<PathBuf>, Error> {
 		match self.status() {
 			Ok(statuses) => {
-				let tip = is_all_workspace(&statuses);
-				if tip {
-					Ok(())
+				let tracked = get_tracked_files(&statuses);
+				if tracked.len() != 0 {
+					Ok(tracked)
 				} else {
 					Err(Error::from_str("No files commit to the index."))
 				}

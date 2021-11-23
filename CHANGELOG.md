@@ -1,4 +1,67 @@
 
+<a name="v1.2.1"></a>
+## [v1.2.1](https://github.com/sdttttt/gcr/compare/v1.2.0.rc.1...v1.2.1) (2021-04-24)
+
+### Chore
+
+* **deps:** bump dialoguer from 0.7.1 to 0.8.0
+
+### Docs
+
+* **version:** 📝 update cargo ver.
+
+### Pull Requests
+
+* Merge pull request [#50](https://github.com/sdttttt/gcr/issues/50) from sdttttt/dependabot/cargo/dialoguer-0.8.0
+
+
+<a name="v1.2.0.rc.1"></a>
+## [v1.2.0.rc.1](https://github.com/sdttttt/gcr/compare/v1.1.0...v1.2.0.rc.1) (2021-04-09)
+
+### Chore
+
+* 📦 update grc config file.
+* 📦 delete .idea folder.
+* 📦 update tools.
+* **chglog:** 📦 add changelog and update package info.
+* **deps:** bump console from 0.13.0 to 0.14.1
+
+### Ci
+
+* 🚀 add build cache.
+* **workflow:** 🚀 delete unit test on windows actions.
+* **workflow:** 🚀 Add unit test step.
+* **workflow:** 🚀 update build command.
+* **workflow:** 🚀 from native makefile to cargo makefile.
+
+### Feat
+
+* 🎉 optimize command exec output.
+* 🎉 update pre output.
+* 🎉 update command exec logic.
+* 🎉 add pre commit action.
+
+### Fix
+
+* **workflow:** 🐞 linux aciton.
+
+### Refactor
+
+* ✂  add after action.
+
+### Test
+
+* 🧪 update unit test.
+* **conf:** 🧪 add unit test.
+
+### Pull Requests
+
+* Merge pull request [#60](https://github.com/sdttttt/gcr/issues/60) from sdttttt/develop
+* Merge pull request [#59](https://github.com/sdttttt/gcr/issues/59) from sdttttt/develop
+* Merge pull request [#55](https://github.com/sdttttt/gcr/issues/55) from sdttttt/sdttttt/fix-workflow
+* Merge pull request [#51](https://github.com/sdttttt/gcr/issues/51) from sdttttt/dependabot/cargo/console-0.14.1
+
+
 <a name="v1.1.0"></a>
 ## [v1.1.0](https://github.com/sdttttt/gcr/compare/v1.1.0-beta.1...v1.1.0) (2021-03-08)
 

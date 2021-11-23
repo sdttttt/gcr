@@ -1,17 +1,30 @@
 use git2::{Signature, Status, Statuses};
+use std::path::{Path, PathBuf};
 use std::{env, fs, process::Command};
 
 use crate::metadata::{
 	GIT_AUTHOR_EMAIL, GIT_AUTHOR_NAME, GIT_COMMITTER_EMAIL, GIT_COMMITTER_NAME, SPACE,
 };
 
+/// See [git2 `IndexEntry.path`](https://docs.rs/git2/0.13.24/git2/struct.IndexEntry.html#structfield.path)
+#[cfg(unix)]
+fn bytes2path(b: &[u8]) -> PathBuf {
+	use std::{ffi::OsStr, os::unix::prelude::*};
+	Path::new(OsStr::from_bytes(b)).into()
+}
+#[cfg(windows)]
+fn bytes2path(b: &[u8]) -> PathBuf {
+	use std::str;
+	Path::new(str::from_utf8(b).unwrap()).into()
+}
+
 pub fn current_path() -> String {
 	let path = fs::canonicalize(".").unwrap();
 	String::from(path.to_str().unwrap())
 }
 
-pub fn is_all_workspace(statuses: &Statuses) -> bool {
-	let mut tip = false;
+pub fn get_tracked_files(statuses: &Statuses) -> Vec<PathBuf> {
+	let mut tracked = Vec::new();
 	for state in statuses.iter() {
 		match state.status() {
 			Status::INDEX_NEW
@@ -19,13 +32,12 @@ pub fn is_all_workspace(statuses: &Statuses) -> bool {
 			| Status::INDEX_DELETED
 			| Status::INDEX_RENAMED
 			| Status::INDEX_TYPECHANGE => {
-				tip = true;
-				break;
+				tracked.push(bytes2path(state.path_bytes()));
 			}
 			_ => {}
 		}
 	}
-	tip
+	tracked
 }
 
 pub fn remove_pound_prefix(input: &str) -> &str {
