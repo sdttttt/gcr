@@ -166,6 +166,7 @@ mod tests {
 		assert_eq!(commands.len(), 2);
 	}
 
+	#[ignore = "unstable"]
 	#[test]
 	fn it_committer_sign_from_null_env() {
 		env::remove_var(GIT_COMMITTER_NAME);
@@ -174,6 +175,7 @@ mod tests {
 		assert!(committer_sign_from_env().is_none())
 	}
 
+	#[ignore = "unstable"]
 	#[test]
 	fn it_committer_sign_from_env() {
 		let name = "sdttttt";
@@ -186,6 +188,7 @@ mod tests {
 		assert_eq!(sign.email().unwrap(), email);
 	}
 
+	#[ignore = "unstable"]
 	#[test]
 	fn it_author_sign_from_null_env() {
 		env::remove_var(GIT_AUTHOR_NAME);
@@ -194,6 +197,7 @@ mod tests {
 		assert!(author_sign_from_env().is_none())
 	}
 
+	#[ignore = "unstable"]
 	#[test]
 	fn it_author_sign_from_env() {
 		let name = "sdttttt";

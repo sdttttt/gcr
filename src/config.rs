@@ -103,10 +103,10 @@ mod tests {
 		assert!(conf.emoji());
 		assert_eq!(conf.files().len(), 0);
 		assert_eq!(conf.command_mode(), &Mode::Commit);
-		assert!(conf.plugins().len() > 0);
+		assert_eq!(conf.plugins().len(), 0);
 		assert_eq!(conf.overwrite_emoji().len(), 0);
 		assert!(conf.extends_type().len() > 0);
-		assert!(conf.pre_command().len() > 0);
+		assert_eq!(conf.pre_command().len(), 0);
 		assert_eq!(conf.after_command().len(), 0);
 	}
 }

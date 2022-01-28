@@ -1,6 +1,6 @@
 emoji = true
 type = ["version: version is change.", "deps: Dependencies change."]
-plug = ["push"]
+plug = []
 
-pre = ["cargo make format", "git-chglog -o CHANGELOG.md"]
+pre = []
 after = []
