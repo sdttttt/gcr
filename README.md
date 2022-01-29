@@ -17,6 +17,8 @@ You can install **grc** in the following ways:
 
 ### From crates.io
 
+grc has very few dependencies, and you can build it very quickly and easily!
+
 Please Run:
 
 ```sh
