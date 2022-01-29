@@ -59,10 +59,10 @@ jobs:
                   command: make
                   args: build-release
 
-            - name: Run cargo bloat
-              uses: orf/cargo-bloat-action@v1
-              with:
-                  token: ${{ secrets.GITHUB_TOKEN }}
+#             - name: Run cargo bloat (not work)
+#               uses: orf/cargo-bloat-action@v1
+#               with:
+#                   token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: upload artifact
               uses: actions/upload-artifact@v2
