@@ -79,7 +79,7 @@ overwrite_emoji = [
 ]
 
 
-# Starting with **1.2.0**, Added two new options to the configuration file, `pre` and `after`, which are similar to githook. Here you can enter the actions of the commands before and after COMMIT. (This feature may not work properly on Windows.)
+# [Beta] Starting with **1.2.0**, Added two new options to the configuration file, `pre` and `after`, which are similar to githook. Here you can enter the actions of the commands before and after COMMIT.
 pre = [
 "cargo test"
 ]
