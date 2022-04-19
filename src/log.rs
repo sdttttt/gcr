@@ -21,11 +21,6 @@ pub fn grc_warn_println(content: impl Display) {
 	println!("{}", color.apply_to(content))
 }
 
-pub fn grc_succ_println(content: impl Display) {
-	let color = Style::new().green();
-
-	println!("{}", color.apply_to(content));
-}
 
 #[cfg(test)]
 mod tests {
