@@ -106,7 +106,5 @@ mod tests {
 		assert_eq!(conf.plugins().len(), 0);
 		assert_eq!(conf.overwrite_emoji().len(), 0);
 		assert!(conf.extends_type().len() > 0);
-		assert_eq!(conf.pre_command().len(), 0);
-		assert_eq!(conf.after_command().len(), 0);
 	}
 }
