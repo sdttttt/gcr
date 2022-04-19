@@ -2,5 +2,5 @@ emoji = true
 type = ["version: version is change.", "deps: Dependencies change."]
 plug = []
 
-pre = []
-after = ["git push"]
+pre = ["git help"]
+after = ["git help"]

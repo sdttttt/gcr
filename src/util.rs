@@ -12,7 +12,6 @@ fn bytes2path(b: &[u8]) -> PathBuf {
 	use std::{ffi::OsStr, os::unix::prelude::*};
 	Path::new(OsStr::from_bytes(b)).into()
 }
-
 #[cfg(windows)]
 fn bytes2path(b: &[u8]) -> PathBuf {
 	use std::str;
@@ -20,7 +19,7 @@ fn bytes2path(b: &[u8]) -> PathBuf {
 }
 
 pub fn current_path() -> String {
-	let path = fs::canonicalize(&".").unwrap();
+	let path = fs::canonicalize(".").unwrap();
 	String::from(path.to_str().unwrap())
 }
 
@@ -66,15 +65,14 @@ pub fn parse_command(commands_text: &Vec<String>) -> Vec<Command> {
 			continue;
 		}
 
-		let args_str = command_str.split(SPACE).collect::<Vec<&str>>();
+		let mut args_str = command_str.split(SPACE).collect::<Vec<&str>>();
+		if cfg!(target_os = "windows") {
+			args_str.insert(0, "powershell");
+		}
 		// 0 index is main command.
-		let mut command = if cfg!(target_os = "windows") {
-			Command::new("powershell")
-		} else {
-			Command::new("sh")
-		};
+		let mut command = Command::new(args_str[0]);
 		// 1.. index is command args.
-		for argv in args_str[0..].into_iter() {
+		for argv in args_str[1..].into_iter() {
 			if argv.is_empty() {
 				continue;
 			}
