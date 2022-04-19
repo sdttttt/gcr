@@ -41,9 +41,4 @@ mod tests {
 	fn it_grc_warn_println() {
 		grc_warn_println("TEST WARN CONTENT.");
 	}
-
-	#[test]
-	fn it_grc_succ_println() {
-		grc_succ_println("TEST SUCC CONTENT.");
-	}
 }
