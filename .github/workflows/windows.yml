@@ -27,6 +27,8 @@ jobs:
                   profile: minimal
                   override: true
 
+            - uses: davidB/rust-cargo-make@v1
+            
             - uses: actions/cache@v2
               with:
                   path: |
