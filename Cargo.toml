@@ -17,7 +17,7 @@ lto = true
 
 [dependencies]
 clap = "2.34.0"
-console = "0.14.1"
+console = "0.15.0"
 git2 = "0.13"
 dialoguer = "0.8.0"
 toml = "0.5.7"
