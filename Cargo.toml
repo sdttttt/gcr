@@ -18,8 +18,8 @@ lto = true
 [dependencies]
 clap = "2.34.0"
 console = "0.15.0"
-git2 = "0.13"
 dialoguer = "0.10.0"
+git2 = "0.14"
 toml = "0.5.7"
 serde = { version = "1.0.82", features = ["derive"] }
 
