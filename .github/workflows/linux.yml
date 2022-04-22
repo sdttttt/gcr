@@ -47,13 +47,13 @@ jobs:
               uses: actions-rs/cargo@v1
               with:
                   command: make
-                  args: test
+                  args: --makefile MakeFile.toml test
 
             - name: Build
               uses: actions-rs/cargo@v1
               with:
                   command: make
-                  args: build-release
+                  args: --makefile MakeFile.toml build-release
 
 #             - name: Run cargo bloat (not work)
 #               uses: orf/cargo-bloat-action@v1
