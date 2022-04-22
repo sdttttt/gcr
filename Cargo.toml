@@ -16,7 +16,7 @@ categories = ["command-line-utilities"]
 lto = true
 
 [dependencies]
-clap = "2.33.3"
+clap = "2.34.0"
 console = "0.14.1"
 git2 = "0.13"
 dialoguer = "0.8.0"
