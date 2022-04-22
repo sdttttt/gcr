@@ -3,4 +3,4 @@ type = ["version: version is change.", "deps: Dependencies change."]
 plug = []
 
 pre = []
-after = ["git push"]
+after = ["git diff --stat"]
