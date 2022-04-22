@@ -21,7 +21,6 @@ pub fn grc_warn_println(content: impl Display) {
 	println!("{}", color.apply_to(content))
 }
 
-
 #[cfg(test)]
 mod tests {
 

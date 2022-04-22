@@ -10,7 +10,7 @@ dependencies = ["format"]
 
 [tasks.test]
 command = "cargo"
-args = ["test"]
+args = ["test",  "--", "--nocapture" ,"--test-threads=1"]
 dependencies = ["format"]
 
 [tasks.run]

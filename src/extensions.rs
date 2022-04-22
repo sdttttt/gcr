@@ -96,7 +96,6 @@ impl Extensions {
 
 	/// read config file convert std::string::String
 	fn read_config_file(filename: &str) -> Result<String, Error> {
-
 		match fs::read_to_string(filename) {
 			Ok(content) => Ok(content),
 			Err(e) => {
