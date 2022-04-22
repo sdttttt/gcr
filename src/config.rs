@@ -25,19 +25,19 @@ impl Configuration {
 	pub fn merge(arg: Arguments, ext: Extensions) -> Rc<Self> {
 		let params = arg.files().clone();
 
-		let extends_type = ext.types().unwrap_or(&vec![]).clone();
+		let extends_type = ext.types().unwrap_or_else(|| vec![]);
 
 		let mode = arg.command_mode();
 
 		let emoji = ext.emoji() || arg.emoji();
 
-		let pre_command = ext.pre_command().unwrap_or(&vec![]).clone();
-		let after_command = ext.after_command().unwrap_or(&vec![]).clone();
+		let pre_command = ext.pre_command().unwrap_or_else(|| vec![]);
+		let after_command = ext.after_command().unwrap_or_else(|| vec![]);
 
 		let overwrite_emoji =
-			if emoji { ext.overwrite_emoji().unwrap_or(&vec![]).clone() } else { vec![] };
+			if emoji { ext.overwrite_emoji().unwrap_or_else(|| vec![]) } else { vec![] };
 
-		let plugs = find_plug(ext.plug().unwrap_or(&vec![]));
+		let plugs = find_plug(&ext.plug().unwrap_or_else(|| vec![]));
 
 		Rc::new(Self {
 			params,

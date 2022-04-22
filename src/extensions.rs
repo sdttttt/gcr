@@ -53,28 +53,28 @@ impl Extensions {
 	}
 
 	/// got All Types in configuration file.
-	pub fn types(&self) -> Option<&Vec<String>> {
-		self.typ.as_ref()
+	pub fn types(&self) -> Option<Vec<String>> {
+		self.typ.clone()
 	}
 
 	pub fn emoji(&self) -> bool {
 		self.emoji.unwrap_or_else(|| false)
 	}
 
-	pub fn overwrite_emoji(&self) -> Option<&Vec<String>> {
-		self.overwrite_emoji.as_ref()
+	pub fn overwrite_emoji(&self) -> Option<Vec<String>> {
+		self.overwrite_emoji.clone()
 	}
 
-	pub fn plug(&self) -> Option<&Vec<String>> {
-		self.plug.as_ref()
+	pub fn plug(&self) -> Option<Vec<String>> {
+		self.plug.clone()
 	}
 
-	pub fn pre_command(&self) -> Option<&Vec<String>> {
-		self.pre.as_ref()
+	pub fn pre_command(&self) -> Option<Vec<String>> {
+		self.pre.clone()
 	}
 
-	pub fn after_command(&self) -> Option<&Vec<String>> {
-		self.after.as_ref()
+	pub fn after_command(&self) -> Option<Vec<String>> {
+		self.after.clone()
 	}
 
 	/// deserialize toml configuration file to struct.
