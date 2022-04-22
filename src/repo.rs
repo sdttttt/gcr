@@ -201,12 +201,12 @@ impl Repository {
 				Ok(ok_out) => {
 					grc_println(String::from_utf8_lossy(&ok_out.stdout));
 					if !ok_out.status.success() {
-						return Err(git2::Error::from_str("per command error."));
+						return Err(Error::from_str("per command error."));
 					}
 				}
 
 				Err(err_out) => {
-					return Err(git2::Error::from_str(
+					return Err(Error::from_str(
 						format!("per command error: {}", err_out.to_string()).as_str(),
 					));
 				}
