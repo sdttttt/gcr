@@ -35,12 +35,6 @@ jobs:
                       target
                   key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-            - name: Install cargo-make
-              uses: actions-rs/cargo@v1
-              with:
-                  command: install
-                  args: --debug cargo-make
-
             - name: Build
               uses: actions-rs/cargo@v1
               with:
