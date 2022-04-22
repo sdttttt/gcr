@@ -32,7 +32,9 @@ jobs:
                   toolchain: ${{ matrix.toolchain }}
                   override: true
                   profile: minimal
-
+            
+            - uses: davidB/rust-cargo-make@v1
+            
             - uses: actions/cache@v2
               with:
                   path: |
