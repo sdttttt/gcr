@@ -20,7 +20,7 @@ clap = "2.34.0"
 console = "0.15.0"
 dialoguer = "0.10.0"
 git2 = "0.14"
-toml = "0.5.7"
+toml = "0.5.9"
 serde = { version = "1.0.82", features = ["derive"] }
 
 [dev-dependencies]
