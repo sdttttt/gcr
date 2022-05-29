@@ -1,3 +1,4 @@
+use dialoguer::Confirm;
 use dialoguer::{theme::ColorfulTheme, Input, Select};
 
 use crate::log::grc_err_println;
@@ -210,13 +211,17 @@ impl Messager {
 
 	/// description of commit message.
 	fn ask_description(&self) -> String {
-		let description = Input::<String>::with_theme(&ColorfulTheme::default())
-			.with_prompt("Provide a longer description? (Optional)")
-			.allow_empty(true)
+		let has_description = Confirm::with_theme(&ColorfulTheme::default())
+			.with_prompt("Provide a longer description?")
+			.default(false)
 			.interact()
-			.unwrap();
+			.unwrap_or(false);
 
-		String::from(description.trim())
+		if has_description {
+			edit::edit("").unwrap_or_else(|_| "".to_owned())
+		} else {
+			"".to_owned()
+		}
 	}
 
 	/// close PR or issue of commit message.
@@ -249,6 +254,12 @@ impl Messager {
 				}
 			})
 			.collect::<Vec<String>>()
+	}
+}
+
+impl Default for Messager {
+	fn default() -> Self {
+		Self::new(false)
 	}
 }
 
