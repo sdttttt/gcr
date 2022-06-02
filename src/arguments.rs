@@ -1,4 +1,4 @@
-use clap::{App, Arg, ArgMatches};
+use clap::{Arg, ArgMatches, Command};
 use git2::Error;
 
 use crate::metadata::*;
@@ -44,26 +44,27 @@ impl Arguments {
 		Self { mode: Mode::Commit, params: vec![], config_filename: String::new(), emoji: false }
 	}
 
-	fn cli() -> App<'static, 'static> {
-		App::new(NAME).version(VERSION).author(AUTHOR).about(DESCRIPTION).args(&[
+	fn cli() -> Command<'static> {
+		Command::new(NAME).version(VERSION).author(AUTHOR).about(DESCRIPTION).args(&[
 			Self::add_arg(),
 			Self::designate_config_arg(),
 			Self::emoji_arg(),
 		])
 	}
 
-	fn add_arg() -> Arg<'static, 'static> {
-		Arg::with_name(ADD_PARAMS)
+	fn add_arg() -> Arg<'static> {
+		Arg::new(ADD_PARAMS)
 			.short(ADD_COMMAND_SHORT)
 			.long(ADD_COMMAND)
-			.multiple(true)
+			.multiple_occurrences(true)
+			.multiple_values(true)
 			.required(false)
 			.help(ADD_COMMAND_HELP)
 			.takes_value(true)
 	}
 
-	fn designate_config_arg() -> Arg<'static, 'static> {
-		Arg::with_name(DESIGNATE_CONFIG_PARAMS)
+	fn designate_config_arg() -> Arg<'static> {
+		Arg::new(DESIGNATE_CONFIG_PARAMS)
 			.short(DESIGNATE_CONFIG_COMMAND_SHORT)
 			.long(DESIGNATE_CONFIG_COMMAND)
 			.required(false)
@@ -71,8 +72,8 @@ impl Arguments {
 			.takes_value(true)
 	}
 
-	fn emoji_arg() -> Arg<'static, 'static> {
-		Arg::with_name(EMOJI_COMMAND)
+	fn emoji_arg() -> Arg<'static> {
+		Arg::new(EMOJI_COMMAND)
 			.long(EMOJI_COMMAND)
 			.required(false)
 			.help(EMOJI_COMMAND_HELP)
@@ -166,6 +167,11 @@ mod tests {
 		let matches = Arguments::cli().get_matches_from(vec);
 
 		Arguments::resolve_command(matches).unwrap()
+	}
+
+	#[test]
+	fn test_clap3_verify() {
+		Arguments::cli().debug_assert();
 	}
 
 	#[test]

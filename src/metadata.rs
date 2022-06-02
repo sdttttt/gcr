@@ -69,7 +69,7 @@ pub enum Mode {
 
 pub const ADD_COMMAND: &str = "add";
 pub const ADD_PARAMS: &str = "filename";
-pub const ADD_COMMAND_SHORT: &str = "a";
+pub const ADD_COMMAND_SHORT: char = 'a';
 pub const ADD_COMMAND_HELP: &str = "Help you add files before commit. If the parameter is `.`, Then GRC will help you add everything.";
 pub const ADD_COMMAND_NO_FILE: &str = "The add command requires parameters.";
 
@@ -79,7 +79,7 @@ pub const ADD_COMMAND_NO_FILE: &str = "The add command requires parameters.";
 
 pub const DESIGNATE_CONFIG_COMMAND: &str = "config";
 pub const DESIGNATE_CONFIG_PARAMS: &str = "configfile";
-pub const DESIGNATE_CONFIG_COMMAND_SHORT: &str = "c";
+pub const DESIGNATE_CONFIG_COMMAND_SHORT: char = 'c';
 pub const DESIGNATE_CONFIG_COMMAND_HELP: &str =
 	"Manually specify a configuration file for the GRC.";
 
