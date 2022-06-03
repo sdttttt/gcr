@@ -49,6 +49,7 @@ impl Arguments {
 			Self::add_arg(),
 			Self::designate_config_arg(),
 			Self::emoji_arg(),
+			Self::version_arg(),
 		])
 	}
 
@@ -77,6 +78,15 @@ impl Arguments {
 			.long(EMOJI_COMMAND)
 			.required(false)
 			.help(EMOJI_COMMAND_HELP)
+			.takes_value(false)
+	}
+
+	fn version_arg() -> Arg<'static> {
+		Arg::new(VERSION_COMMAND)
+			.short(VERSION_COMMAND_SHORT)
+			.long(VERSION_COMMAND)
+			.required(false)
+			.help(VERSION_COMMAND_HELP)
 			.takes_value(false)
 	}
 

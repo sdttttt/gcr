@@ -2,7 +2,7 @@
 /* GRC Metadata */
 /* -------------------------------------------------------------------------- */
 
-pub const VERSION: &str = "1.2.2";
+pub const VERSION: &str = "1.3.0";
 pub const AUTHOR: &str = "SDTTTTT. <sdttttt@outlook.com>";
 pub const NAME: &str = "GRC";
 pub const DESCRIPTION: &str = r#"
@@ -61,6 +61,7 @@ pub enum Mode {
 	Add,
 	AddAll,
 	Commit,
+	Version,
 }
 
 /* --------------------------------------------------------------------------- */
@@ -89,6 +90,14 @@ pub const DESIGNATE_CONFIG_COMMAND_HELP: &str =
 
 pub const EMOJI_COMMAND: &str = "emoji";
 pub const EMOJI_COMMAND_HELP: &str = "Make your submission record look beautiful.";
+
+/* -------------------------------------------------------------------------- */
+/* CLI VERSION INFO */
+/* -------------------------------------------------------------------------- */
+
+pub const VERSION_COMMAND: &str = "version";
+pub const VERSION_COMMAND_SHORT: char = 'v';
+pub const VERSION_COMMAND_HELP: &str = "Show the version.";
 
 /* -------------------------------------------------------------------------- */
 /* GRC ERROR */
