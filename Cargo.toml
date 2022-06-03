@@ -23,7 +23,7 @@ dialoguer = "0.10.1"
 git2 = "0.14.4"
 toml = "0.5.9"
 edit = "0.1.4"
-serde = { version = "1.0.82", features = ["derive"] }
+serde = { version = "1.0.137", features = ["derive"] }
 
 [dev-dependencies]
 cargo-husky = "1.5.0"
