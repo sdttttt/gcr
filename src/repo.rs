@@ -10,7 +10,7 @@ use git2::{
 };
 
 use crate::log::grc_success_println;
-use crate::metadata::VERSION;
+use crate::version::VERSION;
 use crate::{
 	config::Configuration,
 	log::{grc_println, grc_warn_println},

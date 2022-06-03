@@ -25,5 +25,9 @@ toml = "0.5.9"
 edit = "0.1.4"
 serde = { version = "1.0.137", features = ["derive"] }
 
+[build-dependencies]
+serde = { version = "1.0.137", features = ["derive"] }
+toml = "0.5.9"
+
 [dev-dependencies]
 cargo-husky = "1.5.0"

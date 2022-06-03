@@ -3,6 +3,7 @@ use git2::Error;
 
 use crate::metadata::*;
 use crate::util::*;
+use crate::version::VERSION;
 
 /// Parse the behavior and extra parameters of GRC by entering commands.
 pub struct Arguments {

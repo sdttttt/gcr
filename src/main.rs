@@ -9,6 +9,7 @@ mod metadata;
 mod plugins;
 mod repo;
 mod util;
+mod version;
 
 use arguments::*;
 use config::Configuration;
