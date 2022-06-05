@@ -1,5 +1,5 @@
-use dialoguer::Confirm;
 use dialoguer::{theme::ColorfulTheme, Input, Select};
+use dialoguer::{Confirm, Editor};
 
 use crate::log::grc_err_println;
 use crate::metadata::*;
@@ -218,7 +218,10 @@ impl Messager {
 			.unwrap_or(false);
 
 		if has_description {
-			edit::edit("").unwrap_or_else(|_| "".to_owned())
+			Editor::new()
+				.edit("commit descript.")
+				.unwrap_or_else(|_| Some("".to_owned()))
+				.unwrap_or_else(|| "".to_owned())
 		} else {
 			"".to_owned()
 		}
