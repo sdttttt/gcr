@@ -1,4 +1,4 @@
-use dialoguer::{theme::ColorfulTheme, Input, Select};
+use dialoguer::{theme::ColorfulTheme, FuzzySelect, Input};
 use dialoguer::{Confirm, Editor};
 
 use crate::log::grc_err_println;
@@ -149,11 +149,11 @@ impl Messager {
 
 	/// type of commit message.
 	fn ask_type(&mut self) {
-		let selection = Select::with_theme(&ColorfulTheme::default())
+		let selection = FuzzySelect::with_theme(&ColorfulTheme::default())
 			.items(&self.type_list())
 			.default(0)
 			.interact()
-			.unwrap();
+			.expect("Failed to select commit type.");
 
 		// Custom TYPE.
 		if selection == self.commit_type_descript.len() - 1 {
