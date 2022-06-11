@@ -27,7 +27,9 @@ jobs:
 
       - name:                   Generate code coverage
         run: |
-          cargo +nightly tarpaulin --verbose --all-features --implicit-test-threads 1 --workspace --timeout 120 --out Xml
+          cargo +nightly tarpaulin --timeout 120 --out Xml
+        env:
+          RUST_TEST_THREADS: 1
 #     steps:
 #     - uses: actions/checkout@v2
 
