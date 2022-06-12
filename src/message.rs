@@ -253,7 +253,7 @@ impl Messager {
 				let mut space = String::new();
 				if td.0.len() < name_max_len {
 					for _ in 0..(name_max_len - 1 - td.0.len()) {
-						space.push_str(SPACE);
+						space.push(SPACE);
 					}
 				}
 

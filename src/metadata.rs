@@ -3,7 +3,7 @@
 /* -------------------------------------------------------------------------- */
 
 pub const SEPARATOR_SYMBOL: &str = ":";
-pub const SPACE: &str = " ";
+pub const SPACE: char = ' ';
 
 pub const GIT_AUTHOR_NAME: &str = "GIT_AUTHOR_NAME";
 pub const GIT_AUTHOR_EMAIL: &str = "GIT_AUTHOR_EMAIL";
