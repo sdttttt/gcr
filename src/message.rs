@@ -6,14 +6,14 @@ use crate::metadata::*;
 use crate::util::remove_pound_prefix;
 
 /// 0: name 1: description 2: emoji
-struct CommitTD(String, String, String);
+struct CommitTD(String, String, Option<String>);
 
 /// Messsager is Commit Message struct.
 pub struct Messager {
 	commit_type_descript: Vec<CommitTD>,
 
 	typ: String,
-	emoji: String,
+	emoji: Option<String>,
 	scope: String,
 	subject: String,
 	body: String,
@@ -21,15 +21,15 @@ pub struct Messager {
 
 impl CommitTD {
 	pub fn from(type_name: &str, type_desc: &str) -> Self {
-		Self(type_name.to_string(), type_desc.to_string(), String::new())
+		Self(type_name.to_owned(), type_desc.to_owned(), None)
 	}
 
-	pub fn with_emoji(type_name: String, type_desc: String, emoji: String) -> Self {
-		Self(type_name, type_desc, emoji)
+	pub fn with_emoji(type_name: &str, type_desc: &str, emoji: &str) -> Self {
+		Self(type_name.to_owned(), type_desc.to_owned(), Some(emoji.to_owned()))
 	}
 
-	pub fn update_emoji(&mut self, emoji: String) {
-		self.2 = emoji
+	pub fn update_emoji(&mut self, emoji: &str) {
+		self.2 = Some(emoji.to_owned())
 	}
 }
 
@@ -38,29 +38,28 @@ impl Messager {
 		let commit_type_descript = BASE_COMMIT_TYPE_DESCRIPTION
 			.iter()
 			.map(|td: &(&str, &str)| -> CommitTD {
-				let type_name = td.0.to_string();
-				let type_desc = td.1.to_string();
+				let type_name = td.0.to_owned();
+				let type_desc = td.1.to_owned();
 				let mut emoji = String::new();
 
 				if enable_emoji {
 					for emj in BASE_COMMIT_TYPE_EMOJI {
 						if emj.0 == td.0 {
-							emoji = emj.1.to_string();
+							emoji = emj.1.to_owned();
 							break;
 						}
 					}
 				}
 
-				CommitTD::with_emoji(type_name, type_desc, emoji)
+				CommitTD::with_emoji(type_name.as_str(), type_desc.as_str(), emoji.as_str())
 			})
 			.collect();
 		let typ = String::new();
 		let scope = String::new();
 		let subject = String::new();
 		let body = String::new();
-		let emoji = String::new();
 
-		Self { commit_type_descript, typ, scope, subject, body, emoji }
+		Self { commit_type_descript, typ, scope, subject, body, emoji: None }
 	}
 
 	/// Load externally provided extension types.
@@ -92,7 +91,7 @@ impl Messager {
 					std::process::exit(1);
 				};
 				if td.0 == arr_emo[0].trim() {
-					td.update_emoji(arr_emo[1].to_string());
+					td.update_emoji(arr_emo[1]);
 					return;
 				}
 			})
@@ -169,10 +168,10 @@ impl Messager {
 				.interact()
 				.unwrap()
 		} else {
-			self.typ = self.commit_type_descript[selection].0.to_string();
+			self.typ = self.commit_type_descript[selection].0.to_owned();
 			for td in &self.commit_type_descript {
 				if self.typ == td.0 {
-					self.emoji = td.2.to_string();
+					self.emoji = td.2.to_owned();
 					break;
 				}
 			}
@@ -204,8 +203,8 @@ impl Messager {
 			.interact()
 			.unwrap();
 
-		if !self.emoji.is_empty() {
-			self.subject = format!("{} {}", self.emoji, self.subject)
+		if !self.emoji.is_some() {
+			self.subject = format!("{} {}", self.emoji.as_deref().unwrap(), self.subject)
 		}
 	}
 
@@ -240,20 +239,28 @@ impl Messager {
 
 	// self.commit_type_descript { Vec<CommitTD> } convert to { Vec<String> }.
 	fn type_list(&self) -> Vec<String> {
+		let name_max_len = self
+			.commit_type_descript
+			.iter()
+			.reduce(|long_td, td| if td.0.len() > long_td.0.len() { td } else { long_td })
+			.unwrap()
+			.0
+			.len() + 2;
+
 		self.commit_type_descript
 			.iter()
 			.map(|td: &CommitTD| -> String {
 				let mut space = String::new();
-				if td.0.len() < 12 {
-					for _ in 0..(11 - td.0.len()) {
+				if td.0.len() < name_max_len {
+					for _ in 0..(name_max_len - 1 - td.0.len()) {
 						space.push_str(SPACE);
 					}
 				}
 
-				if td.2.is_empty() {
+				if td.2.is_none() {
 					format!("   {}:{}{}", td.0, space, td.1)
 				} else {
-					format!("{} {}:{}{}", td.2, td.0, space, td.1)
+					format!("{} {}:{}{}", td.2.as_deref().unwrap(), td.0, space, td.1)
 				}
 			})
 			.collect::<Vec<String>>()
@@ -274,9 +281,9 @@ mod tests {
 	#[test]
 	fn it_build() {
 		let mut message = Messager::new(false);
-		message.typ = "type".to_string();
-		message.scope = "scope".to_string();
-		message.subject = "subject.".to_string();
+		message.typ = "type".to_owned();
+		message.scope = "scope".to_owned();
+		message.subject = "subject.".to_owned();
 
 		let commit_msg = message.build();
 		assert_eq!(commit_msg.as_str(), "type(scope): subject.")
