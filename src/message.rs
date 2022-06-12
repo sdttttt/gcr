@@ -9,6 +9,7 @@ use crate::util::remove_pound_prefix;
 struct CommitTD(String, String, Option<String>);
 
 /// Messsager is Commit Message struct.
+#[derive(Default)]
 pub struct Messager {
 	commit_type_descript: Vec<CommitTD>,
 
@@ -54,12 +55,8 @@ impl Messager {
 				CommitTD::with_emoji(type_name.as_str(), type_desc.as_str(), emoji.as_str())
 			})
 			.collect();
-		let typ = String::new();
-		let scope = String::new();
-		let subject = String::new();
-		let body = String::new();
 
-		Self { commit_type_descript, typ, scope, subject, body, emoji: None }
+		Self { commit_type_descript, ..Default::default() }
 	}
 
 	/// Load externally provided extension types.
@@ -264,12 +261,6 @@ impl Messager {
 				}
 			})
 			.collect::<Vec<String>>()
-	}
-}
-
-impl Default for Messager {
-	fn default() -> Self {
-		Self::new(false)
 	}
 }
 
