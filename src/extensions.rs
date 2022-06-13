@@ -15,6 +15,8 @@ pub struct Extensions {
 	emoji: Option<bool>,
 
 	overwrite_emoji: Option<Vec<String>>,
+
+	#[cfg(feature = "plug")]
 	plug: Option<Vec<String>>,
 
 	pre: Option<Vec<String>>,
@@ -65,6 +67,7 @@ impl Extensions {
 		self.overwrite_emoji.clone()
 	}
 
+	#[cfg(feature = "plug")]
 	pub fn plug(&self) -> Option<Vec<String>> {
 		self.plug.clone()
 	}
@@ -84,7 +87,10 @@ impl Extensions {
 				typ: None,
 				emoji: None,
 				overwrite_emoji: None,
+
+				#[cfg(feature = "plug")]
 				plug: None,
+
 				pre: None,
 				after: None,
 			});

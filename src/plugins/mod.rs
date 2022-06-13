@@ -1,3 +1,5 @@
+#![cfg(feature = "plug")]
+
 use git2::Error;
 use std::rc::Rc;
 

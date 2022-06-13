@@ -34,6 +34,7 @@ impl Repository {
 		}
 	}
 
+	#[cfg(feature = "plug")]
 	pub fn real_repo(&self) -> &GRepository {
 		&self.repo
 	}
@@ -93,6 +94,8 @@ impl Repository {
 		};
 
 		self.execute_hook_command(self.config.pre_command())?;
+
+		#[cfg(feature = "plug")]
 		for plug in self.config.plugins() {
 			plug.before(&self)?;
 		}
@@ -117,6 +120,8 @@ impl Repository {
 		};
 
 		self.execute_hook_command(self.config.after_command())?;
+
+		#[cfg(feature = "plug")]
 		for plug in self.config.plugins() {
 			plug.after(&self)?;
 		}

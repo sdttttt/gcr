@@ -16,6 +16,9 @@ build = "build.rs"
 [profile.release]
 lto = true
 
+[features]
+plug = []
+
 [dependencies]
 clap = "3.1.18"
 console = "0.15.0"
