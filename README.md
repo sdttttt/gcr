@@ -90,7 +90,9 @@ after = [
 
 ```
 
-### Plug
+### Plug (experimental)
+
+This feature is not enabled in the default version and needs to be set in the build. Add `--features plug` to the cargo build command to enable the plugin.
 
 plug are a new feature added in `1.1.0`. Details of the plug-in and usage can be found [here](https://github.com/sdttttt/gcr/tree/master/src/plugins).
 
