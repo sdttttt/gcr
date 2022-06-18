@@ -7,6 +7,9 @@ Currently, GRC provides very simple lifecycle hook functions.
 
 Let's take a look at these plugins:
 
+> **The API for Plug is not yet fully designed, and everything here is experimental, with no guarantee of availability for future releases.**
+
+
 ## Push
 
 Maybe you're tired of pushing after each commit. Luck ~ **push** plug-in can take care of that.
@@ -62,8 +65,3 @@ $
 ```
 
 Well, it looks clean. I like the feeling. :)
-
-# Description
-
-The API for Plug is not yet fully designed, and everything here is experimental, with no guarantee of availability for future releases.
-
