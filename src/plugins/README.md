@@ -63,9 +63,7 @@ $
 
 Well, it looks clean. I like the feeling. :)
 
-# Contribution
+# Description
 
-plug-in access is a difficult task.
-How to have a good design? highly flexible interface and strong expansibility all need to be carefully considered.
-If you have any good ideas, you are welcome to make issue or PR.
+The API for Plug is not yet fully designed, and everything here is experimental, with no guarantee of availability for future releases.
 
