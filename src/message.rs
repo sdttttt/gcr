@@ -97,7 +97,12 @@ impl Messager {
 		self
 	}
 
-	// got commit message for self.
+	/// `ask` asks the user for the type, scope, and subject of the commit message, then builds the body of
+	/// the message
+	///
+	/// Returns:
+	///
+	/// The Question struct
 	pub fn ask(mut self) -> Self {
 		self.ask_type();
 		self.ask_scope();
