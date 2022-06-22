@@ -2,5 +2,5 @@ emoji = true
 type = ["version: version is change.", "deps: Dependencies change."]
 plug = []
 
-pre = []
-after = ["git diff --stat"]
+pre = ["cargo test -- --nocapture --test-threads=1"]
+after = []
