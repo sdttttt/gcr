@@ -1,10 +1,11 @@
 use std::fmt::Display;
 
-use console::Style;
+use console::{Style, Term};
 
 /// GCR logger.
 pub fn grc_println(content: impl Display) {
-	println!("{}", content)
+	let stdout = Term::stdout();
+	stdout.write_line(content.to_string().as_str()).expect("should output str..");
 }
 
 /// GCR error logger.

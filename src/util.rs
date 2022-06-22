@@ -81,7 +81,6 @@ pub fn parse_command(commands_text: &Vec<String>) -> Vec<Command> {
 		}
 		commands.push(command)
 	}
-
 	commands
 }
 

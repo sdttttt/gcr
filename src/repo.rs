@@ -212,16 +212,16 @@ impl Repository {
 	fn execute_hook_command(&self, commands: Vec<Command>) -> Result<(), Error> {
 		for mut command in commands {
 			match command.output() {
-				Ok(ok_out) => {
-					grc_println(String::from_utf8_lossy(&ok_out.stdout));
-					if !ok_out.status.success() {
-						return Err(Error::from_str("per command error."));
+				Ok(out) => {
+					grc_println(String::from_utf8_lossy(&out.stdout));
+					if !out.status.success() {
+						return Err(Error::from_str("hook command error"));
 					}
 				}
 
-				Err(err_out) => {
+				Err(out) => {
 					return Err(Error::from_str(
-						format!("per command error: {}", err_out.to_string()).as_str(),
+						format!("hook command error: {}", out.to_string()).as_str(),
 					));
 				}
 			}
