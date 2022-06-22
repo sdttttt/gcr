@@ -19,8 +19,9 @@ fn main() {
 	println!("Thank you for installing and using GRC! [by @sdttttt]");
 	println!("cargo:rerun-if-changed=Cargo.toml");
 
-	let cargo_toml_str = std::fs::read_to_string(Path::new("Cargo.toml")).unwrap();
-	let cargo_toml = toml::from_str::<CargoToml>(&cargo_toml_str).unwrap();
+	let cargo_toml_str =
+		std::fs::read_to_string(Path::new("Cargo.toml")).expect("Cargo.toml read failed.");
+	let cargo_toml = toml::from_str::<CargoToml>(&cargo_toml_str).expect("toml parse failed.");
 
 	let version_file_rs = Path::new("src/version.rs");
 
@@ -38,5 +39,5 @@ pub const DESCRIPTION: &str = "{}";
 		cargo_toml.package.authors.join(", "),
 		cargo_toml.package.description
 	);
-	std::fs::write(version_file_rs, version_file_str).unwrap();
+	std::fs::write(version_file_rs, version_file_str).expect("version.rs wirte failed.");
 }
