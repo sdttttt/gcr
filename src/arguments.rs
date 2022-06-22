@@ -6,6 +6,7 @@ use crate::util::*;
 use crate::version::{AUTHOR, DESCRIPTION, NAME, VERSION};
 
 /// Parse the behavior and extra parameters of GRC by entering commands.
+#[derive(Default)]
 pub struct Arguments {
 	mode: Mode,
 	params: Vec<String>,
@@ -39,10 +40,6 @@ impl Arguments {
 
 	pub fn emoji(&self) -> bool {
 		self.emoji
-	}
-
-	pub fn default() -> Self {
-		Self { mode: Mode::Commit, params: vec![], config_filename: String::new(), emoji: false }
 	}
 
 	fn cli() -> Command<'static> {
@@ -93,7 +90,7 @@ impl Arguments {
 
 	/// Construct the behavior according to the input parameters.
 	fn resolve_command(matches: ArgMatches) -> Result<Self, Error> {
-		let mut arg = Self::default();
+		let mut arg = Default::default();
 
 		Self::extends_handle_chain(&mut arg, &matches)?;
 		Self::finally_handle_chain(&mut arg, &matches)?;
@@ -117,7 +114,7 @@ impl Arguments {
 	fn designate_config_handle(arg: &mut Arguments, matches: &ArgMatches) -> Result<bool, Error> {
 		if matches.is_present(DESIGNATE_CONFIG_PARAMS) {
 			if let Some(config_filename) = matches.value_of(DESIGNATE_CONFIG_PARAMS) {
-				arg.config_filename = config_filename.to_string();
+				arg.config_filename = config_filename.to_owned();
 				return Ok(true);
 			}
 		}

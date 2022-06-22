@@ -7,7 +7,7 @@ use serde::Deserialize;
 use crate::metadata::{GLOBAL_CONFIG_PATH, GRC_CONFIG_FILE_NAME};
 
 /// Extensions is GRC future config.
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 pub struct Extensions {
 	#[serde(rename = "type")]
 	typ: Option<Vec<String>>,
@@ -36,14 +36,14 @@ impl Extensions {
 
 	#[cfg(not(target_os = "windows"))]
 	fn from_global() -> Result<Self, Error> {
-		let home_dir = env::var("HOME").unwrap_or(String::new());
+		let home_dir = env::var("HOME").unwrap_or(Default::default());
 		let file_path = format!("{}/{}", home_dir.as_str(), GLOBAL_CONFIG_PATH);
 		Self::from(file_path.as_str())
 	}
 
 	#[cfg(target_os = "windows")]
 	fn from_global() -> Result<Self, Error> {
-		let home_dir = env::var("USERPROFILE").unwrap_or(String::new());
+		let home_dir = env::var("USERPROFILE").unwrap_or(Default::default());
 		let file_path = format!("{}\\{}", home_dir.as_str(), GLOBAL_CONFIG_PATH);
 		Self::from(file_path.as_str())
 	}
@@ -83,17 +83,7 @@ impl Extensions {
 	/// deserialize toml configuration file to struct.
 	fn deserialize(file_str: String) -> Result<Self, Error> {
 		if file_str.len() == 0 || file_str == "" {
-			return Ok(Self {
-				typ: None,
-				emoji: None,
-				overwrite_emoji: None,
-
-				#[cfg(feature = "plug")]
-				plug: None,
-
-				pre: None,
-				after: None,
-			});
+			return Ok(Self { ..Default::default() });
 		}
 
 		let config = toml::from_str::<Extensions>(file_str.as_str())?;
