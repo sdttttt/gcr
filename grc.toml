@@ -2,5 +2,5 @@ emoji = true
 type = ["version: version is change.", "deps: Dependencies change."]
 plug = []
 
-pre = ["cargo test -- --nocapture --test-threads=1"]
+pre = []
 after = []

@@ -73,7 +73,7 @@ pub fn parse_command(commands_text: &Vec<String>) -> Vec<Command> {
 		let mut command = Command::new(args_str[0]);
 		// 1.. index is command args.
 		for argv in args_str[1..].into_iter() {
-			if argv.is_empty() {
+			if argv.trim().is_empty() {
 				continue;
 			}
 
