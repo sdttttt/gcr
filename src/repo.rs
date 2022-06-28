@@ -5,8 +5,8 @@ use std::{
 };
 
 use git2::{
-	Commit, Error, Index, IndexAddOption, ObjectType, Repository as GRepository, Signature,
-	StatusOptions, Statuses,
+	Commit, Error, Index, IndexAddOption, Repository as GRepository, Signature, StatusOptions,
+	Statuses,
 };
 
 use crate::log::grc_success_println;
@@ -191,8 +191,10 @@ impl Repository {
 
 	/// the last commit in this repository.
 	fn find_last_commit(&self) -> Result<Commit, Error> {
-		let obj = self.repo.head()?.resolve()?.peel(ObjectType::Commit)?;
-		obj.into_commit().map_err(|_| Error::from_str("not fonund Commit."))
+		self.repo
+			.head()?
+			.peel_to_commit()
+			.map_err(|_| Error::from_str("Not fonund current branch head."))
 	}
 
 	fn check_index(&self) -> Result<Vec<PathBuf>, Error> {
