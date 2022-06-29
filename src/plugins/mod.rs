@@ -19,15 +19,17 @@ pub trait CommitPlugin {
 	fn after(&self, _: &Repository) -> Result<(), Error> {
 		Ok(())
 	}
+
+	fn name(&self) -> &str;
 }
 
 pub fn find_plug(plug_names: &Vec<String>) -> Vec<Rc<dyn CommitPlugin>> {
-	let plugin_all: &[(&str, Rc<dyn CommitPlugin>); 2] =
-		&[("log", Rc::new(LogPlugin::new())), ("push", Rc::new(PushPlugin::new()))];
+	let plugin_all: &[Rc<dyn CommitPlugin>; 2] =
+		&[Rc::new(LogPlugin::new()), Rc::new(PushPlugin::new())];
 
 	plugin_all
 		.iter()
-		.filter(|t| plug_names.contains(&t.0.to_owned()))
-		.map(|t| t.1.clone())
+		.filter(|t| plug_names.contains(&t.name().to_owned()))
+		.map(|t| t.clone())
 		.collect::<Vec<Rc<dyn CommitPlugin>>>()
 }

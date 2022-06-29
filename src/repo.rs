@@ -152,7 +152,7 @@ impl Repository {
 
 	/// add all files to Repository commit index.
 	fn add_all_files(&self) -> Result<(), Error> {
-		let mut index = self.index()?;
+		let mut index = self.index().expect("cannot get the index file.");
 		index.add_all(["*"].iter(), IndexAddOption::DEFAULT, None)?;
 		index.write()?;
 		Ok(())

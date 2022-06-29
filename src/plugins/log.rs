@@ -23,4 +23,8 @@ impl CommitPlugin for LogPlugin {
 		println!("log plugin runing.");
 		Ok(())
 	}
+
+	fn name(&self) -> &str {
+		"log"
+	}
 }

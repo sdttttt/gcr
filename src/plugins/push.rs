@@ -50,6 +50,10 @@ impl CommitPlugin for PushPlugin {
 		println!("[{}] push is end.", Style::new().green().apply_to("~"));
 		Ok(())
 	}
+
+	fn name(&self) -> &str {
+		"push"
+	}
 }
 
 //#[cfg(test)]
