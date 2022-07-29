@@ -23,7 +23,7 @@ plug = []
 clap = "3.1.18"
 console = "0.15.0"
 dialoguer = { version = "0.10.1", features = ["editor", "fuzzy-select"] }
-git2 = "0.14.4"
+git2 = "0.15.0"
 toml = "0.5.9"
 serde = { version = "1.0.137", features = ["derive"] }
 
