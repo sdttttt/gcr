@@ -21,7 +21,7 @@ plug = []
 
 [dependencies]
 clap = "3.1.18"
-console = "0.15.0"
+console = "0.15.4"
 dialoguer = { version = "0.10.1", features = ["editor", "fuzzy-select"] }
 git2 = "0.14.4"
 toml = "0.5.9"
