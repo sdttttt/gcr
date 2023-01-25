@@ -20,7 +20,7 @@ lto = true
 plug = []
 
 [dependencies]
-clap = "3.1.18"
+clap = "4.1.4"
 console = "0.15.0"
 dialoguer = { version = "0.10.1", features = ["editor", "fuzzy-select"] }
 git2 = "0.14.4"
