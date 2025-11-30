@@ -1,0 +1,4 @@
+[target.'cfg(target_os = "windows")'.env]
+OPENSSL_DIR = "/opt/homebrew/opt/openssl@1.1"
+OPENSSL_INCLUDE_DIR = "/opt/homebrew/opt/openssl@1.1/include"
+OPENSSL_LIB_DIR = "/opt/homebrew/opt/openssl@1.1/lib"
