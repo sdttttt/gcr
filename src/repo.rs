@@ -9,6 +9,7 @@ use git2::{
 	Statuses,
 };
 
+use crate::gpg::{commit_with_signature, GpgConfig};
 use crate::log::grc_success_println;
 use crate::version::VERSION;
 use crate::{
@@ -58,14 +59,47 @@ impl Repository {
 
 		let (author_sign, committer_sign) = self.generate_sign()?;
 
+		// Check if GPG signing is enabled
+		let gpg_config = GpgConfig::from_repo(&self.repo)?;
+
+		if gpg_config.should_sign() {
+			self.commit_with_gpg(
+				message,
+				&tree,
+				&author_sign,
+				&committer_sign,
+				&gpg_config,
+			)?;
+		} else {
+			self.commit_without_gpg(
+				message,
+				&tree,
+				&author_sign,
+				&committer_sign,
+			)?;
+		}
+
+		self.after_commit()?;
+
+		Ok(())
+	}
+
+	/// Commit without GPG signing (original behavior)
+	fn commit_without_gpg(
+		&self,
+		message: &str,
+		tree: &git2::Tree,
+		author_sign: &Signature,
+		committer_sign: &Signature,
+	) -> Result<(), Error> {
 		match self.find_last_commit() {
 			Ok(commit) => {
 				self.repo.commit(
 					Some("HEAD"),
-					&author_sign,
-					&committer_sign,
+					author_sign,
+					committer_sign,
 					message,
-					&tree,
+					tree,
 					&[&commit],
 				)?;
 			}
@@ -73,16 +107,70 @@ impl Repository {
 				grc_warn_println("grc think this is the repo's first commit.");
 				self.repo.commit(
 					Some("HEAD"),
-					&author_sign,
-					&committer_sign,
+					author_sign,
+					committer_sign,
 					message,
-					&tree,
+					tree,
 					&[],
 				)?;
 			}
 		};
+		Ok(())
+	}
 
-		self.after_commit()?;
+	/// Commit with GPG signing
+	fn commit_with_gpg(
+		&self,
+		message: &str,
+		tree: &git2::Tree,
+		author_sign: &Signature,
+		committer_sign: &Signature,
+		gpg_config: &GpgConfig,
+	) -> Result<(), Error> {
+		grc_println("GPG signing enabled for this commit.");
+
+		// Create unsigned commit buffer
+		let commit_buf = match self.find_last_commit() {
+			Ok(parent) => {
+				self.repo.commit_create_buffer(
+					author_sign,
+					committer_sign,
+					message,
+					tree,
+					&[&parent],
+				)?
+			}
+			Err(_) => {
+				grc_warn_println("grc think this is the repo's first commit.");
+				self.repo.commit_create_buffer(
+					author_sign,
+					committer_sign,
+					message,
+					tree,
+					&[],
+				)?
+			}
+		};
+
+		// Sign the commit with GPG
+		let signature = gpg_config.sign(&commit_buf)?;
+
+		// Write the signed commit
+		let commit_id = commit_with_signature(&self.repo, &commit_buf, &signature)?;
+
+		// Update HEAD to point to the new commit
+		// Get current HEAD reference name (branch name) or use "HEAD" if detached
+		let head_ref = match self.repo.head() {
+			Ok(head) => {
+				match head.shorthand() {
+					Some(shorthand) => format!("refs/heads/{}", shorthand),
+					None => "HEAD".to_string(),
+				}
+			}
+			Err(_) => "HEAD".to_string(),
+		};
+
+		self.repo.reference(&head_ref, commit_id, true, message)?;
 
 		Ok(())
 	}
@@ -190,7 +278,7 @@ impl Repository {
 	}
 
 	/// the last commit in this repository.
-	fn find_last_commit(&self) -> Result<Commit, Error> {
+	fn find_last_commit(&self) -> Result<Commit<'_>, Error> {
 		self.repo
 			.head()?
 			.peel_to_commit()

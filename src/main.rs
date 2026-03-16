@@ -3,6 +3,7 @@ use std::rc::Rc;
 mod arguments;
 mod config;
 mod extensions;
+mod gpg;
 mod log;
 mod message;
 mod metadata;
