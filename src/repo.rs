@@ -10,8 +10,6 @@ use git2::{
 };
 
 use crate::gpg::{commit_with_signature, GpgConfig};
-use crate::log::grc_success_println;
-use crate::version::VERSION;
 use crate::{
 	config::Configuration,
 	log::{grc_println, grc_warn_println},
@@ -44,11 +42,6 @@ impl Repository {
 	/// execute git commit.
 	pub fn commit(&self, message: &str) -> Result<(), Error> {
 		self.pre_commit()?;
-
-		if self.config.command_mode() == &Mode::Version {
-			grc_success_println(format!("GRC {}", VERSION));
-			return Ok(());
-		}
 
 		let tree_id = {
 			let mut index = self.repo.index()?;
@@ -209,13 +202,6 @@ impl Repository {
 
 	/// actions after commit.
 	fn after_commit(&self) -> Result<(), Error> {
-		match self.config.command_mode() {
-			Mode::Commit => {}
-			Mode::Add => {}
-			Mode::AddAll => {}
-			_ => (),
-		};
-
 		self.execute_hook_command(self.config.after_command())?;
 
 		#[cfg(feature = "plug")]

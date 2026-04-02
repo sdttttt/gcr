@@ -205,8 +205,8 @@ impl Messager {
 			.interact()
 			.unwrap();
 
-		if !self.emoji.is_some() {
-			self.subject = format!("{} {}", self.emoji.as_deref().unwrap(), self.subject)
+		if let Some(emoji) = &self.emoji {
+			self.subject = format!("{} {}", emoji, self.subject)
 		}
 	}
 

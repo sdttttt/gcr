@@ -47,6 +47,12 @@ fn main() {
 
 	let config = Configuration::merge(arg, extensions);
 
+	// Handle version command early
+	if config.command_mode() == &metadata::Mode::Version {
+		grc_success_println(format!("GRC {}", version::VERSION));
+		return;
+	}
+
 	let path = current_path();
 	// repository Object instance.
 	let repo = match Repository::new(path, Rc::clone(&config)) {
