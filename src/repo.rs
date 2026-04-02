@@ -158,19 +158,28 @@ impl Repository {
 		// Write the signed commit
 		let commit_id = commit_with_signature(&self.repo, &commit_buf, &signature)?;
 
-		// Update HEAD to point to the new commit
-		// Get current HEAD reference name (branch name) or use "HEAD" if detached
+		// Update the branch ref to point to the new signed commit.
+		// commit_signed() only creates the commit object; it does NOT move HEAD.
 		let head_ref = match self.repo.head() {
 			Ok(head) => {
-				match head.shorthand() {
-					Some(shorthand) => format!("refs/heads/{}", shorthand),
-					None => "HEAD".to_string(),
-				}
+				// Normal case: HEAD resolves to a branch ref (e.g. "refs/heads/main").
+				head.name().unwrap_or("HEAD").to_string()
 			}
-			Err(_) => "HEAD".to_string(),
+			Err(_) => {
+				// Unborn repo (first commit): HEAD is a symbolic ref pointing to a
+				// branch that doesn't exist yet.  Read the symbolic target so we
+				// create the branch and leave HEAD as a symbolic ref, matching the
+				// behaviour of a normal (non-GPG) first commit.
+				self.repo
+					.find_reference("HEAD")
+					.ok()
+					.and_then(|r| r.symbolic_target().map(|s| s.to_owned()))
+					.unwrap_or_else(|| "refs/heads/master".to_string())
+			}
 		};
 
-		self.repo.reference(&head_ref, commit_id, true, message)?;
+		self.repo
+			.reference(&head_ref, commit_id, true, &format!("commit: {}", message))?;
 
 		Ok(())
 	}

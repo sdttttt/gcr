@@ -47,8 +47,8 @@ impl GpgConfig {
 	pub fn sign(&self, content: &[u8]) -> Result<String, Error> {
 		let mut cmd = Command::new(&self.program);
 
-		// Use --status-fd for better error detection
-		cmd.arg("--status-fd=2")
+		cmd.arg("--status-fd")
+			.arg("2")
 			.arg("--batch")
 			.arg("--detach-sign")
 			.arg("--armor");
@@ -124,9 +124,68 @@ mod tests {
 
 		let config = GpgConfig::from_repo(&repo).unwrap();
 
-		// Default should be disabled
 		assert!(!config.enabled);
 		assert!(config.signing_key.is_none());
 		assert_eq!(config.program, "gpg");
+		assert!(!config.should_sign());
+	}
+
+	#[test]
+	fn test_gpg_config_enabled_via_git_config() {
+		let tmp = TempDir::new().unwrap();
+		let repo = Repository::init_opts(tmp.path(), &RepositoryInitOptions::new()).unwrap();
+
+		{
+			let mut cfg = repo.config().unwrap();
+			cfg.set_bool("commit.gpgSign", true).unwrap();
+			cfg.set_str("user.signingKey", "DEADBEEF").unwrap();
+			cfg.set_str("gpg.program", "gpg2").unwrap();
+		}
+
+		let config = GpgConfig::from_repo(&repo).unwrap();
+
+		assert!(config.enabled);
+		assert!(config.should_sign());
+		assert_eq!(config.signing_key.as_deref(), Some("DEADBEEF"));
+		assert_eq!(config.program, "gpg2");
+	}
+
+	#[test]
+	fn test_sign_fails_with_nonexistent_program() {
+		let config = GpgConfig {
+			enabled: true,
+			signing_key: None,
+			program: "nonexistent-gpg-program-xyz".to_string(),
+		};
+
+		let result = config.sign(b"hello world");
+		assert!(result.is_err());
+		let msg = result.unwrap_err().message().to_string();
+		assert!(
+			msg.contains("Failed to spawn GPG process"),
+			"unexpected error: {}",
+			msg
+		);
+	}
+
+	/// Verify that after a GPG-signed first commit the HEAD reference is still
+	/// a symbolic ref (not a detached/direct ref pointing straight at the OID).
+	#[test]
+	fn test_first_commit_head_is_symbolic_after_gpg_path() {
+		let tmp = TempDir::new().unwrap();
+		let repo = Repository::init_opts(tmp.path(), &RepositoryInitOptions::new()).unwrap();
+
+		// HEAD must be a symbolic ref pointing to a branch (even before any commit).
+		let head = repo.find_reference("HEAD").unwrap();
+		assert!(
+			head.symbolic_target().is_some(),
+			"HEAD should be a symbolic ref in an unborn repo"
+		);
+		let target = head.symbolic_target().unwrap().to_owned();
+		assert!(
+			target.starts_with("refs/heads/"),
+			"HEAD symbolic target should be a branch ref, got: {}",
+			target
+		);
 	}
 }
