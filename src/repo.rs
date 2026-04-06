@@ -56,20 +56,9 @@ impl Repository {
 		let gpg_config = GpgConfig::from_repo(&self.repo)?;
 
 		if gpg_config.should_sign() {
-			self.commit_with_gpg(
-				message,
-				&tree,
-				&author_sign,
-				&committer_sign,
-				&gpg_config,
-			)?;
+			self.commit_with_gpg(message, &tree, &author_sign, &committer_sign, &gpg_config)?;
 		} else {
-			self.commit_without_gpg(
-				message,
-				&tree,
-				&author_sign,
-				&committer_sign,
-			)?;
+			self.commit_without_gpg(message, &tree, &author_sign, &committer_sign)?;
 		}
 
 		self.after_commit()?;
@@ -98,14 +87,7 @@ impl Repository {
 			}
 			Err(_) => {
 				grc_warn_println("grc think this is the repo's first commit.");
-				self.repo.commit(
-					Some("HEAD"),
-					author_sign,
-					committer_sign,
-					message,
-					tree,
-					&[],
-				)?;
+				self.repo.commit(Some("HEAD"), author_sign, committer_sign, message, tree, &[])?;
 			}
 		};
 		Ok(())
@@ -122,31 +104,32 @@ impl Repository {
 	) -> Result<(), Error> {
 		grc_println("GPG signing enabled for this commit.");
 
+		if gpg_config.use_native_signer() {
+			grc_println("Using native Rust signer.");
+		}
+
 		// Create unsigned commit buffer
 		let commit_buf = match self.find_last_commit() {
-			Ok(parent) => {
-				self.repo.commit_create_buffer(
-					author_sign,
-					committer_sign,
-					message,
-					tree,
-					&[&parent],
-				)?
-			}
+			Ok(parent) => self.repo.commit_create_buffer(
+				author_sign,
+				committer_sign,
+				message,
+				tree,
+				&[&parent],
+			)?,
 			Err(_) => {
 				grc_warn_println("grc think this is the repo's first commit.");
-				self.repo.commit_create_buffer(
-					author_sign,
-					committer_sign,
-					message,
-					tree,
-					&[],
-				)?
+				self.repo.commit_create_buffer(author_sign, committer_sign, message, tree, &[])?
 			}
 		};
 
-		// Sign the commit with GPG
-		let signature = gpg_config.sign(&commit_buf)?;
+		// Sign the commit with GPG (try native signer first, fall back to external)
+		let signature = if gpg_config.use_native_signer() {
+			let signer = gpg_config.create_native_signer()?;
+			signer.sign(&commit_buf)?
+		} else {
+			gpg_config.sign(&commit_buf)?
+		};
 
 		// Write the signed commit
 		let commit_id = commit_with_signature(&self.repo, &commit_buf, &signature)?;
@@ -171,8 +154,7 @@ impl Repository {
 			}
 		};
 
-		self.repo
-			.reference(&head_ref, commit_id, true, &format!("commit: {}", message))?;
+		self.repo.reference(&head_ref, commit_id, true, &format!("commit: {}", message))?;
 
 		Ok(())
 	}

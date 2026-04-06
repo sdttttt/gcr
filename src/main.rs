@@ -9,6 +9,7 @@ mod message;
 mod metadata;
 mod plugins;
 mod repo;
+mod signer;
 mod util;
 mod version;
 

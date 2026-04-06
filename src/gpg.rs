@@ -2,6 +2,8 @@ use std::process::Command;
 
 use git2::{Buf, Error, Repository};
 
+use crate::signer::Signer;
+
 /// GPG signing configuration from git config
 pub struct GpgConfig {
 	/// Whether GPG signing is enabled (commit.gpgSign)
@@ -10,6 +12,10 @@ pub struct GpgConfig {
 	pub signing_key: Option<String>,
 	/// GPG program path (gpg.program)
 	pub program: String,
+	/// Path to signing key file (gpg.keyPath) - native Rust signer
+	pub key_path: Option<String>,
+	/// Passphrase for signing key (gpg.passphraseEnv) - environment variable name
+	pub passphrase_env: Option<String>,
 }
 
 impl GpgConfig {
@@ -21,15 +27,32 @@ impl GpgConfig {
 
 		let signing_key = config.get_string("user.signingKey").ok();
 
-		let program = config
-			.get_string("gpg.program")
-			.unwrap_or_else(|_| "gpg".to_string());
+		let program = config.get_string("gpg.program").unwrap_or_else(|_| "gpg".to_string());
 
-		Ok(Self {
-			enabled,
-			signing_key,
-			program,
-		})
+		let key_path = config.get_string("gpg.keyPath").ok();
+
+		let passphrase_env = config.get_string("gpg.passphraseEnv").ok();
+
+		Ok(Self { enabled, signing_key, program, key_path, passphrase_env })
+	}
+
+	/// Check if native Rust signer should be used
+	pub fn use_native_signer(&self) -> bool {
+		self.key_path.is_some()
+	}
+
+	/// Create native Rust signer if key path is configured
+	pub fn create_native_signer(&self) -> Result<Signer, Error> {
+		if !self.use_native_signer() {
+			return Err(Error::from_str("No key path configured for native signer"));
+		}
+
+		let key_path = self.key_path.as_ref().unwrap();
+
+		let passphrase =
+			self.passphrase_env.as_ref().and_then(|env_name| std::env::var(env_name).ok());
+
+		Signer::from_key_file(key_path, passphrase)
 	}
 
 	/// Check if GPG signing should be performed
@@ -47,11 +70,7 @@ impl GpgConfig {
 	pub fn sign(&self, content: &[u8]) -> Result<String, Error> {
 		let mut cmd = Command::new(&self.program);
 
-		cmd.arg("--status-fd")
-			.arg("2")
-			.arg("--batch")
-			.arg("--detach-sign")
-			.arg("--armor");
+		cmd.arg("--status-fd").arg("2").arg("--batch").arg("--detach-sign").arg("--armor");
 
 		// Add signing key if specified
 		if let Some(ref key) = self.signing_key {
@@ -156,16 +175,14 @@ mod tests {
 			enabled: true,
 			signing_key: None,
 			program: "nonexistent-gpg-program-xyz".to_string(),
+			key_path: None,
+			passphrase_env: None,
 		};
 
 		let result = config.sign(b"hello world");
 		assert!(result.is_err());
 		let msg = result.unwrap_err().message().to_string();
-		assert!(
-			msg.contains("Failed to spawn GPG process"),
-			"unexpected error: {}",
-			msg
-		);
+		assert!(msg.contains("Failed to spawn GPG process"), "unexpected error: {}", msg);
 	}
 
 	/// Verify that after a GPG-signed first commit the HEAD reference is still
