@@ -93,7 +93,7 @@ impl Repository {
 		Ok(())
 	}
 
-	/// Commit with GPG signing
+	/// Commit with PGP signing
 	fn commit_with_gpg(
 		&self,
 		message: &str,
@@ -102,11 +102,7 @@ impl Repository {
 		committer_sign: &Signature,
 		gpg_config: &GpgConfig,
 	) -> Result<(), Error> {
-		grc_println("GPG signing enabled for this commit.");
-
-		if gpg_config.use_native_signer() {
-			grc_println("Using native Rust signer.");
-		}
+		grc_println("PGP signing enabled for this commit.");
 
 		// Create unsigned commit buffer
 		let commit_buf = match self.find_last_commit() {
@@ -123,29 +119,18 @@ impl Repository {
 			}
 		};
 
-		// Sign the commit with GPG (try native signer first, fall back to external)
-		let signature = if gpg_config.use_native_signer() {
-			let signer = gpg_config.create_native_signer()?;
-			signer.sign(&commit_buf)?
-		} else {
-			gpg_config.sign(&commit_buf)?
-		};
+		// Create signer and sign the commit
+		let signer = gpg_config.create_signer()?;
+		let signature = signer.sign(&commit_buf)?;
 
 		// Write the signed commit
 		let commit_id = commit_with_signature(&self.repo, &commit_buf, &signature)?;
 
-		// Update the branch ref to point to the new signed commit.
-		// commit_signed() only creates the commit object; it does NOT move HEAD.
+		// Update the branch ref to point to the new signed commit
 		let head_ref = match self.repo.head() {
-			Ok(head) => {
-				// Normal case: HEAD resolves to a branch ref (e.g. "refs/heads/main").
-				head.name().unwrap_or("HEAD").to_string()
-			}
+			Ok(head) => head.name().unwrap_or("HEAD").to_string(),
 			Err(_) => {
-				// Unborn repo (first commit): HEAD is a symbolic ref pointing to a
-				// branch that doesn't exist yet.  Read the symbolic target so we
-				// create the branch and leave HEAD as a symbolic ref, matching the
-				// behaviour of a normal (non-GPG) first commit.
+				// Unborn repo: read symbolic target to preserve HEAD as symbolic ref
 				self.repo
 					.find_reference("HEAD")
 					.ok()
@@ -155,7 +140,6 @@ impl Repository {
 		};
 
 		self.repo.reference(&head_ref, commit_id, true, &format!("commit: {}", message))?;
-
 		Ok(())
 	}
 
